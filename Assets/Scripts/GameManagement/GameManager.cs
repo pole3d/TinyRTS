@@ -1,13 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using UnityEngine;
+using GameManagement.Players;
 using Utilities;
 
-namespace GameManager
+namespace GameManagement
 {
+    public class GameManagerGameData
+    {
+        public GameManagerGameData(LocalPlayerManager localPlayer, AIPlayerManager aiPlayer)
+        {
+            LocalPlayer = localPlayer;
+            AIPlayer = aiPlayer;
+        }
+
+        public LocalPlayerManager LocalPlayer { get; internal set; }
+        public AIPlayerManager AIPlayer { get; internal set; }
+    }
+    
     public class GameManager : Singleton<GameManager>
     {
+        //datas
+        public GameManagerGameData GameData { get; private set; }
+        
         //events
         public Action OnGameStarted { get; set; }
         public Action OnGameWon { get; set; }
@@ -19,6 +35,10 @@ namespace GameManager
         
         protected override void InternalAwake()
         {
+            GameData = new GameManagerGameData(
+                new LocalPlayerManager(PlayerTeamEnum.Human, 0), 
+                new AIPlayerManager(PlayerTeamEnum.Orcs, 1));
+            
             OnGameStarted += GameStart;
             OnGameWon += GameWon;
             OnGameLost += GameLost;
