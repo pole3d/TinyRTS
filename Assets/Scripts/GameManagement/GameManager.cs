@@ -4,25 +4,46 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Utilities;
 
-namespace GameEngine
+namespace GameManager
 {
-    public class GameEngine : Singleton<GameEngine>
+    public class GameManager : Singleton<GameManager>
     {
+        //events
+        public Action OnGameStarted { get; set; }
+        public Action OnGameWon { get; set; }
+        public Action OnGameLost { get; set; }
+        
         //task management
         private Task _currentTask;
         private Queue<Func<Task>> _taskQueue = new Queue<Func<Task>>();
         
         protected override void InternalAwake()
         {
-            Debug.Log("Engine Awake");
+            OnGameStarted += GameStart;
+            OnGameWon += GameWon;
+            OnGameLost += GameLost;
         }
-        
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            
+            OnGameStarted -= GameStart;
+            OnGameWon -= GameWon;
+            OnGameLost -= GameLost;
+        }
+
+        private void Start()
+        {
+            OnGameStarted.Invoke();
+        }
+
         private void Update()
         {
             UpdateTaskManagement();
         }
 
-        #region TaskManagement
+        #region Task Management
 
         /// <summary>
         /// Update the task management system by checking if the current task is completed and launching the next one
@@ -75,6 +96,25 @@ namespace GameEngine
         public bool IsDoingTask()
         {
             return _taskQueue.Count > 0;
+        }
+
+        #endregion
+
+        #region Game States
+
+        private void GameStart()
+        {
+            
+        }
+
+        private void GameLost()
+        {
+            
+        }
+
+        private void GameWon()
+        {
+            
         }
 
         #endregion
