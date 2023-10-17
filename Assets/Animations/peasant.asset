@@ -7,16 +7,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86ef48df5c8dc0a45baa372460f05c38, type: 3}
   m_Name: peasant
   m_EditorClassIdentifier: 
-  EntityIndex: 0
   Animations:
-  - Name: idle
-    FPS: 12
-    Sprites:
+  - <Name>k__BackingField: idle
+    <FPS>k__BackingField: 12
+    <Sprites>k__BackingField:
     - {fileID: -1666593815, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
     - {fileID: -1644429596, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
     - {fileID: 613723826, guid: 04dfb9c7482ef334d98466075013d336, type: 3}

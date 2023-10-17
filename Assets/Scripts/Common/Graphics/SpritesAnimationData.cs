@@ -1,49 +1,67 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Common.Graphics
 {
+    /// <summary>
+    /// A container asset for storing animations associated with an entity, each accessible by its unique name.
+    /// This asset allows you to store and retrieve animations based on their names.
+    /// TODO: Consider optimizing retrieval with an index.
+    /// </summary>
     [CreateAssetMenu]
     public class SpritesAnimationDatas : ScriptableObject
     {
-        public int EntityIndex;
-        public List<AnimationDatas> Animations;
-
+        /// <summary>
+        /// A class used for storing data related to a single animation,
+        /// including its name, playback speed (FPS), and associated sprites.
+        /// </summary>
         [Serializable]
         public class AnimationDatas
         {
-            public string Name;
-            public int FPS;
-            public List<Sprite> Sprites;
+            [field: SerializeField] public string Name { get; private set; }
+            [field: SerializeField] public int FPS { get; private set; }
+            [field: SerializeField] public List<Sprite> Sprites { get; private set; }
         }
 
-        public AnimationDatas GetAnimation(string name)
-        {
-            if (m_animations == null)
-            {
-                m_animations = new Dictionary<string, AnimationDatas>();
+        public List<AnimationDatas> Animations;
 
-                foreach (var item in Animations)
-                {
-                    m_animations.Add(item.Name, item);
-                }
+        Dictionary<string, AnimationDatas> _animations;
+
+        /// <summary>
+        /// Populates a dictionary with animation data for quick access
+        /// </summary>
+        private void Initialize()
+        {
+            _animations = new Dictionary<string, AnimationDatas>();
+
+            foreach (var item in Animations)
+            {
+                _animations.Add(item.Name, item);
             }
+        } 
+
+        /// <summary>
+        /// Retrieves an animation with the given name
+        /// returns null if no animation is found
+        /// </summary>
+        /// <param name="animationName"></param>
+        /// <returns></returns>
+        public AnimationDatas GetAnimation(string animationName)
+        {
+            if (_animations == null)
+                Initialize();
 
             AnimationDatas animation;
 
-            if (m_animations.TryGetValue(name, out animation) == false)
+            if (_animations.TryGetValue(animationName, out animation) == false)
             {
-                Debug.LogError("Can't find animation " + name + " in " + this.name);
-
-                return null;
+                throw new Exception($"can't find animation {animationName} in {this.name}");
             }
 
             return animation;
-        }
+        } 
 
-        Dictionary<string, AnimationDatas> m_animations;
-    }
+    } 
 
 }

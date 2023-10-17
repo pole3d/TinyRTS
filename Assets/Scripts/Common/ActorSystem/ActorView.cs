@@ -1,45 +1,193 @@
-using System.Collections;
 using System.Collections.Generic;
 using Common.Graphics;
 using UnityEngine;
 
 namespace Common.ActorSystem
 {
+    /// <summary>
+    /// The ActorView class represents an entity with various animations.
+    /// A state refers to a continious animations 
+    /// An action refers to an an animation with a finite duration
+    /// An actor always maintains a state, and if it has an ongoing action that completes, the animation returns to the state animation.
+    /// Action and state names must match the name of the animation
+    /// </summary>
     public class ActorView : MonoBehaviour
     {
-        public GameObject ParentActor;
+        [field: SerializeField] public List<ActorViewAction> Actions { get; private set; } = new List<ActorViewAction>();
+        [field: SerializeField] public List<ActorViewState> States { get; private set; } = new List<ActorViewState>();
+        [field: SerializeField] public SpritesAnimationDatas AnimationsDatas { get; private set; }
 
-        public List<ActorActionView> Actions = new List<ActorActionView>();
-        public List<ActorStateView> States = new List<ActorStateView>();
+        public ActorViewAction CurrentAction => _currentAction;
+        public ActorViewState CurrentState => _currentState;
 
-        public SpritesAnimationDatas AnimationsDatas;
+        public int CurrentStateID => _currentState.ID;
 
-        public int CurrentStateID
+        /// <summary>
+        /// Time since the beginning of the current state
+        /// </summary>
+        public float StateTimer { get; private set; }
+
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+
+        ActorViewAction _currentAction;
+        ActorViewState _currentState;
+        SpritesAnimationDatas.AnimationDatas _currentAnimation;
+        float _timerCurrentAction;
+        int _currentFrame;
+
+        #region Initialize
+
+        private void Awake()
         {
-            get { return CurrentState.ID; }
+            if (_spriteRenderer == null)
+                throw new System.Exception("_spriteRenderer is null");
+
+            BuildStatesID();
         }
 
-
-        [HideInInspector]
-        public float StateTimer;
-
-        public ActorActionView CurrentAction
+        /// <summary>
+        /// Generates a unique index for each state based on the order in the list
+        /// </summary>
+        private void BuildStatesID()
         {
-            get
+            int index = 0;
+            foreach (var state in States)
             {
-                return m_currentAction;
+                state.ID = index;
+                index++;
             }
         }
 
-        [HideInInspector]
-        public ActorStateView CurrentState
+        private void Start()
         {
-            get
+            PlayState(0);
+
+            _currentAnimation = GetAnimation(_currentState.Name);
+            _currentFrame = Random.Range(0, _currentAnimation.Sprites.Count);
+            _spriteRenderer.sprite = _currentAnimation.Sprites[_currentFrame];
+        }
+
+        #endregion
+
+        #region Update
+
+        public void Update()
+        {
+            StateTimer += Time.deltaTime;
+
+            UpdateAction();
+            UpdateView();
+        }
+
+        private void UpdateAction()
+        {
+            if (_currentAction != null && _currentAnimation != null)
             {
-                return m_currentState;
+                _timerCurrentAction += Time.deltaTime;
+
+                if (_timerCurrentAction >= (1.0f / _currentAnimation.FPS) * (float)_currentAnimation.Sprites.Count)
+                {
+                    _timerCurrentAction = 0;
+                    _currentAction = null;
+
+                    EndAction();
+
+                    string nextAction = _currentAction.NextAction;
+                    if (string.IsNullOrEmpty(nextAction) == false)
+                        PlayAction(nextAction);
+                    else
+                        _currentAnimation = GetAnimation(_currentState.Name);
+                }
             }
         }
 
+        /// <summary>
+        /// Updates the sprite according to the current state of the animation
+        /// </summary>
+        void UpdateView()
+        {
+            if (_currentAction != null)
+            {
+                int frame = (int)(_timerCurrentAction * _currentAnimation.FPS);
+
+                if (frame >= _currentAnimation.Sprites.Count)
+                    frame = _currentAnimation.Sprites.Count - 1;
+
+                if (frame != _currentFrame)
+                {
+                    _currentFrame = frame;
+                    _spriteRenderer.sprite = _currentAnimation.Sprites[_currentFrame];
+                }
+
+            }
+            else if (_currentState != null)
+            {
+                int frame = (int)(((StateTimer * _currentAnimation.FPS)) % _currentAnimation.Sprites.Count);
+
+                if (frame != _currentFrame)
+                {
+                    _currentFrame = frame;
+
+                    if (_currentAnimation.Sprites.Count > _currentFrame && _currentFrame >= 0)
+                    {
+                        _spriteRenderer.sprite = _currentAnimation.Sprites[_currentFrame];
+                    }
+                }
+            }
+        }
+
+        void EndAction()
+        {
+            _currentAction = null;
+        }
+
+        #endregion
+
+        #region Tools
+
+        public void PlayState(int stateID)
+        {
+            _currentFrame = -1;
+            StateTimer = 0;
+
+            _currentState = States[stateID];
+            _currentAnimation = GetAnimation(_currentState.Name);
+        }
+
+        public void PlayState(string stateName)
+        {
+            ActorViewState state = GetState(stateName);
+
+            if (state == null)
+            {
+                throw new System.Exception($"can't find state {stateName}");
+            }
+            else
+            {
+                PlayState(state.ID);
+            }
+
+        }
+
+        public void PlayAction(string actionName)
+        {
+            ActorViewAction action = GetAction(actionName);
+            if (action == null)
+            {
+                throw new System.Exception($"can't find action {actionName}");
+            }
+
+            SpritesAnimationDatas.AnimationDatas animation = GetAnimation(action.Name);
+
+            if (animation == null)
+            {
+                throw new System.Exception($"can't find animation {action.Name}");
+            }
+
+            _currentAction = action;
+            _timerCurrentAction = 0;
+            _currentAnimation = GetAnimation(action.Name);
+        }
 
         public bool HasState(string name)
         {
@@ -52,133 +200,14 @@ namespace Common.ActorSystem
             return false;
         }
 
-        private void Awake()
-        {
-            int index = 0;
-            foreach (var state in States)
-            {
-                state.ID = index;
-                index++;
-            }
-
-            m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
-            SetState(0);
-
-            m_currentFrame = UnityEngine.Random.Range(0, GetAnimation(m_currentState.Name).Sprites.Count);
-            m_spriteRenderer.sprite = GetAnimation(m_currentState.Name).Sprites[m_currentFrame];
-        }
-
-        public void Update()
-        {
-            StateTimer += Time.deltaTime;
-
-            if (m_currentAction != null)
-            {
-                m_currentAction.CurrentTimer += Time.deltaTime;
-
-                SpritesAnimationDatas.AnimationDatas animation = GetAnimation(m_currentAction.Name);
-                if (animation != null)
-                {
-                    if (m_currentAction.CurrentTimer >= (1.0f / animation.FPS) * (float)animation.Sprites.Count)
-                    {
-                        string nextAction = m_currentAction.NextAction;
-
-                        m_currentAction.CurrentTimer = 0;
-                        m_currentAction = null;
-
-                        EndAction();
-
-                        if (string.IsNullOrEmpty(nextAction) == false)
-                            PlayAction(nextAction);
-                    }
-                }
-                else
-                {
-
-                }
-            }
-
-            UpdateView();
-
-        }
-
-
-        SpritesAnimationDatas.AnimationDatas GetAnimation(string name)
-        {
-            return AnimationsDatas.GetAnimation(name);
-        }
-
-        void UpdateView()
-        {
-            if (m_currentAction != null)
-            {
-
-                int frame = (int)(m_currentAction.CurrentTimer * GetAnimation(m_currentAction.Name).FPS);
-
-                if (frame >= GetAnimation(m_currentAction.Name).Sprites.Count)
-                    frame = GetAnimation(m_currentAction.Name).Sprites.Count - 1;
-
-                if (frame != m_currentFrame)
-                {
-                    m_currentFrame = frame;
-                    m_spriteRenderer.sprite = GetAnimation(m_currentAction.Name).Sprites[m_currentFrame];
-                }
-
-            }
-            else if (m_currentState != null)
-            {
-                int frame = (int)(((StateTimer * GetAnimation(m_currentState.Name).FPS)) % GetAnimation(m_currentState.Name).Sprites.Count);
-
-                if (frame != m_currentFrame)
-                {
-                    m_currentFrame = frame;
-
-                    if (GetAnimation(m_currentState.Name).Sprites.Count > m_currentFrame && m_currentFrame >= 0)
-                    {
-                        m_spriteRenderer.sprite = GetAnimation(m_currentState.Name).Sprites[m_currentFrame];
-                    }
-                }
-            }
-        }
-
-        void EndAction()
-        {
-            m_currentAction = null;
-        }
-
-
-
         public bool HasAction()
         {
-            return m_currentAction != null;
+            return _currentAction != null;
         }
 
-        public void SetState(int stateID)
-        {
-            m_currentFrame = -1;
-            StateTimer = 0;
+        #endregion
 
-            m_currentState = States[stateID];
-
-        }
-
-        public void SetState(string name)
-        {
-            ActorStateView state = GetState(name);
-
-            if (state == null)
-            {
-                Debug.LogError("can't find state " + name);
-            }
-            else
-            {
-                SetState(state.ID);
-            }
-
-        }
-
-        ActorStateView GetState(string name)
+        ActorViewState GetState(string name)
         {
             foreach (var item in States)
             {
@@ -188,41 +217,14 @@ namespace Common.ActorSystem
 
             return null;
         }
-
-
-
-        public void PlayAction(string actionName)
-        {
-            ActorActionView action = GetAction(actionName);
-            if (action == null)
-            {
-                Debug.LogError("can't find action " + actionName);
-                return;
-            }
-
-            SpritesAnimationDatas.AnimationDatas animation = GetAnimation(action.Name);
-
-            if (animation == null)
-            {
-                Debug.LogError("can't find animation " + actionName);
-                return;
-            }
-
-            m_currentAction = action;
-            m_currentAction.CurrentTimer = 0;
-        }
-
-
-
-        ActorActionView GetAction(int index)
+        ActorViewAction GetAction(int index)
         {
             if (index < 0 || index >= Actions.Count)
                 return null;
 
             return Actions[index];
         }
-
-        ActorActionView GetAction(string actionName)
+        ActorViewAction GetAction(string actionName)
         {
             foreach (var action in Actions)
             {
@@ -232,16 +234,9 @@ namespace Common.ActorSystem
             return null;
         }
 
-        public void SetParent(GameObject parent)
+        SpritesAnimationDatas.AnimationDatas GetAnimation(string name)
         {
-            ParentActor = parent;
+            return AnimationsDatas.GetAnimation(name);
         }
-
-
-
-        int m_currentFrame;
-        SpriteRenderer m_spriteRenderer;
-        ActorActionView m_currentAction;
-        ActorStateView m_currentState;
     }
 }
