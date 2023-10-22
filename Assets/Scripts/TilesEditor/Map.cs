@@ -1,8 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using TilesEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Map : MonoBehaviour
@@ -19,7 +18,7 @@ public class Map : MonoBehaviour
     }
 
     /// <summary>
-    /// Create a map with the given size and the default tile, on the given tilemap
+    /// Create a map with the given size and the default tile, on the given tilemap.
     /// </summary>
     private void FillMap()
     {
@@ -35,8 +34,8 @@ public class Map : MonoBehaviour
     /// <summary>
     /// Add a tile at a position on the tilemap.
     /// </summary>
-    /// <param name="tile"></param>
-    /// <param name="position"></param>
+    /// <param name="tile"> Tile to add. </param>
+    /// <param name="position"> Position to add the tile. </param>
     public void AddTile(Tile tile, Vector3Int position)
     {
         _defaultTilemap.SetTile(position, tile);
