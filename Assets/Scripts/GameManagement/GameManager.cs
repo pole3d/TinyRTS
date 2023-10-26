@@ -8,6 +8,9 @@ using Utilities;
 
 namespace GameManagement
 {
+    /// <summary>
+    /// This class contains the game's data 
+    /// </summary>
     public class GameManagerGameData
     {
         public GameManagerGameData(LocalPlayerManager localPlayer, AIPlayerManager aiPlayer)
@@ -20,6 +23,10 @@ namespace GameManagement
         public AIPlayerManager AIPlayer { get; internal set; }
     }
     
+    
+    /// <summary>
+    /// This class manage the game's instances and reference important values relative to the game
+    /// </summary>
     public class GameManager : Singleton<GameManager>
     {
         //editor fields

@@ -31,6 +31,7 @@ namespace Utilities
                 DontDestroyOnLoad(this);
             }
             
+            //set the Instance to null if the application is quit 
             Application.quitting += ResetInstance;
             
             InternalAwake();
