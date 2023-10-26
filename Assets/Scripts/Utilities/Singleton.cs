@@ -39,7 +39,7 @@ namespace Utilities
 
         protected abstract void InternalAwake();
 
-        protected virtual void OnDestroy()
+        protected virtual void OnDisable()
         {
             if (isPersistant == false)
             {
