@@ -7,50 +7,92 @@ using UnityEngine.Tilemaps;
 
 public class FogOfWar : MonoBehaviour
 {
-    [SerializeField] private Tilemap _fogOfWarTilemap;
-    [SerializeField] private Transform _viewer;
-    [SerializeField] private TileBase _discoveredTile;
+    [Header("-- Tilemap --")] [SerializeField]
+    private Tilemap _fogOfWarTilemap;
+
+    [SerializeField] private Tilemap _underTilemap;
+
+    [Header("-- Tile --")] [SerializeField]
+    private TileBase _discoveredTile;
+
+    [SerializeField] private TileBase _undiscoveredTile;
+
+    [Header("-- Settings --")] [SerializeField]
+    private Transform[] _viewers;
+
     [Range(1, 15)] [SerializeField] private int _fogRadius = 8;
 
-    private Vector3 _lastPlayerPosition;
+    private List<Vector3> _lastPlayerPosition;
 
     private readonly HashSet<Vector3Int> _discoveredTilesList = new HashSet<Vector3Int>();
-    
+
     private const float MinDistancePlayerMove = 0.01f;
 
 
     private void Start()
     {
-        _lastPlayerPosition = _viewer.position;
-        
-        CheckDiscoveredTiles();
+        PaintAllFogOfWarTilemap();
+
+        AddAllViewers();
+
+       StartDiscoveredTiles();
+    }
+
+    private void AddAllViewers()
+    {
+        foreach (var viewer in _viewers)
+        {
+            _lastPlayerPosition.Add(viewer.position);
+        }
+    }
+
+    private void PaintAllFogOfWarTilemap()
+    {
+        BoundsInt bounds = _underTilemap.cellBounds;
+        foreach (var position in bounds.allPositionsWithin)
+        {
+            _fogOfWarTilemap.SetTile(position, _undiscoveredTile);
+        }
+    }
+
+    private void StartDiscoveredTiles()
+    {
+        foreach (var viewer in _viewers)
+        {
+            Vector3Int viewerTilePos = _fogOfWarTilemap.WorldToCell(viewer.position);
+
+            CheckDiscoveredTiles(viewerTilePos);
+        }
     }
 
     private void Update()
     {
-        CheckIfPlayerMove();
+        CheckIfViewersMove();
     }
 
-    private void CheckIfPlayerMove()
+    private void CheckIfViewersMove()
     {
-        if (Vector3.Distance(_lastPlayerPosition, _viewer.position) > MinDistancePlayerMove)
+        for (int i = 0; i < _viewers.Length; i++)
         {
-            CheckDiscoveredTiles();
-            
-            _lastPlayerPosition = _viewer.position;
+            if (Vector3.Distance(_lastPlayerPosition[i], _viewers[i].position) > MinDistancePlayerMove)
+            {
+                Vector3Int viewerTilePos = _fogOfWarTilemap.WorldToCell(_viewers[i].position);
+
+                CheckDiscoveredTiles(viewerTilePos);
+
+                _lastPlayerPosition[i] = _viewers[i].position;
+            }
         }
     }
 
-    private void CheckDiscoveredTiles()
+    private void CheckDiscoveredTiles(Vector3Int viewerTilePos)
     {
-        Vector3Int playerTilePos = _fogOfWarTilemap.WorldToCell(_viewer.position);
-
         List<Vector3Int> tilesToRemove = new List<Vector3Int>();
 
         // Check for discovered tiles if they are outside the _fogRadius range
         foreach (Vector3Int discoveredTile in _discoveredTilesList)
         {
-            if (Vector3Int.Distance(playerTilePos, discoveredTile) > _fogRadius)
+            if (Vector3Int.Distance(viewerTilePos, discoveredTile) > _fogRadius)
             {
                 tilesToRemove.Add(discoveredTile);
             }
@@ -62,21 +104,21 @@ public class FogOfWar : MonoBehaviour
             _fogOfWarTilemap.SetTile(discoveredTile, _discoveredTile);
             _discoveredTilesList.Remove(discoveredTile);
         }
-        
-        AddDiscoveredTiles(playerTilePos);
+
+        AddDiscoveredTiles(viewerTilePos);
     }
 
-    private void AddDiscoveredTiles(Vector3Int playerTilePos)
+    private void AddDiscoveredTiles(Vector3Int viewerTilePos)
     {
         // For all tiles in the radius
-        for (int x = playerTilePos.x - _fogRadius; x <= playerTilePos.x + _fogRadius; x++)
+        for (int x = viewerTilePos.x - _fogRadius; x <= viewerTilePos.x + _fogRadius; x++)
         {
-            for (int y = playerTilePos.y - _fogRadius; y <= playerTilePos.y + _fogRadius; y++)
+            for (int y = viewerTilePos.y - _fogRadius; y <= viewerTilePos.y + _fogRadius; y++)
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
 
                 // Check if it is inside the _fogRadius
-                if (Vector3Int.Distance(playerTilePos, cellPosition) <= _fogRadius)
+                if (Vector3Int.Distance(viewerTilePos, cellPosition) <= _fogRadius)
                 {
                     _fogOfWarTilemap.SetTile(cellPosition, null);
                     _discoveredTilesList.Add(cellPosition);
@@ -88,6 +130,9 @@ public class FogOfWar : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(_viewer.position, _fogRadius);
+        foreach (var viewer in _viewers)
+        {
+            Gizmos.DrawWireSphere(viewer.position, _fogRadius);
+        }
     }
 }
