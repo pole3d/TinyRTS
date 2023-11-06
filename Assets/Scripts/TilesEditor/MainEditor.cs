@@ -105,10 +105,6 @@ namespace TilesEditor
                 Tile tile = _tiles[index];
                 TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentTransform);
                 newTileButton.SetTile(tile, tile.sprite);
-
-                TileData newData = new TileData();
-                _tilesData.Add(newData);
-                newData.TileIndex = index;
             }
         }
 
