@@ -24,6 +24,7 @@ namespace TilesEditor
         private void SetCurrentTile()
         {
             MainEditor.Instance.CurrentTile = _tile;
+            MainEditor.Instance.UpdateCurrentTile();
         }
 
         /// <summary>

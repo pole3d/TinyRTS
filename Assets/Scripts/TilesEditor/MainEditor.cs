@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -11,13 +12,16 @@ namespace TilesEditor
     {
         public static MainEditor Instance;
 
-        [field: SerializeField] public Tile CurrentTile { get; set; }
+        public Tile CurrentTile { get; set; }
+        public Action UpdateCurrentTile;
 
         [SerializeField] private Map _currentMap;
         [SerializeField] private List<Tile> _tiles = new List<Tile>();
         [SerializeField] private Transform _scrollViewContentTransform;
         [SerializeField] private TileButton _tileButtonPrefab;
+        [SerializeField] private SpriteRenderer _tilePreviewObj;
 
+        private List<TileData> _tilesData = new List<TileData>();
         private Camera _mainCamera;
 
         private void Awake()
@@ -39,8 +43,12 @@ namespace TilesEditor
             SetCameraPosition();
 
             SetTileButtons();
-            
-            Debug.Log(Application.persistentDataPath);
+
+            UpdateCurrentTile += UpdateTilePreview;
+
+            CurrentTile = null;
+
+            // Debug.Log(Application.persistentDataPath);
         }
 
         /// <summary>
@@ -59,24 +67,32 @@ namespace TilesEditor
             PaintMap();
         }
 
-
         /// <summary>
         /// If the player is pressing the left button on the mouse, it will paint the selected tile.
         /// </summary>
         private void PaintMap()
         {
-            if (Input.GetMouseButton(0))
+            if (CurrentTile == null)
             {
-                if (CurrentTile == null || IsOverUI(Input.mousePosition))
-                {
-                    return;
-                }
-
-                Vector3 screenToWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
-
-                _currentMap.AddTile(CurrentTile, cellPos);
+                return;
             }
+
+            Vector3 screenToWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
+
+            _tilePreviewObj.transform.parent.position = new Vector3(cellPos.x, cellPos.y, 0);
+            
+            if (!Input.GetMouseButton(0) || IsOverUI(Input.mousePosition))
+            {
+                return;
+            }
+
+            _currentMap.AddTile(CurrentTile, cellPos);
+        }
+
+        private void UpdateTilePreview()
+        {
+            _tilePreviewObj.sprite = CurrentTile.sprite;
         }
 
         /// <summary>
@@ -84,10 +100,15 @@ namespace TilesEditor
         /// </summary>
         private void SetTileButtons()
         {
-            foreach (Tile tile in _tiles)
+            for (int index = 0; index < _tiles.Count; index++)
             {
+                Tile tile = _tiles[index];
                 TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentTransform);
                 newTileButton.SetTile(tile, tile.sprite);
+
+                TileData newData = new TileData();
+                _tilesData.Add(newData);
+                newData.TileIndex = index;
             }
         }
 
