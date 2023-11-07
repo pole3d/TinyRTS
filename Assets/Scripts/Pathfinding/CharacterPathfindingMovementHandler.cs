@@ -28,7 +28,33 @@ public class CharacterPathfindingMovementHandler : MonoBehaviour
             }
             else
             {
+                PathFinding pathFinding = PathFinding.Instance;
                 _currentPathIndex++;
+
+                if (_currentPathIndex < _pathVectorList.Count)
+                {
+                    pathFinding.GetGrid().GetXY(_pathVectorList[_currentPathIndex], out int x, out int y);
+                    if (!pathFinding.GetNode(x, y).IsWalkable)
+                    {
+                        SetTargetPosition(_pathVectorList[_pathVectorList.Count - 1]);
+                        return;
+                    }
+                }
+                //old
+                if (_currentPathIndex > 0)
+                    pathFinding.SetNodeWalkable(_pathVectorList, _currentPathIndex - 1, true);
+
+                //current
+                if (_currentPathIndex < _pathVectorList.Count)
+                    pathFinding.SetNodeWalkable(_pathVectorList, _currentPathIndex, false);
+
+                //if (_currentPathIndex < _pathVectorList.Count - 1)
+                //{
+                //    //next
+                //    pathFinding.SetNodeWalkable(_pathVectorList, _currentPathIndex + 1, false);
+                //}
+
+
                 if (_currentPathIndex >= _pathVectorList.Count)
                 {
                     StopMoving();

@@ -9,7 +9,7 @@ public class TestPath : MonoBehaviour
     [SerializeField] float _cellSize;
     [SerializeField] Transform _textParent;
 
-    [SerializeField] CharacterPathfindingMovementHandler character;
+    [SerializeField] List<CharacterPathfindingMovementHandler> characters;
 
     private PathFinding pathFinding;
     void Start()
@@ -20,7 +20,10 @@ public class TestPath : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            character.SetTargetPosition(GetMouseWorldPos());
+            foreach (var character in characters)
+            {
+                character.SetTargetPosition(GetMouseWorldPos());
+            }
         }
 
 

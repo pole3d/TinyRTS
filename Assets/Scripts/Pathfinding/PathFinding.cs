@@ -13,6 +13,8 @@ internal class PathFinding
     private List<PathNode> _openList;
     private List<PathNode> _closedList;
 
+    private PathNode _closestToTarget = null;
+
     public PathFinding(int width, int height, float cellSize = 10)
     {
         if (Instance == null) Instance = this;
@@ -24,8 +26,12 @@ internal class PathFinding
         _grid = new ShowGrid<PathNode>(width, height, cellSize, Vector3.zero, (ShowGrid<PathNode> grid, int x, int y) => new PathNode(x, y), parent);
     }
 
- 
 
+    public void SetNodeWalkable(List<Vector3> listPos, int index, bool isWalkable)
+    {
+        GetGrid().GetXY(listPos[index], out int x, out int y);
+        GetNode(x, y).SetIsWalkable(isWalkable);
+    }
     public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition)
     {
         _grid.GetXY(startWorldPosition, out int startX, out int startY);
