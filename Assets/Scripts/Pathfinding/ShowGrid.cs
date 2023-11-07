@@ -13,7 +13,7 @@ public class ShowGrid<TGridObject>
     private float _cellSize;
     private Transform _parent;
     private Vector3 _originPos;
-    private bool _showDebug = false;
+    private bool _showDebug = true;
 
     public ShowGrid(int width, int height, float cellSize, Vector3 originPos, Func<ShowGrid<TGridObject>, int, int, TGridObject> createGrid, Transform parent = null)
     {
