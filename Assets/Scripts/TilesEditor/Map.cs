@@ -1,4 +1,3 @@
-using System.IO;
 using TilesEditor.Tiles;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,9 +12,11 @@ namespace TilesEditor
 
         [SerializeField] private Tile _defaultTile;
         [SerializeField] private Tilemap _defaultTilemap;
+        private TileData[,] _tilesPos;
 
         private void Start()
         {
+            _tilesPos = new TileData[MapSize.x, MapSize.y];
             FillMap();
         }
 
@@ -45,6 +46,8 @@ namespace TilesEditor
                 if (tilemap.TilesDataAssociated.Contains(tile))
                 {
                     tilemap.CurrentTilemap.SetTile(position, tile.Tile);
+
+                    _tilesPos[position.x, position.y] = tile;
                 }
             }
         }

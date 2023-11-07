@@ -1424,15 +1424,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <TilemapDatas>k__BackingField:
-  - Tilemap: {fileID: 361497933}
-    TilesDataAssociated: []
-    TilesAssociated:
+  - <CurrentTilemap>k__BackingField: {fileID: 361497933}
+    <TilesAssociated>k__BackingField:
     - {fileID: 11400000, guid: 092f26ec92bc9a84282aab9a9def39be, type: 2}
     - {fileID: 11400000, guid: 64ff2f6b1e425ac438744f75bfb86248, type: 2}
     - {fileID: 11400000, guid: b08ba6112b098f64da1e8c1a914cb54b, type: 2}
     - {fileID: 11400000, guid: a4d8ff87333dc284980ef115aeeea832, type: 2}
     - {fileID: 11400000, guid: 477dc1fa94082f145821743b0bff053d, type: 2}
     - {fileID: 11400000, guid: e9f8f17dfc1daf14c91bd0db34d664ba, type: 2}
+  - <CurrentTilemap>k__BackingField: {fileID: 1906620628}
+    <TilesAssociated>k__BackingField:
     - {fileID: 11400000, guid: 231bc4146e6237248a454fe2ecd87bdd, type: 2}
     - {fileID: 11400000, guid: edeaae48d498f9f4c94b1ca3ad4ebad7, type: 2}
     - {fileID: 11400000, guid: b1c526d116927854ea16a2aea2668705, type: 2}
@@ -1440,37 +1441,6 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 980dace3c90b8fc4fae6a4bb0f90f626, type: 2}
     - {fileID: 11400000, guid: 33dcd1341e6e4d24e92c1e8c4fad19f4, type: 2}
     - {fileID: 11400000, guid: abcbda54e1b377f40b0013ba108e5fe2, type: 2}
-    - {fileID: 11400000, guid: 00854912353962f4d966647d68e17548, type: 2}
-    - {fileID: 11400000, guid: b5e4388cbc1a6284780f3e96f5a7d682, type: 2}
-    - {fileID: 11400000, guid: 971991fa6b26ab840a3cc55ed9ebd51e, type: 2}
-    - {fileID: 11400000, guid: 2abb1dca3fb6f0043818160fea3c5f09, type: 2}
-    - {fileID: 11400000, guid: bed5a5f24f2455b4fbf70f75b1ce5984, type: 2}
-  - Tilemap: {fileID: 1906620628}
-    TilesDataAssociated: []
-    TilesAssociated:
-    - {fileID: 11400000, guid: 8b6dbd040df049f4aa7c7f8558ea9674, type: 2}
-    - {fileID: 11400000, guid: 939a7955ba7ff8e4d90d27ae7010acb8, type: 2}
-    - {fileID: 11400000, guid: cda4f54419692fa4ca769f530bab620c, type: 2}
-    - {fileID: 11400000, guid: ee3a7545879d53140b89feb1478a77dc, type: 2}
-    - {fileID: 11400000, guid: d2552d8177bad354bbb63281aeae21b8, type: 2}
-    - {fileID: 11400000, guid: bb672dff896cbb64e99433eadf2c1989, type: 2}
-    - {fileID: 11400000, guid: 13410c8fa1d23cc47a8bae1e735dd64c, type: 2}
-    - {fileID: 11400000, guid: 4f9279870b14c614a988065d9a7b9a27, type: 2}
-    - {fileID: 11400000, guid: e1f299aa73d853949985f8ba4bb10f03, type: 2}
-    - {fileID: 11400000, guid: 7a41861ab2d9ada4e8a62ccb5e23868f, type: 2}
-    - {fileID: 11400000, guid: 31e2f0e5ffff3ea49a1572c2bc66f146, type: 2}
-    - {fileID: 11400000, guid: fc2caca8c893aba47b1402bc1f3bb8ec, type: 2}
-    - {fileID: 11400000, guid: 4f80789f6e1154b49ac35f5a4548cf1c, type: 2}
-    - {fileID: 11400000, guid: 09f248e56f6acaa4b8cfbef2e50aa0af, type: 2}
-    - {fileID: 11400000, guid: 5878f1077e236b842806c64ae8909a1d, type: 2}
-    - {fileID: 11400000, guid: 0db6a84328cb2f34e8b272cb5ead2dca, type: 2}
-    - {fileID: 11400000, guid: be78f41af29490c48b387567921260fa, type: 2}
-    - {fileID: 11400000, guid: aff41078eb1600d42a33cd2dac402863, type: 2}
-    - {fileID: 11400000, guid: d4492a28719b6ba4ea4b454cf6c87586, type: 2}
-    - {fileID: 11400000, guid: de7b7494e58575f4d81f4a5b8df462d5, type: 2}
-    - {fileID: 11400000, guid: 667de9b51dea6f049973935358ffd4d0, type: 2}
-    - {fileID: 11400000, guid: 4645b9067f66be246b9ffd489665f5c2, type: 2}
-    - {fileID: 11400000, guid: 4e58469558a693c43b227e4e6a6e5115, type: 2}
   _currentMap: {fileID: 413033637}
   _tileButtonPrefab: {fileID: 487441823971541542, guid: dc2bcbabae543a64ca72b67d35b83500, type: 3}
   _tilemapButtonPrefab: {fileID: 2673954181663458291, guid: c54a5ef52504be44f81669ef703fe53c, type: 3}

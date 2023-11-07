@@ -34,7 +34,6 @@ namespace TilesEditor
         [SerializeField] private LayoutGroup _tilemapsButtonLayout;
 
         private Camera _mainCamera;
-        private List<TileData> _tilesInMap = new List<TileData>();
 
         private void Awake()
         {
@@ -71,10 +70,8 @@ namespace TilesEditor
                 }
             }
 
-            CreateTilemapButtons();
+            // CreateTilemapButtons();
             CreateTileButtons();
-
-            // Debug.Log(Application.persistentDataPath);
         }
 
         /// <summary>
@@ -114,13 +111,6 @@ namespace TilesEditor
             }
 
             _currentMap.AddTileToMap(CurrentTile, cellPos);
-
-            _tilesInMap.Add(new TileData
-            {
-                Tile = CurrentTile.Tile,
-                TilePosition = cellPos,
-                AssociatedTilemap = null
-            });
         }
 
 
