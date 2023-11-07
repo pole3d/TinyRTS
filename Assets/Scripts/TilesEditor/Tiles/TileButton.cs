@@ -1,13 +1,12 @@
-using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-namespace TilesEditor
+namespace TilesEditor.Tiles
 {
     public class TileButton : MonoBehaviour
     {
-        [SerializeField] private Tile _tile;
+        [SerializeField] private TileData _tile;
         [SerializeField] private Image _display;
 
         private Button _button;
@@ -32,7 +31,7 @@ namespace TilesEditor
         /// </summary>
         /// <param name="tile"> The tile to set. </param> 
         /// <param name="sprite"> The sprite to display. </param>
-        public void SetTile(Tile tile, Sprite sprite)
+        public void SetTileDisplay(TileData tile, Sprite sprite)
         {
             _tile = tile;
             _display.sprite = sprite;

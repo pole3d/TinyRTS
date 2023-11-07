@@ -2,9 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TilesEditor.Tiles;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
+using TileData = TilesEditor.Tiles.TileData;
 
 namespace TilesEditor
 {
@@ -12,17 +16,25 @@ namespace TilesEditor
     {
         public static MainEditor Instance;
 
-        public Tile CurrentTile { get; set; }
+        public TileData CurrentTile { get; set; }
+        [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
         public Action UpdateCurrentTile;
 
         [SerializeField] private Map _currentMap;
-        [SerializeField] private List<Tile> _tiles = new List<Tile>();
-        [SerializeField] private Transform _scrollViewContentTransform;
-        [SerializeField] private TileButton _tileButtonPrefab;
+
+        [Header("Object References")] [SerializeField]
+        private TileButton _tileButtonPrefab;
+
+        [SerializeField] private Button _tilemapButtonPrefab;
         [SerializeField] private SpriteRenderer _tilePreviewObj;
 
-        private List<TileData> _tilesData = new List<TileData>();
+        [Header("Layout References")] [SerializeField]
+        private LayoutGroup _scrollViewContentLayout;
+
+        [SerializeField] private LayoutGroup _tilemapsButtonLayout;
+
         private Camera _mainCamera;
+        private List<TileData> _tilesInMap = new List<TileData>();
 
         private void Awake()
         {
@@ -42,11 +54,25 @@ namespace TilesEditor
 
             SetCameraPosition();
 
-            SetTileButtons();
-
             UpdateCurrentTile += UpdateTilePreview;
 
             CurrentTile = null;
+
+            foreach (TilemapData tilemap in TilemapDatas)
+            {
+                foreach (Tile tile in tilemap.TilesAssociated)
+                {
+                    tilemap.TilesDataAssociated.Add(new TileData
+                    {
+                        Tile = tile,
+                        TilePosition = default,
+                        AssociatedTilemap = null
+                    });
+                }
+            }
+
+            CreateTilemapButtons();
+            CreateTileButtons();
 
             // Debug.Log(Application.persistentDataPath);
         }
@@ -81,30 +107,55 @@ namespace TilesEditor
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
 
             _tilePreviewObj.transform.parent.position = new Vector3(cellPos.x, cellPos.y, 0);
-            
+
             if (!Input.GetMouseButton(0) || IsOverUI(Input.mousePosition))
             {
                 return;
             }
 
-            _currentMap.AddTile(CurrentTile, cellPos);
+            _currentMap.AddTileToMap(CurrentTile, cellPos);
+
+            _tilesInMap.Add(new TileData
+            {
+                Tile = CurrentTile.Tile,
+                TilePosition = cellPos,
+                AssociatedTilemap = null
+            });
         }
 
+
+        /// <summary>
+        /// Update the sprite of the tile preview when click on a new tile button.
+        /// </summary>
         private void UpdateTilePreview()
         {
-            _tilePreviewObj.sprite = CurrentTile.sprite;
+            _tilePreviewObj.sprite = CurrentTile.Tile.sprite;
         }
 
         /// <summary>
         /// Instantiate the tiles buttons in the scroll view.
         /// </summary>
-        private void SetTileButtons()
+        private void CreateTileButtons()
         {
-            for (int index = 0; index < _tiles.Count; index++)
+            foreach (TilemapData tilemap in TilemapDatas)
             {
-                Tile tile = _tiles[index];
-                TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentTransform);
-                newTileButton.SetTile(tile, tile.sprite);
+                foreach (TileData tile in tilemap.TilesDataAssociated)
+                {
+                    TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentLayout.transform);
+                    newTileButton.SetTileDisplay(tile, tile.Tile.sprite);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Instantiate the tilemap buttons in the viewport.
+        /// </summary>
+        private void CreateTilemapButtons()
+        {
+            foreach (TilemapData tilemap in TilemapDatas)
+            {
+                Button button = Instantiate(_tilemapButtonPrefab, _tilemapsButtonLayout.transform);
+                button.GetComponentInChildren<TMP_Text>().text = tilemap.CurrentTilemap.name;
             }
         }
 
