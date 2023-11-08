@@ -3,6 +3,7 @@
 
 
 using System.Collections.Generic;
+using UnityEngine;
 
 class PathNode
 {
@@ -15,6 +16,8 @@ class PathNode
     public List<PathNode> Neighbours = new List<PathNode>();
     public PathNode cameFromNode = null;
     public bool IsWalkable;
+
+    public GameObject pathReserved = null;
 
     public PathNode(int x, int y)
     {
@@ -31,6 +34,13 @@ class PathNode
     {
         IsWalkable = isWalkable;
     }
+
+    public void ReservedPath(GameObject owner = null)
+    {
+        IsWalkable = owner == null ? true : false;
+        pathReserved = owner;
+    }
+
     public override string ToString()
     {
         return $"{X}x, {Y}y";

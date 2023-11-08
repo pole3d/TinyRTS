@@ -13,6 +13,7 @@ public class CharacterPathfindingMovementHandler : MonoBehaviour
         HandleMovement();
     }
 
+    private int _lastIndex = 0;
     private void HandleMovement()
     {
         if (_pathVectorList != null)
@@ -29,37 +30,43 @@ public class CharacterPathfindingMovementHandler : MonoBehaviour
             else
             {
                 PathFinding pathFinding = PathFinding.Instance;
-                _currentPathIndex++;
+
 
                 if (_currentPathIndex < _pathVectorList.Count)
                 {
                     pathFinding.GetGrid().GetXY(_pathVectorList[_currentPathIndex], out int x, out int y);
-                    if (!pathFinding.GetNode(x, y).IsWalkable)
+                    if (pathFinding.GetNode(x, y).pathReserved != null && pathFinding.GetNode(x, y).pathReserved != this.gameObject)
                     {
                         SetTargetPosition(_pathVectorList[_pathVectorList.Count - 1]);
-                        return;
+
                     }
                 }
+
+
                 //old
-                if (_currentPathIndex > 0)
-                    pathFinding.SetNodeWalkable(_pathVectorList, _currentPathIndex - 1, true);
+                pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex);
+
+                _currentPathIndex++;
 
                 //current
-                if (_currentPathIndex < _pathVectorList.Count)
-                    pathFinding.SetNodeWalkable(_pathVectorList, _currentPathIndex, false);
-
-                //if (_currentPathIndex < _pathVectorList.Count - 1)
-                //{
-                //    //next
-                //    pathFinding.SetNodeWalkable(_pathVectorList, _currentPathIndex + 1, false);
-                //}
-
-
                 if (_currentPathIndex >= _pathVectorList.Count)
                 {
                     StopMoving();
                     //stop animator
+                    return;
                 }
+                else
+                {
+                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this.gameObject);
+                }
+
+                if (_currentPathIndex < _pathVectorList.Count - 1)
+                {
+                    //next
+                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this.gameObject);
+                }
+
+                _lastIndex = _currentPathIndex;
             }
         }
         else
@@ -75,9 +82,16 @@ public class CharacterPathfindingMovementHandler : MonoBehaviour
     {
         return transform.position;
     }
+
+
+
+
     public void SetTargetPosition(Vector3 targetPos)
     {
+        if (_pathVectorList != null) PathFinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
+
         _currentPathIndex = 0;
+
         _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
         if (_pathVectorList != null && _pathVectorList.Count > 1)
         {
