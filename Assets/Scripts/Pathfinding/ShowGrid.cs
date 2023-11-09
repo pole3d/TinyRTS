@@ -7,19 +7,19 @@ using UnityEngine;
 public class ShowGrid<TGridObject>
 {
     public TGridObject[,] GridArray;
+    public int Width;
+    public int Height;
+    public float CellSize;
 
-    private int _width;
-    private int _height;
-    private float _cellSize;
     private Transform _parent;
     private Vector3 _originPos;
     private bool _showDebug = true;
 
     public ShowGrid(int width, int height, float cellSize, Vector3 originPos, Func<ShowGrid<TGridObject>, int, int, TGridObject> createGrid, Transform parent = null)
     {
-        this._width = width;
-        this._height = height;
-        this._cellSize = cellSize;
+        this.Width = width;
+        this.Height = height;
+        this.CellSize = cellSize;
         _parent = parent;
         _originPos = originPos;
 
@@ -32,7 +32,10 @@ public class ShowGrid<TGridObject>
             }
         }
 
-        if (_showDebug == true)
+        if (_showDebug == false)
+        {
+            return;
+        }
         #region Debug
         {
             TextMesh[,] _debugTextArray = new TextMesh[width, height];
@@ -41,37 +44,42 @@ public class ShowGrid<TGridObject>
             {
                 for (int y = 0; y < GridArray.GetLength(1); y++)
                 {
-                    _debugTextArray[x, y] = CreateWorldText(GridArray[x, y].ToString(), _parent, GetWorldPos(x, y) + new Vector3(cellSize, cellSize) * .5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    Debug.DrawLine(GetWorldPos(x, y), GetWorldPos(x, y + 1), Color.white, 100f);
-                    Debug.DrawLine(GetWorldPos(x, y), GetWorldPos(x + 1, y), Color.white, 100f);
+                    //apth node
+                    _debugTextArray[x, y] = CreateWorldText(GridArray[x, y].ToString(), _parent, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * .5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
+                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
                 }
             }
-            Debug.DrawLine(GetWorldPos(0, height), GetWorldPos(width, height), Color.white, 100f);
-            Debug.DrawLine(GetWorldPos(width, 0), GetWorldPos(width, height), Color.white, 100f);
+            
+            Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
+            Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
         }
         #endregion
     }
    
 
-    private Vector3 GetWorldPos(int x, int y)
+    public Vector3 GetWorldPosition(int x, int y)
     {
-        return new Vector3(x, y) * _cellSize + _originPos;
+        return new Vector3(x, y) * CellSize + _originPos;
     }
     public void GetXY(Vector3 worldPos, out int x, out int y)
     {
-        x = Mathf.FloorToInt((worldPos - _originPos).x / _cellSize);
-        y = Mathf.FloorToInt((worldPos - _originPos).y / _cellSize);
+        x = Mathf.FloorToInt((worldPos - _originPos).x / CellSize);
+        y = Mathf.FloorToInt((worldPos - _originPos).y / CellSize);
     }
 
     public TGridObject GetGridObject(int x, int y)
     {
-        if (x >= 0 && y >= 0 && x < _width && y < _height)
+        if (x >= 0 && y >= 0 && x < Width && y < Height)
+        {
             return GridArray[x, y];
-        else return default;
+        }
+        
+        return default;
     }
     public float GetCellSize()
     {
-        return _cellSize;
+        return CellSize;
     }
     public int GetWidth()
     {

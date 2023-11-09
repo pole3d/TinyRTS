@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Pathfinding;
 using UnityEngine;
 
 public class TestPath : MonoBehaviour
@@ -11,10 +12,10 @@ public class TestPath : MonoBehaviour
 
     [SerializeField] List<CharacterPathfindingMovementHandler> characters;
 
-    private PathFinding pathFinding;
-    void Start()
+    private PathFinding _pathFinding;
+    private void Start()
     {
-        pathFinding = new PathFinding(_width, _height, _textParent, _cellSize);
+        _pathFinding = new PathFinding(_width, _height, _textParent, _cellSize);
     }
     private void Update()
     {
@@ -31,8 +32,8 @@ public class TestPath : MonoBehaviour
         {
             //take the case unwalkable (no visuale + temporary)
             Vector3 mouseWorldPos = GetMouseWorldPos();
-            pathFinding.GetGrid().GetXY(mouseWorldPos, out int x, out int y);
-            pathFinding.GetNode(x, y).SetIsWalkable(!pathFinding.GetNode(x, y).IsWalkable);
+            _pathFinding.GetGrid().GetXY(mouseWorldPos, out int x, out int y);
+            _pathFinding.GetNode(x, y).SetIsWalkable(!_pathFinding.GetNode(x, y).IsWalkable);
         }
     }
     public static Vector3 GetMouseWorldPos()

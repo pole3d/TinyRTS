@@ -1,48 +1,62 @@
-
-
-
-
 using System.Collections.Generic;
+using GameManagement;
 using UnityEngine;
 
-class PathNode
+namespace Pathfinding
 {
-    public int X;
-    public int Y;
-    public int GCost;
-    public int HCost;
-    public int FCost;
-
-    public List<PathNode> Neighbours = new List<PathNode>();
-    public PathNode cameFromNode = null;
-    public bool IsWalkable;
-
-    public GameObject pathReserved = null;
-
-    public PathNode(int x, int y)
+    class PathNode
     {
-        this.X = x;
-        this.Y = y;
-        IsWalkable = true;
-    }
+        public int X;
+        public int Y;
+        public int GCost;
+        public int HCost;
+        public int FCost;
+        public Vector2Int Coordinates
+        {
+            get { return new Vector2Int(X, Y); }
+        }
 
-    public int CalculateFCost()
-    {
-        return GCost + HCost;
-    }
-    public void SetIsWalkable(bool isWalkable)
-    {
-        IsWalkable = isWalkable;
-    }
+        public List<PathNode> Neighbours = new List<PathNode>();
+        public PathNode CameFromNode = null;
+        public bool IsWalkable;
 
-    public void ReservedPath(GameObject owner = null)
-    {
-        IsWalkable = owner == null ? true : false;
-        pathReserved = owner;
-    }
+        public PathNodeOccupier NodeOccupier
+        {
+            get { return _nodeOccupier; }
+            set
+            {
+                _nodeOccupier = value;
+                GameManager.Instance.DrawGizmoAt(Coordinates, value == null ? Color.red : Color.green);
+            }
+        }
+        private PathNodeOccupier _nodeOccupier;
+        
+        
+        public PathNode(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+            IsWalkable = true;
+        }
 
-    public override string ToString()
-    {
-        return $"{X}x, {Y}y";
+        public int CalculateFCost()
+        {
+            return GCost + HCost;
+        }
+        public void SetIsWalkable(bool isWalkable)
+        {
+            IsWalkable = isWalkable;
+        }
+
+        public void SetPathOwned(PathNodeOccupier occupier = null)
+        {
+            IsWalkable = occupier == null;
+            NodeOccupier = occupier;
+        }
+
+        public override string ToString()
+        {
+            return $"{X}x, {Y}y";
+        }
     }
 }

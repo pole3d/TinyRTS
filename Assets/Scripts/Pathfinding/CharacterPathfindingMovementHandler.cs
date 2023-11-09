@@ -1,102 +1,98 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterPathfindingMovementHandler : MonoBehaviour
+namespace Pathfinding
 {
-    [SerializeField] float _speed = 40f;
-    private int _currentPathIndex;
-    private List<Vector3> _pathVectorList;
-
-    void Update()
+    public class CharacterPathfindingMovementHandler : PathNodeOccupier
     {
-        HandleMovement();
-    }
+        [SerializeField] private float _speed = 40f;
+        
+        private int _currentPathIndex;
+        private List<Vector3> _pathVectorList = new List<Vector3>();
+        private int _lastIndex = 0;
 
-    private int _lastIndex = 0;
-    private void HandleMovement()
-    {
-        if (_pathVectorList != null)
+        private void Update()
         {
-            Vector3 targetPos = _pathVectorList[_currentPathIndex];
-            Vector3 position = transform.position;
-            if (Vector3.Distance(position, targetPos) > 1f)
-            {
-                Vector3 moveDir = (targetPos - position).normalized;
+            HandleMovement();
+        }
 
-                //float distanceBefore = Vector3.Distance(position, targetPos);
-                transform.position = position + moveDir * _speed * Time.deltaTime;
+        private void HandleMovement()
+        {
+            if (_pathVectorList != null && _pathVectorList.Count > 0)
+            {
+                PathFinding pathFinding = PathFinding.Instance;
+                
+                Vector3 targetPosition = _pathVectorList[_currentPathIndex];
+                Vector3 currentPosition = transform.position;
+                float distanceToTargetPosition = Vector3.Distance(currentPosition, targetPosition);
+
+                if (distanceToTargetPosition > 1f) //if not close
+                {
+                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
+                    
+                    Vector3 moveDirection = (targetPosition - currentPosition).normalized;
+                    transform.position = currentPosition + moveDirection * (_speed * Time.deltaTime);
+                }
+                else //if close
+                {
+                    SetTargetPosition(_pathVectorList[^1]);
+
+                    //old
+                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, null);
+
+                    _currentPathIndex++;
+
+                    //current
+                    if (_currentPathIndex >= _pathVectorList.Count)
+                    {
+                        StopMoving();
+                        //stop animator
+                        return;
+                    }
+                    else
+                    {
+                        pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
+                    }
+
+                    if (_currentPathIndex < _pathVectorList.Count - 1)
+                    {
+                        //next
+                        pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this);
+                    }
+
+                    _lastIndex = _currentPathIndex;
+                }
             }
             else
             {
-                PathFinding pathFinding = PathFinding.Instance;
-
-
-                if (_currentPathIndex < _pathVectorList.Count)
-                {
-                    pathFinding.GetGrid().GetXY(_pathVectorList[_currentPathIndex], out int x, out int y);
-                    if (pathFinding.GetNode(x, y).pathReserved != null && pathFinding.GetNode(x, y).pathReserved != this.gameObject)
-                    {
-                        SetTargetPosition(_pathVectorList[_pathVectorList.Count - 1]);
-
-                    }
-                }
-
-
-                //old
-                pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex);
-
-                _currentPathIndex++;
-
-                //current
-                if (_currentPathIndex >= _pathVectorList.Count)
-                {
-                    StopMoving();
-                    //stop animator
-                    return;
-                }
-                else
-                {
-                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this.gameObject);
-                }
-
-                if (_currentPathIndex < _pathVectorList.Count - 1)
-                {
-                    //next
-                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this.gameObject);
-                }
-
-                _lastIndex = _currentPathIndex;
+                //stop animator
             }
         }
-        else
+        private void StopMoving()
         {
-            //stop animator
+            _pathVectorList = null;
         }
-    }
-    private void StopMoving()
-    {
-        _pathVectorList = null;
-    }
-    public Vector3 GetPosition()
-    {
-        return transform.position;
-    }
-
-
-
-
-    public void SetTargetPosition(Vector3 targetPos)
-    {
-        if (_pathVectorList != null) PathFinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
-
-        _currentPathIndex = 0;
-
-        _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
-        if (_pathVectorList != null && _pathVectorList.Count > 1)
+        public Vector3 GetPosition()
         {
-            _pathVectorList.RemoveAt(0);
+            return transform.position;
         }
-    }
 
+
+        public void SetTargetPosition(Vector3 targetPos)
+        {
+            if (_pathVectorList != null && _pathVectorList.Count > 0)
+            {
+                PathFinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
+            }
+
+            _currentPathIndex = 0;
+
+            _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
+            if (_pathVectorList != null && _pathVectorList.Count > 1)
+            {
+                _pathVectorList.RemoveAt(0);
+            }
+        }
+
+    }
 }

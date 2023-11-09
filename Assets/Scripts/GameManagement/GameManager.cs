@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GameManagement.Players;
+using Pathfinding;
 using UnityEngine;
 using Utilities;
 
@@ -155,5 +156,33 @@ namespace GameManagement
         }
 
         #endregion
+        
+        #if UNITY_EDITOR
+
+        private Dictionary<Vector2Int, Color> _dicoNodeGizmos = new Dictionary<Vector2Int, Color>();
+
+        public void DrawGizmoAt(Vector2Int positon, Color color)
+        {
+            if (_dicoNodeGizmos.ContainsKey(positon))
+            {
+                _dicoNodeGizmos[positon] = color;
+                return;
+            }
+            
+            _dicoNodeGizmos.Add(positon,color);
+        }
+        
+        public void OnDrawGizmos()
+        {
+            foreach (var node in _dicoNodeGizmos)
+            {
+                Gizmos.color = node.Value;
+                PathFinding pathFinding = PathFinding.Instance;
+                Vector3 worldPosition = pathFinding.Grid.GetWorldPosition(node.Key.x, node.Key.y) + (Vector3.one * pathFinding.Grid.CellSize * 0.5f);
+                Gizmos.DrawSphere(worldPosition, 1f);
+            }
+        }
+
+#endif
     }
 }
