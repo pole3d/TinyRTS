@@ -6,7 +6,7 @@ namespace Pathfinding
     public class CharacterPathfindingMovementHandler : PathNodeOccupier
     {
         [SerializeField] private float _speed = 40f;
-        
+
         private int _currentPathIndex;
         private List<Vector3> _pathVectorList = new List<Vector3>();
         private int _lastIndex = 0;
@@ -21,7 +21,7 @@ namespace Pathfinding
             if (_pathVectorList != null && _pathVectorList.Count > 0)
             {
                 PathFinding pathFinding = PathFinding.Instance;
-                
+
                 Vector3 targetPosition = _pathVectorList[_currentPathIndex];
                 Vector3 currentPosition = transform.position;
                 float distanceToTargetPosition = Vector3.Distance(currentPosition, targetPosition);
@@ -29,20 +29,15 @@ namespace Pathfinding
                 if (distanceToTargetPosition > 1f) //if not close
                 {
                     pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
-                    
+
                     Vector3 moveDirection = (targetPosition - currentPosition).normalized;
                     transform.position = currentPosition + moveDirection * (_speed * Time.deltaTime);
                 }
                 else //if close
                 {
-                    SetTargetPosition(_pathVectorList[^1]);
-
-                    //old
-                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, null);
-
                     _currentPathIndex++;
 
-                    //current
+
                     if (_currentPathIndex >= _pathVectorList.Count)
                     {
                         StopMoving();
@@ -52,6 +47,7 @@ namespace Pathfinding
                     else
                     {
                         pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
+                        SetTargetPosition(_pathVectorList[^1]);
                     }
 
                     if (_currentPathIndex < _pathVectorList.Count - 1)
@@ -88,6 +84,9 @@ namespace Pathfinding
             _currentPathIndex = 0;
 
             _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
+
+            PathFinding.Instance.SetPathReserved(_pathVectorList, _currentPathIndex, null);
+
             if (_pathVectorList != null && _pathVectorList.Count > 1)
             {
                 _pathVectorList.RemoveAt(0);
