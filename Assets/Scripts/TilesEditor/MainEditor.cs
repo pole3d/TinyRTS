@@ -33,7 +33,14 @@ namespace TilesEditor
 
         [SerializeField] private LayoutGroup _tilemapsButtonLayout;
 
+        [Header("Map References")] [SerializeField]
+        private Transform _savePanel;
+
+        [SerializeField] private Transform _loadPanel;
+        [SerializeField] private Button _loadMapButton;
+
         private Camera _mainCamera;
+        private List<string> _filesButtons = new List<string>();
 
         private void Awake()
         {
@@ -99,6 +106,11 @@ namespace TilesEditor
                 return;
             }
 
+            if (_savePanel.gameObject.activeSelf || _loadPanel.gameObject.activeSelf)
+            {
+                return;
+            }
+
             Vector3 screenToWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
 
@@ -118,6 +130,56 @@ namespace TilesEditor
             _currentMap.AddTileToMap(CurrentTile, cellPos);
         }
 
+        public void DisplaySavePanel()
+        {
+            _savePanel.gameObject.SetActive(!_savePanel.gameObject.activeSelf);
+        }
+
+        /// <summary>
+        /// Display the load panel.
+        /// </summary>
+        public void DisplayLoadPanel()
+        {
+            _loadPanel.gameObject.SetActive(!_loadPanel.gameObject.activeSelf);
+
+            foreach (FileInfo file in GetMapSaves())
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file.Name);
+                
+                if (!_filesButtons.Contains(fileName))
+                {
+                    Button newButton = Instantiate(_loadMapButton, _loadPanel);
+
+                    newButton.GetComponentInChildren<TMP_Text>().text = fileName;
+                    newButton.onClick.AddListener(() =>
+                    {
+                        _currentMap.LoadMap(fileName);
+                        DisplayLoadPanel();
+                    });
+
+                    _filesButtons.Add(fileName);
+                }
+            }
+        }
+
+        
+        /// <summary>
+        /// Get the saves from the saves folder.
+        /// </summary>
+        /// <returns> Return a list of the files. </returns>
+        private List<FileInfo> GetMapSaves()
+        {
+            List<FileInfo> files = new List<FileInfo>();
+            DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/Saves");
+            FileInfo[] info = dir.GetFiles("*.json");
+
+            foreach (FileInfo file in info)
+            {
+                files.Add(file);
+            }
+
+            return files;
+        }
 
         /// <summary>
         /// Update the sprite of the tile preview when click on a new tile button.

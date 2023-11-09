@@ -8,6 +8,6 @@ namespace TilesEditor
     public class MapData
     {
         public List<TileData> TileDatas = new List<TileData>();
-        public TileData[,] TilesPos;
+        public List<Vector3Int> TilePos = new List<Vector3Int>();
     }
 }

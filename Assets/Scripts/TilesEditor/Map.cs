@@ -2,6 +2,9 @@ using System;
 using System.IO;
 using System.Net;
 using TilesEditor.Tiles;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Compilation;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = TilesEditor.Tiles.TileData;
@@ -60,18 +63,18 @@ namespace TilesEditor
             }
         }
 
-        private void Update()
+        /// <summary>
+        /// Save the map in a json file.
+        /// </summary>
+        /// <param name="mapName"> The input field where the player is going to write the name of the map. </param>
+        public void SaveMap(TMP_InputField mapName)
         {
-            if (Input.GetButtonDown("Jump"))
+            if(mapName == null || mapName.text == "")
             {
-                SaveMap();
+                return;
             }
-        }
-
-        private void SaveMap()
-        {
+            
             MapData mapData = new MapData();
-            mapData.TilesPos = _tilesPos;
 
             for (int x = 0; x < MapSize.x; x++)
             {
@@ -80,17 +83,43 @@ namespace TilesEditor
                     TileData tileData = _tilesPos[x, y];
 
                     mapData.TileDatas.Add(tileData);
-
-                    // if (tileData != null)
-                    // {
-                    //     Debug.Log(
-                    //         $"Tile {tileData.Tile} added, on the tilemap {tileData.AssociatedTilemap} at coordinates {x} and {y}");
-                    // }
+                    mapData.TilePos.Add(new Vector3Int(x, y, 0));
                 }
             }
 
             string json = JsonUtility.ToJson(mapData, true);
-            File.WriteAllText(Application.dataPath + "/testLevel.json", json);
+            File.WriteAllText(Application.dataPath + $"/Saves/{mapName.text}.json", json);
+
+            Debug.Log("Map saved");
+        }
+
+        /// <summary>
+        /// Load a map from its name.
+        /// </summary>
+        /// <param name="mapName"> Name of the map. </param>
+        public void LoadMap(string mapName)
+        {
+            string json = File.ReadAllText(Application.dataPath + $"/Saves/{mapName}.json");
+            MapData mapData = JsonUtility.FromJson<MapData>(json);
+
+            foreach (TilemapData tilemap in MainEditor.Instance.TilemapDatas)
+            {
+                tilemap.CurrentTilemap.ClearAllTiles();
+            }
+
+            for (int i = 0; i < mapData.TileDatas.Count; i++)
+            {
+                if (mapData.TileDatas[i].Tile != null)
+                {
+                    mapData.TileDatas[i].AssociatedTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                }
+                else
+                {
+                    _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+                }
+            }
+
+            Debug.Log("Map loaded");
         }
     }
 }
