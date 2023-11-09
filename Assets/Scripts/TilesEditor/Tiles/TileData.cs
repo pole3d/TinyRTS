@@ -8,7 +8,6 @@ namespace TilesEditor.Tiles
     public class TileData
     {
         public Tile Tile;
-        public Vector3Int TilePosition;
         public Tilemap AssociatedTilemap;
     }
 }

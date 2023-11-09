@@ -606,7 +606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MapSize>k__BackingField: {x: 100, y: 100}
   <Grid>k__BackingField: {fileID: 339170166}
-  _defaultTile: {fileID: 11400000, guid: efcab3a3cfa33e1429b76c432e797b4a, type: 2}
+  _defaultTile: {fileID: 11400000, guid: 231bc4146e6237248a454fe2ecd87bdd, type: 2}
   _defaultTilemap: {fileID: 361497933}
 --- !u!1 &745179642
 GameObject:

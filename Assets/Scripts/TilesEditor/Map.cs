@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Net;
 using TilesEditor.Tiles;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -45,11 +48,49 @@ namespace TilesEditor
             {
                 if (tilemap.TilesDataAssociated.Contains(tile))
                 {
-                    tilemap.CurrentTilemap.SetTile(position, tile.Tile);
+                    if (_tilesPos[position.x, position.y] != tile)
+                    {
+                        tilemap.CurrentTilemap.SetTile(position, tile.Tile);
 
-                    _tilesPos[position.x, position.y] = tile;
+                        tile.AssociatedTilemap = tilemap.CurrentTilemap;
+
+                        _tilesPos[position.x, position.y] = tile;
+                    }
                 }
             }
+        }
+
+        private void Update()
+        {
+            if (Input.GetButtonDown("Jump"))
+            {
+                SaveMap();
+            }
+        }
+
+        private void SaveMap()
+        {
+            MapData mapData = new MapData();
+            mapData.TilesPos = _tilesPos;
+
+            for (int x = 0; x < MapSize.x; x++)
+            {
+                for (int y = 0; y < MapSize.y; y++)
+                {
+                    TileData tileData = _tilesPos[x, y];
+
+                    mapData.TileDatas.Add(tileData);
+
+                    // if (tileData != null)
+                    // {
+                    //     Debug.Log(
+                    //         $"Tile {tileData.Tile} added, on the tilemap {tileData.AssociatedTilemap} at coordinates {x} and {y}");
+                    // }
+                }
+            }
+
+            string json = JsonUtility.ToJson(mapData, true);
+            File.WriteAllText(Application.dataPath + "/testLevel.json", json);
         }
     }
 }

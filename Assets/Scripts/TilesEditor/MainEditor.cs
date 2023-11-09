@@ -64,7 +64,6 @@ namespace TilesEditor
                     tilemap.TilesDataAssociated.Add(new TileData
                     {
                         Tile = tile,
-                        TilePosition = default,
                         AssociatedTilemap = null
                     });
                 }
@@ -106,6 +105,12 @@ namespace TilesEditor
             _tilePreviewObj.transform.parent.position = new Vector3(cellPos.x, cellPos.y, 0);
 
             if (!Input.GetMouseButton(0) || IsOverUI(Input.mousePosition))
+            {
+                return;
+            }
+
+            if (cellPos.x < 0 || cellPos.x > _currentMap.MapSize.x || cellPos.y > _currentMap.MapSize.y ||
+                cellPos.y < 0)
             {
                 return;
             }
