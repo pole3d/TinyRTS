@@ -17,14 +17,24 @@ public class TestPath : MonoBehaviour
     {
         _pathFinding = new PathFinding(_width, _height, _textParent, _cellSize);
     }
+    public int NBPath = 1000;
+    int nb_calculate=0;
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            foreach (var character in characters)
+            //foreach (var character in characters)
+            //{
+            //    character.SetTargetPosition(GetMouseWorldPos());
+            //}
+            var time = Time.realtimeSinceStartupAsDouble;
+            for (int i = 0; i < NBPath; i++)
             {
-                character.SetTargetPosition(GetMouseWorldPos());
+                PathFinding.Instance.FindPath(Vector3.zero, GetMouseWorldPos());
+                //characters[0].SetTargetPosition(GetMouseWorldPos());
             }
+            Debug.Log(time - Time.realtimeSinceStartupAsDouble + "ms" + nb_calculate + " nombre de fois");
+            nb_calculate++;
         }
 
 
@@ -33,9 +43,10 @@ public class TestPath : MonoBehaviour
             //take the case unwalkable (no visuale + temporary)
             Vector3 mouseWorldPos = GetMouseWorldPos();
             _pathFinding.GetGrid().GetXY(mouseWorldPos, out int x, out int y);
-            _pathFinding.GetNode(x, y).SetIsWalkable(!_pathFinding.GetNode(x, y).IsWalkable);
+            _pathFinding.GetNode(x, y).SetIsWalkable(0);
         }
     }
+
     public static Vector3 GetMouseWorldPos()
     {
         Vector3 vec = GetMouseWorldPosWithZ(Input.mousePosition, Camera.main);

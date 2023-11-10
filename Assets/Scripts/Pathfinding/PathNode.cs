@@ -18,7 +18,7 @@ namespace Pathfinding
 
         public List<PathNode> Neighbours = new List<PathNode>();
         public PathNode CameFromNode = null;
-        public bool IsWalkable;
+        public byte IsWalkable;
 
         public PathNodeOccupier NodeOccupier
         {
@@ -36,21 +36,21 @@ namespace Pathfinding
         {
             this.X = x;
             this.Y = y;
-            IsWalkable = true;
+            IsWalkable = 1;
         }
 
         public int CalculateFCost()
         {
             return GCost + HCost;
         }
-        public void SetIsWalkable(bool isWalkable)
+        public void SetIsWalkable(byte isWalkable)
         {
             IsWalkable = isWalkable;
         }
 
         public void SetPathOwned(PathNodeOccupier occupier = null)
         {
-            IsWalkable = occupier == null;
+            //IsWalkable = occupier.Occupier;
             NodeOccupier = occupier;
         }
 

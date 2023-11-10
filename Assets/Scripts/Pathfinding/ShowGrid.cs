@@ -38,14 +38,14 @@ public class ShowGrid<TGridObject>
         }
         #region Debug
         {
-            TextMesh[,] _debugTextArray = new TextMesh[width, height];
+            //TextMesh[,] _debugTextArray = new TextMesh[width, height];
 
             for (int x = 0; x < GridArray.GetLength(0); x++)
             {
                 for (int y = 0; y < GridArray.GetLength(1); y++)
                 {
                     //apth node
-                    _debugTextArray[x, y] = CreateWorldText(GridArray[x, y].ToString(), _parent, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * .5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    //_debugTextArray[x, y] = CreateWorldText(GridArray[x, y].ToString(), _parent, GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * .5f, 20, Color.white, TextAnchor.MiddleCenter);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
                 }

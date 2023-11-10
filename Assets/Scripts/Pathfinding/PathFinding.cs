@@ -90,7 +90,7 @@ namespace Pathfinding
         {
             PathNode startNode = Grid.GetGridObject(startX, startY);
             PathNode endNode = Grid.GetGridObject(endX, endY);
-            if (endNode.NodeOccupier != null || endNode.IsWalkable == false)
+            if (endNode.NodeOccupier != null || endNode.IsWalkable == 0)
             {
                 endNode = FindClosestFreePathNodeTo(endNode);
             }
@@ -119,7 +119,7 @@ namespace Pathfinding
                 foreach (PathNode neighbourNode in currentNode.Neighbours)
                 {
                     if (_closedList.Contains(neighbourNode) == true) continue;
-                    if (neighbourNode.IsWalkable == false)
+                    if (neighbourNode.IsWalkable == 0)
                     {
                         _closedList.Add(neighbourNode);
                         continue;
@@ -168,7 +168,7 @@ namespace Pathfinding
                 }
                 
                 PathNode nodeToCheck = Grid.GridArray[coordinateNodeToCheck.x, coordinateNodeToCheck.y];
-                if (nodeToCheck.NodeOccupier == null && nodeToCheck.IsWalkable)
+                if (nodeToCheck.NodeOccupier == null && nodeToCheck.IsWalkable == 1)
                 {
                     return nodeToCheck;
                 }
@@ -227,30 +227,32 @@ namespace Pathfinding
         {
             List<PathNode> neighbour = new List<PathNode>();
 
-            if (current.X - 1 >= 0)
-            {
-                //Left
-                neighbour.Add(GetNode(current, -1, 0));
-                //Left Down
-                if (current.Y - 1 >= 0) neighbour.Add(GetNode(current, -1, -1));
-                //Left up
-                if (current.Y + 1 < Grid.GetHeight()) neighbour.Add(GetNode(current, -1, 1));
-            }
+            Vector2Int[] directions = new Vector2Int[8]
+           {
+                new Vector2Int(0, 1),//down
+                new Vector2Int(0, -1),//up
+                new Vector2Int(-1, 0),//left
+                new Vector2Int(-1, -1),//left down
+                new Vector2Int(-1, 1),//left up
+                new Vector2Int(1, 0),//right
+                new Vector2Int(1, 1),//right up
+                new Vector2Int(1, -1)//right down
+           };
 
-            if (current.X + 1 < Grid.GetWidth())
-            {
-                //Right
-                neighbour.Add(GetNode(current, 1, 0));
-                //Right Down
-                if (current.Y - 1 >= 0) neighbour.Add(GetNode(current, 1, -1));
-                //Right Up
-                if (current.Y + 1 < Grid.GetHeight()) neighbour.Add(GetNode(current, 1, 1));
-            }
 
-            //Down
-            if (current.Y - 1 >= 0) neighbour.Add(GetNode(current, 0, -1));
-            //Up
-            if (current.Y + 1 < Grid.GetHeight()) neighbour.Add(GetNode(current, 0, 1));
+            foreach (Vector2Int direction in directions)
+            {
+                Vector2Int coordinateNodeToCheck = current.Coordinates + direction;
+                if (coordinateNodeToCheck.x < 0
+                    || coordinateNodeToCheck.y < 0
+                    || coordinateNodeToCheck.x >= Grid.GetWidth()
+                    || coordinateNodeToCheck.y > Grid.GetHeight())
+                {
+                    continue;
+                }
+
+                neighbour.Add(GetNode(current, direction.x, direction.y));
+            }
 
             return neighbour;
         }
