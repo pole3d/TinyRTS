@@ -155,7 +155,7 @@ MonoBehaviour:
   BuildingPrefabs:
   - {fileID: 1449038729684565575, guid: a772a6ef134914045b82e229023e85b6, type: 3}
   Camera: {fileID: 1342455288}
-  CellSize: 32
+  CellSize: 1
 --- !u!4 &185087229
 Transform:
   m_ObjectHideFlags: 0
