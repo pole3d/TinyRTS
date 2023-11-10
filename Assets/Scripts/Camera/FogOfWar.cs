@@ -22,7 +22,7 @@ public class FogOfWar : MonoBehaviour
 
     [Range(1, 15)] [SerializeField] private int _fogRadius = 8;
 
-    private List<Vector3> _lastPlayerPosition;
+    private List<Vector3> _lastPlayerPosition = new List<Vector3>();
 
     private readonly HashSet<Vector3Int> _discoveredTilesList = new HashSet<Vector3Int>();
 
