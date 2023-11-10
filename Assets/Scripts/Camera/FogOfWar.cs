@@ -18,13 +18,14 @@ public class FogOfWar : MonoBehaviour
     [SerializeField] private TileBase _undiscoveredTile;
 
     [Header("-- Settings --")] [SerializeField]
-    private Transform[] _viewers;
+    private Transform[] _viewerTransforms;
+    private Viewers[] _viewers;
 
     [Range(1, 15)] [SerializeField] private int _fogRadius = 8;
 
     private List<Vector3> _lastPlayerPosition = new List<Vector3>();
 
-    private readonly HashSet<Vector3Int> _discoveredTilesList = new HashSet<Vector3Int>();
+    private Dictionary<Transform, List<Vector2Int>> _discoveredTileByViewers = new Dictionary<Transform, List<Vector2Int>>();
 
     private const float MinDistancePlayerMove = 0.01f;
 
@@ -40,9 +41,13 @@ public class FogOfWar : MonoBehaviour
 
     private void AddAllViewers()
     {
-        foreach (var viewer in _viewers)
+        foreach (var viewer in _viewerTransforms)
         {
-            _lastPlayerPosition.Add(viewer.position);
+            var position = viewer.position;
+            
+            _lastPlayerPosition.Add(position);
+            
+            _discoveredTileByViewers.Add(viewer, new List<Vector2Int>());
         }
     }
 
@@ -57,12 +62,18 @@ public class FogOfWar : MonoBehaviour
 
     private void StartDiscoveredTiles()
     {
-        foreach (var viewer in _viewers)
+        for (int i = 0; i < _viewerTransforms.Length; i++)
         {
-            Vector3Int viewerTilePos = _fogOfWarTilemap.WorldToCell(viewer.position);
+            Vector2Int viewerTilePos = GetViewerTilePos(i);
 
-            CheckDiscoveredTiles(viewerTilePos);
+            CheckDiscoveredTiles(_viewerTransforms[i]);
         }
+    }
+
+    private Vector2Int GetViewerTilePos(int i)
+    {
+        Vector3Int viewerTilePos3 = _fogOfWarTilemap.WorldToCell(_viewerTransforms[i].position);
+        return new Vector2Int(viewerTilePos3.x, viewerTilePos3.y);
     }
 
     private void Update()
@@ -72,56 +83,59 @@ public class FogOfWar : MonoBehaviour
 
     private void CheckIfViewersMove()
     {
-        for (int i = 0; i < _viewers.Length; i++)
+        for (int i = 0; i < _viewerTransforms.Length; i++)
         {
-            if (Vector3.Distance(_lastPlayerPosition[i], _viewers[i].position) > MinDistancePlayerMove)
+            if (Vector2.Distance(_lastPlayerPosition[i], _viewerTransforms[i].position) > MinDistancePlayerMove)
             {
-                Vector3Int viewerTilePos = _fogOfWarTilemap.WorldToCell(_viewers[i].position);
+                CheckDiscoveredTiles(_viewerTransforms[i]);
 
-                CheckDiscoveredTiles(viewerTilePos);
-
-                _lastPlayerPosition[i] = _viewers[i].position;
+                _lastPlayerPosition[i] = _viewerTransforms[i].position;
             }
         }
     }
 
-    private void CheckDiscoveredTiles(Vector3Int viewerTilePos)
+    private void CheckDiscoveredTiles(Transform viewer)
     {
-        List<Vector3Int> tilesToRemove = new List<Vector3Int>();
+        var viewerTilePos = new Vector2Int((int)viewer.position.x, (int)viewer.position.y);
+        List<Vector2Int> tilesToRemove = new List<Vector2Int>();
 
         // Check for discovered tiles if they are outside the _fogRadius range
-        foreach (Vector3Int discoveredTile in _discoveredTilesList)
+        foreach (Vector2Int discoveredTile in _discoveredTileByViewers[viewer])
         {
-            if (Vector3Int.Distance(viewerTilePos, discoveredTile) > _fogRadius)
+            if (Vector2Int.Distance(viewerTilePos, discoveredTile) > _fogRadius)
             {
                 tilesToRemove.Add(discoveredTile);
             }
         }
 
         // Change these tiles with discoveredTile and remove them from the _discoveredTilesList 
-        foreach (Vector3Int discoveredTile in tilesToRemove)
+        foreach (Vector2Int discoveredTile in tilesToRemove)
         {
-            _fogOfWarTilemap.SetTile(discoveredTile, _discoveredTile);
-            _discoveredTilesList.Remove(discoveredTile);
+            _fogOfWarTilemap.SetTile(new Vector3Int(discoveredTile.x, discoveredTile.y, 0), _discoveredTile);
+            _discoveredTileByViewers[viewer].Remove(discoveredTile);
+            // _discoveredTilesList.Remove(discoveredTile);
         }
 
-        AddDiscoveredTiles(viewerTilePos);
+        AddDiscoveredTiles(viewer);
     }
 
-    private void AddDiscoveredTiles(Vector3Int viewerTilePos)
+    private void AddDiscoveredTiles(Transform viewer)
     {
+        var viewerTilePos = new Vector2Int((int)viewer.position.x, (int)viewer.position.y);
+
         // For all tiles in the radius
         for (int x = viewerTilePos.x - _fogRadius; x <= viewerTilePos.x + _fogRadius; x++)
         {
             for (int y = viewerTilePos.y - _fogRadius; y <= viewerTilePos.y + _fogRadius; y++)
             {
-                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                Vector2Int cellPosition = new Vector2Int(x, y);
 
                 // Check if it is inside the _fogRadius
-                if (Vector3Int.Distance(viewerTilePos, cellPosition) <= _fogRadius)
+                if (Vector2Int.Distance(viewerTilePos, cellPosition) <= _fogRadius)
                 {
-                    _fogOfWarTilemap.SetTile(cellPosition, null);
-                    _discoveredTilesList.Add(cellPosition);
+                    _fogOfWarTilemap.SetTile(new Vector3Int(cellPosition.x, cellPosition.y, 0), null);
+                    // _discoveredTilesList.Add(cellPosition);
+                    _discoveredTileByViewers[viewer].Add(cellPosition);
                 }
             }
         }
@@ -130,9 +144,15 @@ public class FogOfWar : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        foreach (var viewer in _viewers)
+        foreach (var viewer in _viewerTransforms)
         {
             Gizmos.DrawWireSphere(viewer.position, _fogRadius);
         }
     }
+}
+
+public class Viewers
+{
+    public Transform Position;
+    public List<Vector2Int> DiscoveredTile;
 }
