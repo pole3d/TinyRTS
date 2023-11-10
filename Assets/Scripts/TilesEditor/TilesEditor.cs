@@ -12,9 +12,12 @@ using TileData = TilesEditor.Tiles.TileData;
 
 namespace TilesEditor
 {
-    public class MainEditor : MonoBehaviour
+    /// <summary>
+    /// Handle the editor system.
+    /// </summary>
+    public class TilesEditor : MonoBehaviour
     {
-        public static MainEditor Instance;
+        public static TilesEditor Instance;
 
         public TileData CurrentTile { get; set; }
         [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
@@ -22,20 +25,17 @@ namespace TilesEditor
 
         [SerializeField] private Map _currentMap;
 
-        [Header("Object References")] [SerializeField]
-        private TileButton _tileButtonPrefab;
-
+        [Header("Object References")]
+        [SerializeField] private TileButton _tileButtonPrefab;
         [SerializeField] private Button _tilemapButtonPrefab;
         [SerializeField] private SpriteRenderer _tilePreviewObj;
 
-        [Header("Layout References")] [SerializeField]
-        private LayoutGroup _scrollViewContentLayout;
-
+        [Header("Layout References")]
+        [SerializeField] private LayoutGroup _scrollViewContentLayout;
         [SerializeField] private LayoutGroup _tilemapsButtonLayout;
 
-        [Header("Map References")] [SerializeField]
-        private Transform _savePanel;
-
+        [Header("Map References")]
+        [SerializeField] private Transform _savePanel;
         [SerializeField] private Transform _loadPanel;
         [SerializeField] private Button _loadMapButton;
 
@@ -68,16 +68,23 @@ namespace TilesEditor
             {
                 foreach (Tile tile in tilemap.TilesAssociated)
                 {
-                    tilemap.TilesDataAssociated.Add(new TileData
-                    {
-                        Tile = tile,
-                        AssociatedTilemap = null
-                    });
+                    tilemap.TilesDataAssociated.Add(
+                        new TileData
+                        {
+                            Tile = tile,
+                            AssociatedTilemap = null
+                        });
                 }
             }
 
             // CreateTilemapButtons();
             CreateTileButtons();
+        }
+
+        public void SetCurrentTile(TileData tile)
+        {
+            CurrentTile = tile;
+            UpdateCurrentTile();
         }
 
         /// <summary>
@@ -145,24 +152,24 @@ namespace TilesEditor
             foreach (FileInfo file in GetMapSaves())
             {
                 string fileName = Path.GetFileNameWithoutExtension(file.Name);
-                
+
                 if (!_filesButtons.Contains(fileName))
                 {
                     Button newButton = Instantiate(_loadMapButton, _loadPanel);
 
                     newButton.GetComponentInChildren<TMP_Text>().text = fileName;
-                    newButton.onClick.AddListener(() =>
-                    {
-                        _currentMap.LoadMap(fileName);
-                        DisplayLoadPanel();
-                    });
+                    newButton.onClick.AddListener(
+                        () =>
+                        {
+                            _currentMap.LoadMap(fileName);
+                            DisplayLoadPanel();
+                        });
 
                     _filesButtons.Add(fileName);
                 }
             }
         }
 
-        
         /// <summary>
         /// Get the saves from the saves folder.
         /// </summary>

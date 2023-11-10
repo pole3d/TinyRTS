@@ -6,6 +6,9 @@ using UnityEngine.Tilemaps;
 
 namespace TilesEditor.Tiles
 {
+    /// <summary>
+    /// Used to set the tiles associated to the tiles in the inspector.
+    /// </summary>
     [Serializable]
     public class TilemapData
     {

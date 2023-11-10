@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace TilesEditor
 {
+    /// <summary>
+    /// The map data to load and save tilemaps.
+    /// </summary>
     public class MapData
     {
         public List<TileData> TileDatas = new List<TileData>();

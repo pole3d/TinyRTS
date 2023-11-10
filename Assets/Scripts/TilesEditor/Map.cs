@@ -11,6 +11,9 @@ using TileData = TilesEditor.Tiles.TileData;
 
 namespace TilesEditor
 {
+    /// <summary>
+    /// Used to get and set map datas.
+    /// </summary>
     public class Map : MonoBehaviour
     {
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
@@ -47,7 +50,7 @@ namespace TilesEditor
         /// <param name="position"> Position to add the tile. </param>
         public void AddTileToMap(TileData tile, Vector3Int position)
         {
-            foreach (TilemapData tilemap in MainEditor.Instance.TilemapDatas)
+            foreach (TilemapData tilemap in TilesEditor.Instance.TilemapDatas)
             {
                 if (tilemap.TilesDataAssociated.Contains(tile))
                 {
@@ -102,7 +105,7 @@ namespace TilesEditor
             string json = File.ReadAllText(Application.dataPath + $"/Saves/{mapName}.json");
             MapData mapData = JsonUtility.FromJson<MapData>(json);
 
-            foreach (TilemapData tilemap in MainEditor.Instance.TilemapDatas)
+            foreach (TilemapData tilemap in TilesEditor.Instance.TilemapDatas)
             {
                 tilemap.CurrentTilemap.ClearAllTiles();
             }

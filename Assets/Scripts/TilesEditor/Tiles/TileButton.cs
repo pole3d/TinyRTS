@@ -4,26 +4,19 @@ using UnityEngine.UI;
 
 namespace TilesEditor.Tiles
 {
+    /// <summary>
+    /// Used to set the tiles buttons data.
+    /// </summary>
     public class TileButton : MonoBehaviour
     {
-        [SerializeField] private TileData _tile;
         [SerializeField] private Image _display;
+        [SerializeField] private Button _button;
 
-        private Button _button;
+        private TileData _tile;
 
         private void Start()
         {
-            _button = GetComponent<Button>();
-            _button.onClick.AddListener(SetCurrentTile);
-        }
-
-        /// <summary>
-        /// Update the current tile on click.
-        /// </summary>
-        private void SetCurrentTile()
-        {
-            MainEditor.Instance.CurrentTile = _tile;
-            MainEditor.Instance.UpdateCurrentTile();
+            _button.onClick.AddListener(() => TilesEditor.Instance.SetCurrentTile(_tile));
         }
 
         /// <summary>
