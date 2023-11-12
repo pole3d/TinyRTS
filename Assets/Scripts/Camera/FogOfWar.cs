@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Manages the Fog of War in the game
+/// </summary>
 public class FogOfWar : MonoBehaviour
 {
     [Header("-- Tilemap --")] [SerializeField]
@@ -25,35 +28,38 @@ public class FogOfWar : MonoBehaviour
     [Range(1, 15)] [SerializeField] private int _fogRadius = 8;
 
     private List<Vector3> _lastPlayerPosition = new List<Vector3>();
-
-    private List<Viewers> _discoveredViewers = new List<Viewers>();
+    private List<Viewers> _discoveredTiles = new List<Viewers>();
 
     private const float MinDistancePlayerMove = 0.01f;
 
-
+    /// <summary>
+    /// Initializes the Fog of War
+    /// </summary>
     private void Start()
     {
         PaintAllFogOfWarTilemap();
-
         AddAllViewers();
-
         StartDiscoveredTiles();
     }
 
+    /// <summary>
+    /// Adds all viewers to the Fog of War system
+    /// </summary>
     private void AddAllViewers()
     {
         foreach (var viewer in _viewerTransforms)
         {
             var position = viewer.position;
-
             _lastPlayerPosition.Add(position);
-
             Viewers newViewer = new Viewers(viewer, new List<Vector2Int>(), _fogRadius);
-            _discoveredViewers.Add(newViewer);
+            _discoveredTiles.Add(newViewer);
             _fogRadius++;
         }
     }
 
+    /// <summary>
+    /// Paints the entire Fog of War tilemap with the undiscovered tile
+    /// </summary>
     private void PaintAllFogOfWarTilemap()
     {
         BoundsInt bounds = _underTilemap.cellBounds;
@@ -63,27 +69,28 @@ public class FogOfWar : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initiates the discovery of tiles by viewers
+    /// </summary>
     private void StartDiscoveredTiles()
     {
-        for (int i = 0; i < _viewerTransforms.Length; i++)
+        foreach (var viewer in _viewerTransforms)
         {
-            Vector2Int viewerTilePos = GetViewerTilePos(i);
-
-            CheckDiscoveredTiles(_viewerTransforms[i]);
+            CheckDiscoveredTiles(viewer);
         }
     }
 
-    private Vector2Int GetViewerTilePos(int i)
-    {
-        Vector3Int viewerTilePos3 = _fogOfWarTilemap.WorldToCell(_viewerTransforms[i].position);
-        return new Vector2Int(viewerTilePos3.x, viewerTilePos3.y);
-    }
-
+    /// <summary>
+    /// Update is called once per frame, checks if viewers have moved
+    /// </summary>
     private void Update()
     {
         CheckIfViewersMove();
     }
 
+    /// <summary>
+    /// Checks if viewers have moved and updates discovered tiles accordingly
+    /// </summary>
     private void CheckIfViewersMove()
     {
         for (int i = 0; i < _viewerTransforms.Length; i++)
@@ -91,12 +98,14 @@ public class FogOfWar : MonoBehaviour
             if (Vector2.Distance(_lastPlayerPosition[i], _viewerTransforms[i].position) > MinDistancePlayerMove)
             {
                 CheckDiscoveredTiles(_viewerTransforms[i]);
-
                 _lastPlayerPosition[i] = _viewerTransforms[i].position;
             }
         }
     }
 
+    /// <summary>
+    /// Checks and updates discovered tiles based on viewer movement
+    /// </summary>
     private void CheckDiscoveredTiles(Transform viewer)
     {
         var viewerTilePos = new Vector2Int((int)viewer.position.x, (int)viewer.position.y);
@@ -113,7 +122,7 @@ public class FogOfWar : MonoBehaviour
             }
         }
 
-        // Change these tiles with discoveredTile and remove them from the _discoveredTilesList 
+        // Change these tiles with discoveredTile and remove them from the discoveredViewer.DiscoveredTiles list 
         foreach (Vector2Int discoveredTile in tilesToRemove)
         {
             _fogOfWarTilemap.SetTile(new Vector3Int(discoveredTile.x, discoveredTile.y, 0), _discoveredTile);
@@ -123,6 +132,9 @@ public class FogOfWar : MonoBehaviour
         AddDiscoveredTiles(viewer, discoveredViewer);
     }
 
+    /// <summary>
+    /// Adds newly discovered tiles to the Fog of War
+    /// </summary>
     private void AddDiscoveredTiles(Transform viewer, Viewers discoveredViewer)
     {
         var viewerTilePos = new Vector2Int((int)viewer.position.x, (int)viewer.position.y);
@@ -135,7 +147,7 @@ public class FogOfWar : MonoBehaviour
             {
                 Vector2Int cellPosition = new Vector2Int(x, y);
 
-                // Check if it is inside the FogRadius and not clear to avoid remove visibility to other viewers
+                // Check if it is inside the FogRadius and not clear to avoid removing visibility to other viewers
                 var isNotShadow = _fogOfWarTilemap.GetTile(new Vector3Int(cellPosition.x, cellPosition.y, 0));
 
                 if (Vector2Int.Distance(viewerTilePos, cellPosition) <= FogRadius && isNotShadow)
@@ -147,9 +159,12 @@ public class FogOfWar : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the Viewers object associated with the given viewer transform
+    /// </summary>
     private Viewers GetGoodViewers(Transform viewer)
     {
-        foreach (var discoViewer in _discoveredViewers)
+        foreach (var discoViewer in _discoveredTiles)
         {
             if (viewer == discoViewer.Transform)
             {
@@ -160,16 +175,22 @@ public class FogOfWar : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Draws wire spheres around viewers in the scene for visualization
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        foreach (var viewer in _discoveredViewers)
+        foreach (var viewer in _discoveredTiles)
         {
             Gizmos.DrawWireSphere(viewer.Transform.position, viewer.FogRadius);
         }
     }
 }
 
+/// <summary>
+/// Represents a viewer in the Fog of War system
+/// </summary>
 public class Viewers
 {
     public readonly Transform Transform;
