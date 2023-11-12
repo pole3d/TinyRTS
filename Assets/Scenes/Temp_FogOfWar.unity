@@ -21361,6 +21361,18 @@ PrefabInstance:
       propertyPath: _viewers.Array.data[1]
       value: 
       objectReference: {fileID: 855558764}
+    - target: {fileID: 1001788851688360782, guid: 0f319a039903ce044bcfcf0ea96040f7, type: 3}
+      propertyPath: _viewerTransforms.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001788851688360782, guid: 0f319a039903ce044bcfcf0ea96040f7, type: 3}
+      propertyPath: _viewerTransforms.Array.data[0]
+      value: 
+      objectReference: {fileID: 1640610770}
+    - target: {fileID: 1001788851688360782, guid: 0f319a039903ce044bcfcf0ea96040f7, type: 3}
+      propertyPath: _viewerTransforms.Array.data[1]
+      value: 
+      objectReference: {fileID: 855558764}
     - target: {fileID: 1799122197199474211, guid: 0f319a039903ce044bcfcf0ea96040f7, type: 3}
       propertyPath: m_RootOrder
       value: 1
