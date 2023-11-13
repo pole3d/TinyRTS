@@ -11,11 +11,13 @@ namespace Pathfinding
         const int MOVE_DIAG_COST = 14;
 
         public static PathFinding Instance;
-        public ShowGrid<PathNode> Grid;
+        public Grid<PathNode> Grid;
 
 
         private List<PathNode> _openList;
+        private LinkedList<PathNode> _openLinkedList;
         private List<PathNode> _closedList;
+        private LinkedList<PathNode> _closedLinkedList;
 
         private PathNode _closestToTarget = null;
 
@@ -33,8 +35,8 @@ namespace Pathfinding
                 Debug.LogError("2 pathfinding");
             }
 
-            Grid = new ShowGrid<PathNode>(width, height, cellSize, Vector3.zero,
-                (ShowGrid<PathNode> grid, int x, int y) => new PathNode(x, y));
+            Grid = new Grid<PathNode>(width, height, cellSize, Vector3.zero,
+                (Grid<PathNode> grid, int x, int y) => new PathNode(x, y));
 
             _openArray2D = new PathNode[height, width];
             _closedArray2D = new PathNode[height, width];
@@ -50,8 +52,8 @@ namespace Pathfinding
             {
                 Debug.LogError("2 pathfinding");
             }
-            Grid = new ShowGrid<PathNode>(width, height, cellSize, Vector3.zero,
-                (ShowGrid<PathNode> grid, int x, int y) => new PathNode(x, y), parent);
+            Grid = new Grid<PathNode>(width, height, cellSize, Vector3.zero,
+                (Grid<PathNode> grid, int x, int y) => new PathNode(x, y), parent);
 
             _openArray2D = new PathNode[height, width];
             _closedArray2D = new PathNode[height, width];
@@ -98,6 +100,9 @@ namespace Pathfinding
 
         public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
         {
+            Array.Clear(_openArray2D, 0, _openArray2D.Length);
+            Array.Clear(_closedArray2D, 0, _closedArray2D.Length);
+
             PathNode startNode = Grid.GetGridObject(startX, startY);
             PathNode endNode = Grid.GetGridObject(endX, endY);
             if (endNode.NodeOccupier != null || endNode.IsWalkable == 0)
@@ -125,20 +130,20 @@ namespace Pathfinding
 
                 _openList.Remove(currentNode);
                 _closedList.Add(currentNode);
-                _openArray2D[currentNode.Coordinates.y, currentNode.Coordinates.x] = null;
-                _closedArray2D[currentNode.Coordinates.y, currentNode.Coordinates.x] = currentNode;
+                _openArray2D[currentNode.Coordinates.x, currentNode.Coordinates.y] = null;
+                _closedArray2D[currentNode.Coordinates.x, currentNode.Coordinates.y] = currentNode;
 
 
                 foreach (PathNode neighbourNode in currentNode.Neighbours)
                 {
-                    if (_closedArray2D[neighbourNode.Coordinates.y, neighbourNode.Coordinates.x] != null) continue;
+                    if (_closedArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] != null) continue;
 
-                    //if (_closedLinkedList.Contains(neighbourNode) == true) continue;
+                    //if (_closedList.Contains(neighbourNode) == true) continue;
 
                     if (neighbourNode.IsWalkable == 0)
                     {
                         _closedList.Add(neighbourNode);
-                        _closedArray2D[neighbourNode.Coordinates.y, neighbourNode.Coordinates.x] = neighbourNode;
+                        _closedArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] = neighbourNode;
 
                         continue;
                     }
@@ -153,10 +158,10 @@ namespace Pathfinding
                         neighbourNode.CameFromNode = currentNode;
                         //if (_openList.Contains(neighbourNode) == false) _openList.Add(neighbourNode);
 
-                        //if (_openLinkedList.Contains(neighbourNode) == false)
-                        if (_openArray2D[neighbourNode.Coordinates.y, neighbourNode.Coordinates.x] == null)
+                        if (_openArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] == null)
                         {
-                            _openArray2D[neighbourNode.Coordinates.y, neighbourNode.Coordinates.x] = neighbourNode;
+                            _openList.Add(neighbourNode);
+                            _openArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] = neighbourNode;
                         }
                     }
                 }
@@ -164,6 +169,7 @@ namespace Pathfinding
 
             if (_closestToTarget != null)
             {
+                Debug.Log("nopath");
                 return CalculatePath(_closestToTarget);
             }
             
@@ -242,7 +248,7 @@ namespace Pathfinding
             return Grid.GetGridObject(x, y);
         }
 
-        public ShowGrid<PathNode> GetGrid()
+        public Grid<PathNode> GetGrid()
         {
             return Grid;
         }

@@ -18,7 +18,7 @@ public class TestPath : MonoBehaviour
         _pathFinding = new PathFinding(_width, _height, _textParent, _cellSize);
     }
     public int NBPath = 1000;
-    int nb_calculate=0;
+    int nb_calculate = 0;
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -27,11 +27,11 @@ public class TestPath : MonoBehaviour
             //{
             //    character.SetTargetPosition(GetMouseWorldPos());
             //}
+            //characters[0].SetTargetPosition(GetMouseWorldPos());
             var time = Time.realtimeSinceStartupAsDouble;
             for (int i = 0; i < NBPath; i++)
             {
                 PathFinding.Instance.FindPath(Vector3.zero, GetMouseWorldPos());
-                //characters[0].SetTargetPosition(GetMouseWorldPos());
             }
             Debug.Log(time - Time.realtimeSinceStartupAsDouble + "ms" + nb_calculate + " nombre de fois");
             nb_calculate++;
