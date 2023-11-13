@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ShowGrid<TGridObject>
+public class Grid<TGridObject>
 {
     public TGridObject[,] GridArray;
     public int Width;
@@ -15,7 +15,7 @@ public class ShowGrid<TGridObject>
     private Vector3 _originPos;
     private bool _showDebug = true;
 
-    public ShowGrid(int width, int height, float cellSize, Vector3 originPos, Func<ShowGrid<TGridObject>, int, int, TGridObject> createGrid, Transform parent = null)
+    public Grid(int width, int height, float cellSize, Vector3 originPos, Func<Grid<TGridObject>, int, int, TGridObject> createGrid, Transform parent = null)
     {
         this.Width = width;
         this.Height = height;
