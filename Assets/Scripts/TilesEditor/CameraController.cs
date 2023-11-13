@@ -60,6 +60,11 @@ namespace TilesEditor
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
 
+            if (horizontal == 0 && vertical == 0)
+            {
+                return;
+            }
+
             Vector3 newPos = transform.position + new Vector3(horizontal, vertical, 0f) * (_speed * Time.deltaTime);
 
             float clampX = Mathf.Clamp(newPos.x, _halfWidth, _map.MapSize.x - _halfWidth);

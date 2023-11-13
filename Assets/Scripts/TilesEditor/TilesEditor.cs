@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using TilesEditor.Tiles;
@@ -19,15 +18,14 @@ namespace TilesEditor
     {
         public static TilesEditor Instance;
 
-        public TileData CurrentTile { get; set; }
+        private TileData CurrentTile { get; set; }
         [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
-        public Action UpdateCurrentTile;
 
         [SerializeField] private Map _currentMap;
 
         [Header("Object References")]
         [SerializeField] private TileButton _tileButtonPrefab;
-        [SerializeField] private Button _tilemapButtonPrefab;
+        [SerializeField] private TilemapButton _tilemapButtonPrefab;
         [SerializeField] private SpriteRenderer _tilePreviewObj;
 
         [Header("Layout References")]
@@ -39,8 +37,10 @@ namespace TilesEditor
         [SerializeField] private Transform _loadPanel;
         [SerializeField] private Button _loadMapButton;
 
+        private Action _updateCurrentTile;
         private Camera _mainCamera;
         private List<string> _filesButtons = new List<string>();
+        private TilemapButton[] _tilemapButtons;
 
         private void Awake()
         {
@@ -56,11 +56,13 @@ namespace TilesEditor
 
         private void Start()
         {
+            _tilemapButtons = new TilemapButton[TilemapDatas.Length];
+
             _mainCamera = Camera.main;
 
             SetCameraPosition();
 
-            UpdateCurrentTile += UpdateTilePreview;
+            _updateCurrentTile += UpdateTilePreview;
 
             CurrentTile = null;
 
@@ -77,14 +79,14 @@ namespace TilesEditor
                 }
             }
 
-            // CreateTilemapButtons();
+            CreateTilemapButtons();
             CreateTileButtons();
         }
 
         public void SetCurrentTile(TileData tile)
         {
             CurrentTile = tile;
-            UpdateCurrentTile();
+            _updateCurrentTile();
         }
 
         /// <summary>
@@ -207,6 +209,8 @@ namespace TilesEditor
                 {
                     TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentLayout.transform);
                     newTileButton.SetTileDisplay(tile, tile.Tile.sprite);
+                    tilemap.TilesButtonsAssociated.Add(newTileButton);
+                    newTileButton.gameObject.SetActive(false);
                 }
             }
         }
@@ -216,10 +220,36 @@ namespace TilesEditor
         /// </summary>
         private void CreateTilemapButtons()
         {
-            foreach (TilemapData tilemap in TilemapDatas)
+            for (int index = 0; index < TilemapDatas.Length; index++)
             {
-                Button button = Instantiate(_tilemapButtonPrefab, _tilemapsButtonLayout.transform);
+                TilemapData tilemap = TilemapDatas[index];
+                TilemapButton button = Instantiate(_tilemapButtonPrefab, _tilemapsButtonLayout.transform);
+
                 button.GetComponentInChildren<TMP_Text>().text = tilemap.CurrentTilemap.name;
+                button.SetTilemapData(tilemap);
+
+                _tilemapButtons[index] = button;
+            }
+        }
+
+
+        /// <summary>
+        /// Set active false all the tiles buttons that are not 
+        /// </summary>
+        /// <param name="currentTilemapButton"></param>
+        public void DontDisplayTiles(TilemapButton currentTilemapButton)
+        {
+            foreach (TilemapButton button in _tilemapButtons)
+            {
+                if (currentTilemapButton == button)
+                {
+                    continue;
+                }
+
+                foreach (TileButton tileButton in button.TilemapData.TilesButtonsAssociated)
+                {
+                    tileButton.gameObject.SetActive(false);
+                }
             }
         }
 

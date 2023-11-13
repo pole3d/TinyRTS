@@ -14,6 +14,7 @@ namespace TilesEditor.Tiles
     {
         [field: SerializeField] public Tilemap CurrentTilemap { get; private set; }
         [field: SerializeField] public List<Tile> TilesAssociated { get; private set; } = new List<Tile>();
+        public List<TileButton> TilesButtonsAssociated { get; set; } = new List<TileButton>();
         public List<TileData> TilesDataAssociated { get; } = new List<TileData>();
     }
 }
