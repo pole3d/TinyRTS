@@ -83,7 +83,7 @@ namespace Pathfinding
 
             _currentPathIndex = 0;
 
-            _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
+            //_pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
 
             PathFinding.Instance.SetPathReserved(_pathVectorList, _currentPathIndex, null);
 
