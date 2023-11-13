@@ -113,7 +113,7 @@ namespace TilesEditor
                 return;
             }
 
-            if (_savePanel.gameObject.activeSelf || _loadPanel.gameObject.activeSelf)
+            if (MenuIsOpen())
             {
                 return;
             }
@@ -236,6 +236,11 @@ namespace TilesEditor
             EventSystem.current.RaycastAll(pointer, raycastResults);
 
             return raycastResults.Count > 0 || EventSystem.current.currentSelectedGameObject != null;
+        }
+
+        public bool MenuIsOpen()
+        {
+            return _loadPanel.gameObject.activeSelf || _savePanel.gameObject.activeSelf;
         }
     }
 }
