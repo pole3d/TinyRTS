@@ -83,6 +83,16 @@ namespace TilesEditor
             CreateTileButtons();
         }
 
+        public void ResetMap()
+        {
+            foreach (TilemapData tilemap in TilemapDatas)
+            {
+                tilemap.CurrentTilemap.ClearAllTiles();
+            }
+            
+            _currentMap.FillMap();
+        }
+
         public void SetCurrentTile(TileData tile)
         {
             CurrentTile = tile;

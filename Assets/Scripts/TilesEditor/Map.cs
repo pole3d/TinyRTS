@@ -32,7 +32,7 @@ namespace TilesEditor
         /// <summary>
         /// Create a map with the given size and the default tile, on the given tilemap.
         /// </summary>
-        private void FillMap()
+        public void FillMap()
         {
             for (int x = 0; x < MapSize.x; x++)
             {
