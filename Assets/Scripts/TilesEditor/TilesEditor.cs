@@ -57,14 +57,12 @@ namespace TilesEditor
         private void Start()
         {
             _tilemapButtons = new TilemapButton[TilemapDatas.Length];
-
             _mainCamera = Camera.main;
+            CurrentTile = null;
 
             SetCameraPosition();
 
             _updateCurrentTile += UpdateTilePreview;
-
-            CurrentTile = null;
 
             foreach (TilemapData tilemap in TilemapDatas)
             {
@@ -83,6 +81,9 @@ namespace TilesEditor
             CreateTileButtons();
         }
 
+        /// <summary>
+        /// Clear all the tiles of the map but set the background.
+        /// </summary>
         public void ResetMap()
         {
             foreach (TilemapData tilemap in TilemapDatas)
@@ -133,7 +134,7 @@ namespace TilesEditor
                 return;
             }
 
-            _tilePreviewObj.transform.parent.position = new Vector3(cellPos.x, cellPos.y, 0);
+            _tilePreviewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
 
             if (!Input.GetMouseButton(0))
             {

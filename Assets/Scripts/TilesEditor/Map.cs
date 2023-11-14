@@ -1,13 +1,8 @@
-using System;
 using System.IO;
-using System.Net;
 using TilesEditor.Tiles;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Compilation;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
@@ -40,7 +35,10 @@ namespace TilesEditor
 
             SetBrushSizeSliderValues();
         }
-
+        
+        /// <summary>
+        /// Set the brush size slider's values.
+        /// </summary>
         private void SetBrushSizeSliderValues()
         {
             SetBrushSize(_brushSizeSlider.value);
@@ -48,11 +46,14 @@ namespace TilesEditor
             _brushSizeSlider.maxValue = _brushSizeMax;
             _brushSizeSlider.onValueChanged.AddListener(SetBrushSize);
         }
-
+        
+        /// <summary>
+        /// Set the brush size according to the slider.
+        /// </summary>
+        /// <param name="value"> Slider value. </param>
         private void SetBrushSize(float value)
         {
             _brushSize = value;
-            EventSystem.current.SetSelectedGameObject(null);
         }
 
         /// <summary>
@@ -78,27 +79,26 @@ namespace TilesEditor
         {
             foreach (TilemapData tilemap in TilesEditor.Instance.TilemapDatas)
             {
-                if (tilemap.TilesDataAssociated.Contains(tile))
+                if (!tilemap.TilesDataAssociated.Contains(tile))
                 {
-                    for (int x = 0; x < _brushSize; x++)
+                    continue;
+                }
+                
+                for (int x = 0; x < _brushSize; x++)
+                {
+                    for (int y = 0; y < _brushSize; y++)
                     {
-                        for (int y = 0; y < _brushSize; y++)
+                        Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
+
+                        if (TilesEditor.Instance.IsInZone(pos) == false)
                         {
-                            Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
-
-                            if (TilesEditor.Instance.IsInZone(pos) == false)
-                            {
-                                return;
-                            }
-
-                            if (_tilesPos[pos.x, pos.y] != tile)
-                            {
-                                tilemap.CurrentTilemap.SetTile(pos, tile.Tile);
-
-                                tile.AssociatedTilemap = tilemap;
-                                _tilesPos[pos.x, pos.y] = tile;
-                            }
+                            continue;
                         }
+
+                        tilemap.CurrentTilemap.SetTile(pos, tile.Tile);
+
+                        tile.AssociatedTilemap = tilemap;
+                        _tilesPos[pos.x, pos.y] = tile;
                     }
                 }
             }

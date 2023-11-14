@@ -28,16 +28,17 @@ namespace TilesEditor
             SetSizeSliderValues();
             SetCameraPosition();
         }
-
+        
+        /// <summary>
+        /// Set the slider's initial values.
+        /// </summary>
         private void SetSizeSliderValues()
         {
-
             SetSpeed(_slider.value);
             _slider.onValueChanged.AddListener(SetSpeed);
             _slider.minValue = 1;
             _slider.maxValue = _maxSpeed;
         }
-
 
         /// <summary>
         /// Set the speed according to the slider value.
@@ -46,7 +47,6 @@ namespace TilesEditor
         private void SetSpeed(float value)
         {
             _speed = value;
-            EventSystem.current.SetSelectedGameObject(null);
         }
 
         /// <summary>
