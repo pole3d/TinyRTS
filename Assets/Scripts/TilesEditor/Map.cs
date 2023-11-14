@@ -18,9 +18,9 @@ namespace TilesEditor
     {
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
+        [field: SerializeField] public Tilemap DefaultTilemap { get; set; }
 
         [SerializeField] private Tile _defaultTile;
-        [SerializeField] private Tilemap _defaultTilemap;
         private TileData[,] _tilesPos;
 
         private void Start()
@@ -38,7 +38,7 @@ namespace TilesEditor
             {
                 for (int y = 0; y < MapSize.y; y++)
                 {
-                    _defaultTilemap.SetTile(new Vector3Int(x, y, 0), _defaultTile);
+                    DefaultTilemap.SetTile(new Vector3Int(x, y, 0), _defaultTile);
                 }
             }
         }
@@ -58,8 +58,7 @@ namespace TilesEditor
                     {
                         tilemap.CurrentTilemap.SetTile(position, tile.Tile);
 
-                        tile.AssociatedTilemap = tilemap.CurrentTilemap;
-
+                        tile.AssociatedTilemap = tilemap;
                         _tilesPos[position.x, position.y] = tile;
                     }
                 }
@@ -72,11 +71,11 @@ namespace TilesEditor
         /// <param name="mapName"> The input field where the player is going to write the name of the map. </param>
         public void SaveMap(TMP_InputField mapName)
         {
-            if(mapName == null || mapName.text == "")
+            if (mapName == null || mapName.text == "")
             {
                 return;
             }
-            
+
             MapData mapData = new MapData();
 
             for (int x = 0; x < MapSize.x; x++)
@@ -114,11 +113,12 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    mapData.TileDatas[i].AssociatedTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    // mapData.TileDatas[i].AssociatedTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    TilesEditor.Instance.TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
                 }
                 else
                 {
-                    _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+                    DefaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
                 }
             }
 

@@ -11,6 +11,6 @@ namespace TilesEditor.Tiles
     public class TileData
     {
         public Tile Tile;
-        public Tilemap AssociatedTilemap;
+        public TilemapData AssociatedTilemap;
     }
 }
