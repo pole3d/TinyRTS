@@ -6,7 +6,10 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Compilation;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
 
 namespace TilesEditor
@@ -18,15 +21,38 @@ namespace TilesEditor
     {
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
-        [field: SerializeField] public Tilemap DefaultTilemap { get; set; }
 
+        [Header("Defaults references")]
+        [SerializeField] private Tilemap _defaultTilemap;
         [SerializeField] private Tile _defaultTile;
+
+        [Header("Brush Size")]
+        [SerializeField, Range(1, 30)] private float _brushSizeMax;
+        [SerializeField] private Slider _brushSizeSlider;
+
         private TileData[,] _tilesPos;
+        private float _brushSize;
 
         private void Start()
         {
             _tilesPos = new TileData[MapSize.x, MapSize.y];
             FillMap();
+
+            SetBrushSizeSliderValues();
+        }
+
+        private void SetBrushSizeSliderValues()
+        {
+            SetBrushSize(_brushSizeSlider.value);
+            _brushSizeSlider.minValue = 1;
+            _brushSizeSlider.maxValue = _brushSizeMax;
+            _brushSizeSlider.onValueChanged.AddListener(SetBrushSize);
+        }
+
+        private void SetBrushSize(float value)
+        {
+            _brushSize = value;
+            EventSystem.current.SetSelectedGameObject(null);
         }
 
         /// <summary>
@@ -38,7 +64,7 @@ namespace TilesEditor
             {
                 for (int y = 0; y < MapSize.y; y++)
                 {
-                    DefaultTilemap.SetTile(new Vector3Int(x, y, 0), _defaultTile);
+                    _defaultTilemap.SetTile(new Vector3Int(x, y, 0), _defaultTile);
                 }
             }
         }
@@ -54,12 +80,25 @@ namespace TilesEditor
             {
                 if (tilemap.TilesDataAssociated.Contains(tile))
                 {
-                    if (_tilesPos[position.x, position.y] != tile)
+                    for (int x = 0; x < _brushSize; x++)
                     {
-                        tilemap.CurrentTilemap.SetTile(position, tile.Tile);
+                        for (int y = 0; y < _brushSize; y++)
+                        {
+                            Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
 
-                        tile.AssociatedTilemap = tilemap;
-                        _tilesPos[position.x, position.y] = tile;
+                            if (TilesEditor.Instance.IsInZone(pos) == false)
+                            {
+                                return;
+                            }
+
+                            if (_tilesPos[pos.x, pos.y] != tile)
+                            {
+                                tilemap.CurrentTilemap.SetTile(pos, tile.Tile);
+
+                                tile.AssociatedTilemap = tilemap;
+                                _tilesPos[pos.x, pos.y] = tile;
+                            }
+                        }
                     }
                 }
             }
@@ -113,12 +152,11 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    // mapData.TileDatas[i].AssociatedTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
                     TilesEditor.Instance.TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
                 }
                 else
                 {
-                    DefaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+                    _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
                 }
             }
 

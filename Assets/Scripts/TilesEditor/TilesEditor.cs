@@ -89,7 +89,7 @@ namespace TilesEditor
             {
                 tilemap.CurrentTilemap.ClearAllTiles();
             }
-            
+
             _currentMap.FillMap();
         }
 
@@ -120,12 +120,7 @@ namespace TilesEditor
         /// </summary>
         private void PaintMap()
         {
-            if (CurrentTile == null)
-            {
-                return;
-            }
-
-            if (MenuIsOpen())
+            if (CurrentTile == null || MenuIsOpen())
             {
                 return;
             }
@@ -133,20 +128,29 @@ namespace TilesEditor
             Vector3 screenToWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
 
-            _tilePreviewObj.transform.parent.position = new Vector3(cellPos.x, cellPos.y, 0);
-
-            if (!Input.GetMouseButton(0) || IsOverUI(Input.mousePosition))
+            if (IsOverUI(Input.mousePosition))
             {
                 return;
             }
 
-            if (cellPos.x < 0 || cellPos.x > _currentMap.MapSize.x || cellPos.y > _currentMap.MapSize.y ||
-                cellPos.y < 0)
+            _tilePreviewObj.transform.parent.position = new Vector3(cellPos.x, cellPos.y, 0);
+
+            if (!Input.GetMouseButton(0))
+            {
+                return;
+            }
+
+            if (IsInZone(cellPos) == false)
             {
                 return;
             }
 
             _currentMap.AddTileToMap(CurrentTile, cellPos);
+        }
+
+        public bool IsInZone(Vector3 position)
+        {
+            return position.x > 0 && position.x < _currentMap.MapSize.x && position.y < _currentMap.MapSize.y && position.y > 0;
         }
 
         public void DisplaySavePanel()
@@ -268,7 +272,7 @@ namespace TilesEditor
         /// </summary>
         /// <param name="position"> Mouse position. </param>
         /// <returns></returns>
-        private bool IsOverUI(Vector2 position)
+        public bool IsOverUI(Vector2 position)
         {
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = position;

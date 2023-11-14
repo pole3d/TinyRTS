@@ -22,23 +22,30 @@ namespace TilesEditor
         {
             _camera = GetComponent<Camera>();
 
-            _halfWidth = _camera.orthographicSize * Screen.width / Screen.height;
-            _halfHeight = _camera.orthographicSize;
+            _halfWidth = (_camera.orthographicSize * Screen.width / Screen.height) + 1;
+            _halfHeight = _camera.orthographicSize + 1;
 
-            SetSpeed(_slider.value);
-            _slider.onValueChanged.AddListener(SetSpeed);
-
+            SetSizeSliderValues();
             SetCameraPosition();
         }
 
-        
+        private void SetSizeSliderValues()
+        {
+
+            SetSpeed(_slider.value);
+            _slider.onValueChanged.AddListener(SetSpeed);
+            _slider.minValue = 1;
+            _slider.maxValue = _maxSpeed;
+        }
+
+
         /// <summary>
         /// Set the speed according to the slider value.
         /// </summary>
         /// <param name="value"> Slider value. </param>
         private void SetSpeed(float value)
         {
-            _speed = _maxSpeed * value;
+            _speed = value;
             EventSystem.current.SetSelectedGameObject(null);
         }
 
