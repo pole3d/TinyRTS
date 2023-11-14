@@ -42,8 +42,8 @@ public class TestPath : MonoBehaviour
         {
             //take the case unwalkable (no visuale + temporary)
             Vector3 mouseWorldPos = GetMouseWorldPos();
-            _pathFinding.GetGrid().GetXY(mouseWorldPos, out int x, out int y);
-            _pathFinding.GetNode(x, y).SetIsWalkable(0);
+            _pathFinding.Grid.GetXY(mouseWorldPos, out int x, out int y);
+            _pathFinding.Grid.GetGridObject(x, y).SetIsWalkable(0);
         }
     }
 
