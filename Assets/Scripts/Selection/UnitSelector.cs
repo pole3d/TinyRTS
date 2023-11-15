@@ -24,7 +24,7 @@ public class UnitSelector : MonoBehaviour
             _startPosition = Utils.GetMouseWorldPosition();
         }
 
-        if (Input.GetMouseButton(0)) //drag
+        if (Input.GetMouseButton(0))
         {
             Vector3 currentMousePosition = Utils.GetMouseWorldPosition();
             Vector3 lowerLeft = new Vector3(
@@ -43,22 +43,51 @@ public class UnitSelector : MonoBehaviour
         {
             _selectionAreaTransform.gameObject.SetActive(false);
 
-            Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_startPosition, Utils.GetMouseWorldPosition());
-            
-            foreach (Unit unit in _selectedUnitList)
+            if (!Input.GetKey(KeyCode.LeftShift))
             {
-                unit.SetSelectedVisible(false);
+                foreach (Unit unit in _selectedUnitList)
+                {
+                    unit.SetSelectedVisible(false);
+                }
+
+                _selectedUnitList.Clear();
             }
 
-            _selectedUnitList.Clear();
-            
+            Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_startPosition, Utils.GetMouseWorldPosition());
+
+            bool allUnitsSelected = true;
+
             foreach (Collider2D collider2D in collider2DArray)
             {
                 Unit unit = collider2D.GetComponent<Unit>();
                 if (unit != null)
                 {
-                    unit.SetSelectedVisible(true);
-                    _selectedUnitList.Add(unit);
+                    if (!_selectedUnitList.Contains(unit))
+                    {
+                        allUnitsSelected = false;
+                        break;
+                    }
+                }
+            }
+
+            foreach (Collider2D collider2D in collider2DArray)
+            {
+                Unit unit = collider2D.GetComponent<Unit>();
+                if (unit != null)
+                {
+                    if (allUnitsSelected)
+                    {
+                        unit.SetSelectedVisible(false);
+                        _selectedUnitList.Remove(unit);
+                    }
+                    else
+                    {
+                        if (_selectedUnitList.Contains(unit) == false)
+                        {
+                            unit.SetSelectedVisible(true);
+                            _selectedUnitList.Add(unit);
+                        }
+                    }
                 }
             }
 
