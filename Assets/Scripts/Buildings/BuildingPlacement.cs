@@ -23,6 +23,7 @@ namespace Building
             if (Input.GetMouseButtonDown(0))
             {
                 _buildingToPlace.SpriteRenderer.color = Color.white;
+                _buildingToPlace.IsGhost = false;
                 _buildingToPlace = null;
             }
             else if (Input.GetMouseButtonDown(1))
@@ -64,6 +65,7 @@ namespace Building
             
             _buildingToPlace = Instantiate(BuildingPrefabs.Find(building => building.Name == name));
             _buildingToPlace.SpriteRenderer.color = Color.green;
+            _buildingToPlace.IsGhost = true;
         }
     }
 }

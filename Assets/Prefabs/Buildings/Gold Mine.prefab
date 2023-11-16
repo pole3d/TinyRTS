@@ -100,6 +100,7 @@ MonoBehaviour:
   SpriteRenderer: {fileID: 605422887166961382}
   Name: Gold Mine
   Sprite: {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+  BuildTime: 10
   TimeBetweenFrames: 0.5
   Frames:
   - {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
