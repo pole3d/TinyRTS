@@ -1,18 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class UnitSelector : MonoBehaviour
 {
     [SerializeField] private Transform _selectionAreaTransform;
 
     private Vector3 _startPosition;
-    private List<Unit> _selectedUnitList;
+    private List<UnitSelectable> _selectedUnitList;
 
     private void Awake()
     {
-        _selectedUnitList = new List<Unit>();
+        _selectedUnitList = new List<UnitSelectable>();
         _selectionAreaTransform.gameObject.SetActive(false);
     }
 
@@ -45,7 +43,7 @@ public class UnitSelector : MonoBehaviour
 
             if (!Input.GetKey(KeyCode.LeftShift))
             {
-                foreach (Unit unit in _selectedUnitList)
+                foreach (UnitSelectable unit in _selectedUnitList)
                 {
                     unit.SetSelectedVisible(false);
                 }
@@ -59,7 +57,7 @@ public class UnitSelector : MonoBehaviour
 
             foreach (Collider2D collider2D in collider2DArray)
             {
-                Unit unit = collider2D.GetComponent<Unit>();
+                UnitSelectable unit = collider2D.GetComponent<UnitSelectable>();
                 if (unit != null)
                 {
                     if (!_selectedUnitList.Contains(unit))
@@ -72,7 +70,7 @@ public class UnitSelector : MonoBehaviour
 
             foreach (Collider2D collider2D in collider2DArray)
             {
-                Unit unit = collider2D.GetComponent<Unit>();
+                UnitSelectable unit = collider2D.GetComponent<UnitSelectable>();
                 if (unit != null)
                 {
                     if (allUnitsSelected)
