@@ -12,3 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bc9efdd9a6fb64e9d75006484b7b9e, type: 3}
   m_Name: GameplayData
   m_EditorClassIdentifier: 
+  <Units>k__BackingField:
+  - <UnitType>k__BackingField: 0
+    <Life>k__BackingField: 100
+    <Damage>k__BackingField: 1
+    <Range>k__BackingField: 1
+    <MoveSpeed>k__BackingField: 1
