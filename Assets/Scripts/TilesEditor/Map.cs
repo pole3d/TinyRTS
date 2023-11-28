@@ -14,6 +14,8 @@ namespace TilesEditor
     /// </summary>
     public class Map : MonoBehaviour
     {
+        [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
+
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
 
@@ -77,7 +79,7 @@ namespace TilesEditor
         /// <param name="position"> Position to add the tile. </param>
         public void AddTileToMap(TileData tile, Vector3Int position)
         {
-            foreach (TilemapData tilemap in TilesEditor.Instance.TilemapDatas)
+            foreach (TilemapData tilemap in TilemapDatas)
             {
                 if (!tilemap.TilesDataAssociated.Contains(tile))
                 {
@@ -90,7 +92,9 @@ namespace TilesEditor
                     {
                         Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
 
-                        if (TilesEditor.Instance.IsInZone(pos) == false)
+                        bool isInZone = position.x > 0 && position.x < MapSize.x && position.y < MapSize.y && position.y > 0;
+                        
+                        if (isInZone == false)
                         {
                             continue;
                         }
@@ -143,7 +147,7 @@ namespace TilesEditor
             string json = File.ReadAllText(Application.dataPath + $"/Saves/{mapName}.json");
             MapData mapData = JsonUtility.FromJson<MapData>(json);
 
-            foreach (TilemapData tilemap in TilesEditor.Instance.TilemapDatas)
+            foreach (TilemapData tilemap in TilemapDatas)
             {
                 tilemap.CurrentTilemap.ClearAllTiles();
             }
@@ -152,7 +156,7 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    TilesEditor.Instance.TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
                 }
                 else
                 {
