@@ -13,7 +13,9 @@ namespace Pathfinding
         public Grid<PathNode> Grid;
 
         private List<PathNode> _openList;
+        public List<PathNode> OpenList => _openList;
         private List<PathNode> _closedList;
+        public List<PathNode> ClosedList => _closedList;
 
         private PathNode _closestToTarget = null;
 
@@ -166,7 +168,7 @@ namespace Pathfinding
 
             _openList = new List<PathNode> { startNode };
             _closedList = new List<PathNode>();
-
+            
 
             startNode.GCost = 0;
             startNode.HCost = CalculateDistance(startNode, endNode);
@@ -229,6 +231,8 @@ namespace Pathfinding
             Debug.Log("nopath");
             return null;
         }
+
+        
 
         private PathNode FindClosestFreePathNodeTo(PathNode node)
         {

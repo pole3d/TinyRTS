@@ -17,7 +17,7 @@ public class TestPath : MonoBehaviour
     {
         _pathFinding = new PathFinding(_width, _height, _textParent, _cellSize);
     }
-    public int NBPath = 1000;
+    public int NBPath = 1;
     int nb_calculate = 0;
     private void Update()
     {
