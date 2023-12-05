@@ -28,7 +28,7 @@ namespace Pathfinding
 
                 if (distanceToTargetPosition > 1f) //if not close
                 {
-                    //pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
+                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
 
                     Vector3 moveDirection = (targetPosition - currentPosition).normalized;
                     transform.position = currentPosition + moveDirection * (_speed * Time.deltaTime);
@@ -44,19 +44,19 @@ namespace Pathfinding
                         //stop animator
                         return;
                     }
-                    //else
-                    //{
-                    //    //pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
-                    //    SetTargetPosition(_pathVectorList[^1]);
-                    //}
+                    else
+                    {
+                        //pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
+                        SetTargetPosition(_pathVectorList[^1]);
+                    }
 
-                    //if (_currentPathIndex < _pathVectorList.Count - 1)
-                    //{
-                    //    //next
-                    //    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this);
-                    //}
+                    if (_currentPathIndex < _pathVectorList.Count - 1)
+                    {
+                        //next
+                        pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this);
+                    }
 
-                    //_lastIndex = _currentPathIndex;
+                    _lastIndex = _currentPathIndex;
                 }
             }
             else
@@ -76,22 +76,21 @@ namespace Pathfinding
 
         public void SetTargetPosition(Vector3 targetPos)
         {
-            //if (_pathVectorList != null && _pathVectorList.Count > 0)
-            //{
-            //    PathFinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
-            //}
+            if (_pathVectorList != null && _pathVectorList.Count > 0)
+            {
+               PathFinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
+            }
 
             _currentPathIndex = 0;
 
             _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
 
-            //PathFinding.Instance.SetPathReserved(_pathVectorList, _currentPathIndex, null);
+            PathFinding.Instance.SetPathReserved(_pathVectorList, _currentPathIndex, null);
 
             if (_pathVectorList != null && _pathVectorList.Count > 1)
             {
                 _pathVectorList.RemoveAt(0);
             }
         }
-
     }
 }
