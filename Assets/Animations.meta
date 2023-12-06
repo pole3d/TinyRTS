@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/Buildings.meta
+guid: b1d8ba5b62cd9b94d9bd57905613f2f8
+========
 guid: dbd01918d21cfdd4597643e5974f1c19
+>>>>>>>> main:Assets/Animations.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

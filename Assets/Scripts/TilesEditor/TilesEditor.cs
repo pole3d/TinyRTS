@@ -19,7 +19,6 @@ namespace TilesEditor
         public static TilesEditor Instance;
 
         private TileData CurrentTile { get; set; }
-        [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
 
         [SerializeField] private Map _currentMap;
 
@@ -56,7 +55,7 @@ namespace TilesEditor
 
         private void Start()
         {
-            _tilemapButtons = new TilemapButton[TilemapDatas.Length];
+            _tilemapButtons = new TilemapButton[_currentMap.TilemapDatas.Length];
             _mainCamera = Camera.main;
             CurrentTile = null;
 
@@ -64,7 +63,7 @@ namespace TilesEditor
 
             _updateCurrentTile += UpdateTilePreview;
 
-            foreach (TilemapData tilemap in TilemapDatas)
+            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
                 foreach (Tile tile in tilemap.TilesAssociated)
                 {
@@ -86,7 +85,7 @@ namespace TilesEditor
         /// </summary>
         public void ResetMap()
         {
-            foreach (TilemapData tilemap in TilemapDatas)
+            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
                 tilemap.CurrentTilemap.ClearAllTiles();
             }
@@ -218,7 +217,7 @@ namespace TilesEditor
         /// </summary>
         private void CreateTileButtons()
         {
-            foreach (TilemapData tilemap in TilemapDatas)
+            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
                 foreach (TileData tile in tilemap.TilesDataAssociated)
                 {
@@ -235,9 +234,9 @@ namespace TilesEditor
         /// </summary>
         private void CreateTilemapButtons()
         {
-            for (int index = 0; index < TilemapDatas.Length; index++)
+            for (int index = 0; index < _currentMap.TilemapDatas.Length; index++)
             {
-                TilemapData tilemap = TilemapDatas[index];
+                TilemapData tilemap = _currentMap.TilemapDatas[index];
                 TilemapButton button = Instantiate(_tilemapButtonPrefab, _tilemapsButtonLayout.transform);
 
                 button.GetComponentInChildren<TMP_Text>().text = tilemap.CurrentTilemap.name;
