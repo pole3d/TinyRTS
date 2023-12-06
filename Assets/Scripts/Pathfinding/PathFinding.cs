@@ -100,12 +100,15 @@ namespace Pathfinding
                 if (coordinateNodeToCheck.x < 0
                     || coordinateNodeToCheck.y < 0
                     || coordinateNodeToCheck.x >= Grid.GetWidth()
-                    || coordinateNodeToCheck.y > Grid.GetHeight())
+                    || coordinateNodeToCheck.y >= Grid.GetHeight())
                 {
                     continue;
                 }
-
-                neighbour.Add(Grid.GetGridObject(current.X + direction.x, current.Y + direction.y));
+                PathNode node = Grid.GetGridObject(current.X + direction.x, current.Y + direction.y);
+                if (node != null)
+                {
+                    neighbour.Add(node);
+                }
             }
 
             return neighbour;
@@ -194,8 +197,6 @@ namespace Pathfinding
                 {
                     if (_closedArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] != null) continue;
 
-                    //if (_closedList.Contains(neighbourNode) == true) continue;
-
                     if (neighbourNode.IsWalkable == 0)
                     {
                         _closedList.Add(neighbourNode);
@@ -224,7 +225,7 @@ namespace Pathfinding
 
             if (_closestToTarget != null)
             {
-                Debug.Log("nopath");
+                Debug.Log("closed path");
                 return CalculatePath(_closestToTarget);
             }
 
@@ -307,8 +308,8 @@ namespace Pathfinding
                     lowestFCost = item;
                 }
 
-                if (_closestToTarget != null && _closestToTarget.HCost > item.HCost) _closestToTarget = item;
-                else if (_closestToTarget == null) _closestToTarget = item;
+                if (_closestToTarget != null && _closestToTarget.HCost > item.HCost) { _closestToTarget = item; }
+                else if (_closestToTarget == null) { _closestToTarget = item; }
             }
 
             return lowestFCost;

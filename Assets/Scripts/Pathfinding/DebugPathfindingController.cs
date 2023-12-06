@@ -44,28 +44,28 @@ namespace Pathfinding
                 _pathFinding.Grid.GetXY(mouseWorldPos, out int x, out int y);
                 _pathFinding.Grid.GetGridObject(x, y).SetIsWalkable(0);
                 Debug.DrawLine(new Vector3(mouseWorldPos.x, mouseWorldPos.y - 2, 0),
-                    new Vector3(mouseWorldPos.x, mouseWorldPos.y + 2, 0), Color.red, 100f);
+                    new Vector3(mouseWorldPos.x, mouseWorldPos.y + 2, 0), Color.red, 1000000000f);
             }
         }
 
         private async void CalculatePathFindingToPosition(Vector3 position)
         {
-            // double time = Time.realtimeSinceStartupAsDouble;
-            //
-            // for (int i = 0; i < NumberOfPathToCalculate; i++)
-            // {
-            //     _pathVectorList = PathFinding.Instance.FindPath(Vector3.zero, position);
-            //     Debug.Log("calculated pathfinding " + i);
-            //     await Task.Delay((int)(Time.deltaTime * 1000));
-            // }
-            //
-            // Debug.Log(time - Time.realtimeSinceStartupAsDouble + "ms");
-            
-            foreach (var character in _characters)
+            double time = Time.realtimeSinceStartupAsDouble;
+
+            for (int i = 0; i < NumberOfPathToCalculate; i++)
             {
+                _pathVectorList = PathFinding.Instance.FindPath(Vector3.zero, position);
+                Debug.Log("calculated pathfinding " + i);
                 await Task.Delay((int)(Time.deltaTime * 1000));
-                character.SetTargetPosition(GetMouseWorldPosition());
             }
+
+            Debug.Log(time - Time.realtimeSinceStartupAsDouble + "s");
+
+            //foreach (var character in _characters)
+            //{
+            //    await Task.Delay((int)(Time.deltaTime * 1000));
+            //    character.SetTargetPosition(GetMouseWorldPosition());
+            //}
         }
 
         public static Vector3 GetMouseWorldPosition()
@@ -79,7 +79,8 @@ namespace Pathfinding
     
         private void OnDrawGizmos()
         {
-            if (PathFinding.Instance == null || PathFinding.Instance.OpenList == null || PathFinding.Instance.OpenList.Count <= 0)
+           
+            if (PathFinding.Instance == null || PathFinding.Instance.OpenList == null /*|| PathFinding.Instance.OpenList.Count <= 0*/)
             {
                 return;
             }
