@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Gameplay.Units;
 using TilesEditor.Tiles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
@@ -19,13 +21,15 @@ namespace TilesEditor
         public static TilesEditor Instance;
 
         private TileData CurrentTile { get; set; }
+        private UnitEditorData CurrentUnit { get; set; }
 
         [SerializeField] private Map _currentMap;
 
         [Header("Object References")]
         [SerializeField] private TileButton _tileButtonPrefab;
         [SerializeField] private TilemapButton _tilemapButtonPrefab;
-        [SerializeField] private SpriteRenderer _tilePreviewObj;
+        [SerializeField] private SpriteRenderer _previewObj;
+        [SerializeField] private SpriteRenderer _unitButtonPrefab;
 
         [Header("Layout References")]
         [SerializeField] private LayoutGroup _scrollViewContentLayout;
@@ -37,6 +41,7 @@ namespace TilesEditor
         [SerializeField] private Button _loadMapButton;
 
         private Action _updateCurrentTile;
+        private Action _updateCurrentUnit;
         private Camera _mainCamera;
         private List<string> _filesButtons = new List<string>();
         private TilemapButton[] _tilemapButtons;
@@ -97,6 +102,13 @@ namespace TilesEditor
         {
             CurrentTile = tile;
             _updateCurrentTile();
+            CurrentUnit = null;
+        }
+
+        public void SetCurrentUnit(UnitEditorData unit)
+        {
+            CurrentUnit = unit;
+            CurrentTile = null;
         }
 
         /// <summary>
@@ -133,7 +145,7 @@ namespace TilesEditor
                 return;
             }
 
-            _tilePreviewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
+            _previewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
 
             if (!Input.GetMouseButton(0))
             {
@@ -209,7 +221,15 @@ namespace TilesEditor
         /// </summary>
         private void UpdateTilePreview()
         {
-            _tilePreviewObj.sprite = CurrentTile.Tile.sprite;
+            if (CurrentTile != null && CurrentUnit == null)
+            {
+                _previewObj.sprite = CurrentTile.Tile.sprite;
+
+            }
+            else if (CurrentUnit != null && CurrentTile == null)
+            {
+                _previewObj.sprite = CurrentUnit.Sprite;
+            }
         }
 
         /// <summary>

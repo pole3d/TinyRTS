@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gameplay.Units;
 using TilesEditor.Tiles;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -12,5 +13,6 @@ namespace TilesEditor
     {
         public List<TileData> TileDatas = new List<TileData>();
         public List<Vector3Int> TilePos = new List<Vector3Int>();
+        public List<UnitEditorData> UnitEditorDatas = new List<UnitEditorData>();
     }
 }

@@ -1,4 +1,5 @@
 using System.IO;
+using Gameplay.Units;
 using TilesEditor.Tiles;
 using TMPro;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace TilesEditor
     public class Map : MonoBehaviour
     {
         [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
+        [field: SerializeField] public UnitEditorData[] UnitTypes { get; private set; }
 
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
