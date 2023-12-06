@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GameManagement.Players;
+using Gameplay.Units;
 using Pathfinding;
+using TilesEditor;
 using UnityEngine;
 using Utilities;
 
@@ -30,11 +32,14 @@ namespace GameManagement
     /// </summary>
     public class GameManager : Singleton<GameManager>
     {
-        //editor fields
+        [field:Header("References")] [field:SerializeField] public MapLoader MapLoader { get; private set; }
+        [field:SerializeField] public FogOfWar FogOfWar { get; private set; }
+        [field:SerializeField] public Unit UnitPrefab { get; private set; }
+        
         [Space(5), Header("Teams")]
         [SerializeField] private PlayerTeamEnum _playerTeam;
         [SerializeField] private PlayerTeamEnum _enemyTeam;
-        
+
         //references
         public BoardManager Board { get; private set; }
         
@@ -65,7 +70,10 @@ namespace GameManagement
             OnGameWon += GameWon;
             OnGameLost += GameLost;
 
-            Board = new BoardManager();
+            Board = new BoardManager(this);
+            
+            MapLoader.Initialize();
+            FogOfWar.Initialize();
         }
 
         protected override void OnDisable()

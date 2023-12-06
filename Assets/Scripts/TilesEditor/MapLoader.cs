@@ -20,7 +20,7 @@ namespace TilesEditor
         [SerializeField, Tooltip("The default tile will be placed in this.")]
         private Tilemap _defaultTilemap;
 
-        private void Start()
+        public void Initialize()
         {
             LoadMapFromFile();
         }
