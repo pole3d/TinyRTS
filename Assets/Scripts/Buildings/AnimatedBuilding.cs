@@ -14,10 +14,10 @@ namespace Building
         {
             base.Update();
 
-            UpdateBuildingFrame();
+            UpdateFrameTimer();
         }
 
-        private void UpdateBuildingFrame()
+        private void UpdateFrameTimer()
         {
             _currentFrameTime += Time.deltaTime;
             if (_currentFrameTime < TimeBetweenFrames)
