@@ -24,3 +24,14 @@ MonoBehaviour:
     - {fileID: 1264652199, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
     - {fileID: -1431723066, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
     - {fileID: -816670954, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+  - <Name>k__BackingField: walk
+    <FPS>k__BackingField: 12
+    <Sprites>k__BackingField:
+    - {fileID: -1327118939, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: 1422584123, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: -425255328, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: 753310744, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: 174404939, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: -1225613789, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: 1438804533, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
+    - {fileID: -157841973, guid: 04dfb9c7482ef334d98466075013d336, type: 3}
