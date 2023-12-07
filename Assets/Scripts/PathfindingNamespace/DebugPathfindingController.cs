@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Pathfinding
+namespace PathfindingNamespace
 {
     public class DebugPathfindingController : MonoBehaviour
     {
@@ -15,11 +15,11 @@ namespace Pathfinding
         [SerializeField] List<CharacterPathfindingMovementHandler> _characters = new List<CharacterPathfindingMovementHandler>();
     
         private List<Vector3> _pathVectorList = new List<Vector3>();
-        private PathFinding _pathFinding;
+        private Pathfinding _pathfinding;
 
         private void Start()
         {
-            _pathFinding = new PathFinding(_width, _height, _textParent, _cellSize);
+            _pathfinding = new Pathfinding(_width, _height, _textParent, _cellSize);
         }
     
         private void Update()
@@ -41,8 +41,8 @@ namespace Pathfinding
             if (Input.GetMouseButtonDown(1))
             {
                 Vector3 mouseWorldPos = GetMouseWorldPosition();
-                _pathFinding.Grid.GetXY(mouseWorldPos, out int x, out int y);
-                _pathFinding.Grid.GetGridObject(x, y).SetIsWalkable(0);
+                _pathfinding.Grid.GetXY(mouseWorldPos, out int x, out int y);
+                _pathfinding.Grid.GetGridObject(x, y).SetIsWalkable(0);
                 Debug.DrawLine(new Vector3(mouseWorldPos.x, mouseWorldPos.y - 2, 0),
                     new Vector3(mouseWorldPos.x, mouseWorldPos.y + 2, 0), Color.red, 1000000000f);
             }
@@ -54,7 +54,7 @@ namespace Pathfinding
 
             for (int i = 0; i < NumberOfPathToCalculate; i++)
             {
-                _pathVectorList = PathFinding.Instance.FindPath(Vector3.zero, position);
+                _pathVectorList = Pathfinding.Instance.FindPath(Vector3.zero, position);
                 Debug.Log("calculated pathfinding " + i);
                 await Task.Delay((int)(Time.deltaTime * 1000));
             }
@@ -80,24 +80,24 @@ namespace Pathfinding
         private void OnDrawGizmos()
         {
            
-            if (PathFinding.Instance == null || PathFinding.Instance.OpenList == null /*|| PathFinding.Instance.OpenList.Count <= 0*/)
+            if (Pathfinding.Instance == null || Pathfinding.Instance.OpenList == null /*|| PathFinding.Instance.OpenList.Count <= 0*/)
             {
                 return;
             }
-            foreach (var item in PathFinding.Instance.OpenList)
+            foreach (var item in Pathfinding.Instance.OpenList)
             {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawSphere(new Vector3((item.Coordinates.x * 5) + 5 / 2, (item.Coordinates.y * 5) + 5 / 2, 0), 2);
+                Gizmos.color = new Color(0f, 1f, 1f, 0.4f);
+                Gizmos.DrawSphere(new Vector3((item.Coordinates.x * 5) + 5 / 2, (item.Coordinates.y * 5) + 5 / 2, 0), 0.5f);
             }
-            foreach (var item in PathFinding.Instance.ClosedList)
+            foreach (var item in Pathfinding.Instance.ClosedList)
             {
-                Gizmos.color = Color.red;
-                Gizmos.DrawSphere(new Vector3((item.Coordinates.x * 5) + 5 / 2, (item.Coordinates.y * 5) + 5 / 2, 0), 2);
+                Gizmos.color = new Color(1f, 0f, 0f, 0.4f);
+                Gizmos.DrawSphere(new Vector3((item.Coordinates.x * 5) + 5 / 2, (item.Coordinates.y * 5) + 5 / 2, 0), 0.5f);
             }
             foreach (var item in _pathVectorList)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawSphere(new Vector3(item.x, item.y, 0), 2);
+                Gizmos.color = new Color(0f, 1f, 0f, 0.4f);
+                Gizmos.DrawSphere(new Vector3(item.x, item.y, 0), 0.5f);
             }
         }
     

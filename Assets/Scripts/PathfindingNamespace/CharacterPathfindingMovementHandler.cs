@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Pathfinding
+namespace PathfindingNamespace
 {
     public class CharacterPathfindingMovementHandler : PathNodeOccupier
     {
@@ -20,7 +20,7 @@ namespace Pathfinding
         {
             if (_pathVectorList != null && _pathVectorList.Count > 0)
             {
-                PathFinding pathFinding = PathFinding.Instance;
+                Pathfinding pathfinding = Pathfinding.Instance;
 
                 Vector3 targetPosition = _pathVectorList[_currentPathIndex];
                 Vector3 currentPosition = transform.position;
@@ -28,7 +28,7 @@ namespace Pathfinding
 
                 if (distanceToTargetPosition > 1f) //if not close
                 {
-                    pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
+                    pathfinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
 
                     Vector3 moveDirection = (targetPosition - currentPosition).normalized;
                     transform.position = currentPosition + moveDirection * (_speed * Time.deltaTime);
@@ -53,7 +53,7 @@ namespace Pathfinding
                     if (_currentPathIndex < _pathVectorList.Count - 1)
                     {
                         //next
-                        pathFinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this);
+                        pathfinding.SetPathReserved(_pathVectorList, _currentPathIndex + 1, this);
                     }
 
                     _lastIndex = _currentPathIndex;
@@ -78,14 +78,14 @@ namespace Pathfinding
         {
             if (_pathVectorList != null && _pathVectorList.Count > 0)
             {
-               PathFinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
+               Pathfinding.Instance.ResetNodeWalkable(_pathVectorList, _lastIndex);
             }
 
             _currentPathIndex = 0;
 
-            _pathVectorList = PathFinding.Instance.FindPath(GetPosition(), targetPos);
+            _pathVectorList = Pathfinding.Instance.FindPath(GetPosition(), targetPos);
 
-            PathFinding.Instance.SetPathReserved(_pathVectorList, _currentPathIndex, null);
+            Pathfinding.Instance.SetPathReserved(_pathVectorList, _currentPathIndex, null);
 
             if (_pathVectorList != null && _pathVectorList.Count > 1)
             {

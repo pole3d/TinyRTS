@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Pathfinding
+namespace PathfindingNamespace
 {
     public class PathNodeOccupier : MonoBehaviour
     {

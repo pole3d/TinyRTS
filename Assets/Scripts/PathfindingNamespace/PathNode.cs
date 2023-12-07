@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using GameManagement;
 using UnityEngine;
 
-namespace Pathfinding
+namespace PathfindingNamespace
 {
-    class PathNode
+    public class PathNode
     {
         public int X;
         public int Y;

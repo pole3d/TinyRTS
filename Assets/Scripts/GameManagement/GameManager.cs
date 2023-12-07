@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameManagement.Players;
 using Gameplay.Units;
-using Pathfinding;
+using PathfindingNamespace;
 using TilesEditor;
 using UnityEngine;
 using Utilities;
@@ -35,6 +35,7 @@ namespace GameManagement
         [field:Header("References")] [field:SerializeField] public MapLoader MapLoader { get; private set; }
         [field:SerializeField] public FogOfWar FogOfWar { get; private set; }
         [field:SerializeField] public Unit UnitPrefab { get; private set; }
+        [field:SerializeField] public PathfindingController PathfindingController { get; private set; }
         
         [Space(5), Header("Teams")]
         [SerializeField] private PlayerTeamEnum _playerTeam;
@@ -74,6 +75,7 @@ namespace GameManagement
             
             MapLoader.Initialize();
             FogOfWar.Initialize();
+            PathfindingController.Initialize();
         }
 
         protected override void OnDisable()
@@ -116,7 +118,7 @@ namespace GameManagement
 
         #endregion
         
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         private Dictionary<Vector2Int, Color> _dicoNodeGizmos = new Dictionary<Vector2Int, Color>();
 
@@ -136,9 +138,9 @@ namespace GameManagement
             foreach (var node in _dicoNodeGizmos)
             {
                 Gizmos.color = node.Value;
-                PathFinding pathFinding = PathFinding.Instance;
-                Vector3 worldPosition = pathFinding.Grid.GetWorldPosition(node.Key.x, node.Key.y) + (Vector3.one * pathFinding.Grid.CellSize * 0.5f);
-                Gizmos.DrawSphere(worldPosition, 1f);
+                Pathfinding pathfinding = PathfindingNamespace.Pathfinding.Instance;
+                Vector3 worldPosition = pathfinding.Grid.GetWorldPosition(node.Key.x, node.Key.y) + (Vector3.one * pathfinding.Grid.CellSize * 0.5f);
+                Gizmos.DrawSphere(worldPosition, 0.2f);
             }
         }
 

@@ -8,16 +8,17 @@ namespace Selection
     /// </summary>
     public class UnitSelectionController : MonoBehaviour
     {
+        public List<UnitSelectable> SelectedUnitList { get; private set; }
+        
         private const int MouseButtonToSelect = 0;
     
         [SerializeField] private Transform _selectionAreaTransform;
     
         private Vector3 _startPosition;
-        private List<UnitSelectable> _selectedUnitList;
 
         private void Awake()
         {
-            _selectedUnitList = new List<UnitSelectable>();
+            SelectedUnitList = new List<UnitSelectable>();
             _selectionAreaTransform.gameObject.SetActive(false);
         }
 
@@ -45,12 +46,12 @@ namespace Selection
             //if the player wasn't pressing shift, unselect all the current selected units
             if (Input.GetKey(KeyCode.LeftShift) == false)
             {
-                foreach (UnitSelectable unit in _selectedUnitList)
+                foreach (UnitSelectable unit in SelectedUnitList)
                 {
                     unit.SetSelectedVisible(false);
                 }
 
-                _selectedUnitList.Clear();
+                SelectedUnitList.Clear();
             }
 
             Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_startPosition, Utils.GetMouseWorldPosition());
@@ -59,7 +60,7 @@ namespace Selection
 
             foreach (Collider2D colliderToSelect in collider2DArray)
             {
-                if (colliderToSelect.TryGetComponent(out UnitSelectable unit) == false || _selectedUnitList.Contains(unit))
+                if (colliderToSelect.TryGetComponent(out UnitSelectable unit) == false || SelectedUnitList.Contains(unit))
                 {
                     continue;
                 }
@@ -78,16 +79,16 @@ namespace Selection
                 if (allUnitsSelected)
                 {
                     unit.SetSelectedVisible(false);
-                    _selectedUnitList.Remove(unit);
+                    SelectedUnitList.Remove(unit);
                 }
-                else if (_selectedUnitList.Contains(unit) == false)
+                else if (SelectedUnitList.Contains(unit) == false)
                 {
                     unit.SetSelectedVisible(true);
-                    _selectedUnitList.Add(unit);
+                    SelectedUnitList.Add(unit);
                 }
             }
 
-            Debug.Log(_selectedUnitList.Count + " unit(s) selected");
+            Debug.Log(SelectedUnitList.Count + " unit(s) selected");
         }
 
         /// <summary>

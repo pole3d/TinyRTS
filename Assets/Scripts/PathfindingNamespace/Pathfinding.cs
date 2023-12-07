@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Pathfinding
+namespace PathfindingNamespace
 {
-    internal class PathFinding
+    public class Pathfinding
     {
         const int MOVE_STRAIGHT_COST = 10;
         const int MOVE_DIAG_COST = 14;
 
-        public static PathFinding Instance;
+        public static Pathfinding Instance;
         public Grid<PathNode> Grid;
 
         private List<PathNode> _openList;
@@ -23,7 +23,7 @@ namespace Pathfinding
         private PathNode[,] _closedArray2D;
 
         #region Initialisation
-        public PathFinding(int width, int height, float cellSize = 10)
+        public Pathfinding(int width, int height, float cellSize = 10)
         {
             if (Instance == null)
             {
@@ -38,10 +38,9 @@ namespace Pathfinding
                 (Grid<PathNode> grid, int x, int y) => new PathNode(x, y));
 
             Initialize(height, width);
-
         }
 
-        public PathFinding(int width, int height, Transform parent, float cellSize = 10)
+        public Pathfinding(int width, int height, Transform parent, float cellSize = 10)
         {
             if (Instance == null)
             {
