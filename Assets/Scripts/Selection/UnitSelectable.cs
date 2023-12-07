@@ -1,11 +1,27 @@
+using System;
 using UnityEngine;
 
-public class UnitSelectable : MonoBehaviour
+namespace Selection
 {
-    [SerializeField] private GameObject _selectedGameObject;
-
-    public void SetSelectedVisible(bool visible)
+    /// <summary>
+    /// Allow the selection to select this unit and turn on/off the selection UI of it
+    /// </summary>
+    public class UnitSelectable : MonoBehaviour
     {
-        _selectedGameObject.SetActive(visible);
+        [SerializeField] private GameObject _selectedGameObject;
+
+        private void Awake()
+        {
+            _selectedGameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Set the selected UI of the unit visible or not
+        /// </summary>
+        /// <param name="visible">set selected UI visible</param>
+        public void SetSelectedVisible(bool visible)
+        {
+            _selectedGameObject.SetActive(visible);
+        }
     }
 }
