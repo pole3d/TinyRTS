@@ -21,8 +21,14 @@ public class CameraMovement : MonoBehaviour
     {
         Vector3 newPos = Vector3.zero; 
         Vector3 mousePos = Input.mousePosition; 
-        Vector3 screenSize = new Vector3(Screen.width, Screen.height, 0); 
+        Vector3 screenSize = new Vector3(Screen.width, Screen.height, 0);
 
+        if (mousePos.x > screenSize.x || mousePos.x < 0 
+            || mousePos.y > screenSize.y || mousePos.y < 0)
+        {
+            return;
+        }
+        
         float xInput = Input.GetAxisRaw("Horizontal"); 
         float yInput = Input.GetAxisRaw("Vertical"); 
 
@@ -30,7 +36,6 @@ public class CameraMovement : MonoBehaviour
         {
             newPos.x = _camSpeed * Time.deltaTime; 
         }
-
         else if (mousePos.x <= _edgeSize || xInput < 0)
         {
             newPos.x = -_camSpeed * Time.deltaTime; 
@@ -40,7 +45,6 @@ public class CameraMovement : MonoBehaviour
         {
             newPos.y = _camSpeed * Time.deltaTime; 
         }
-
         else if (mousePos.y <= _edgeSize || yInput < 0)
         {
             newPos.y = -_camSpeed * Time.deltaTime; 
