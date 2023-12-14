@@ -15,6 +15,8 @@ public class UnitSelector : MonoBehaviour
 
     [SerializeField] private bool IsHomogeneous;
 
+    private Vector3 currentMousePosition;
+    
     private void Awake()
     {
         _selectedUnitList = new List<UnitSelectable>();
@@ -31,7 +33,7 @@ public class UnitSelector : MonoBehaviour
 
         if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject() == false)
         {
-            Vector3 currentMousePosition = Utils.GetMouseWorldPosition();
+            currentMousePosition = Utils.GetMouseWorldPosition();
             Vector3 lowerLeft = new Vector3(
                 Mathf.Min(_startPosition.x, currentMousePosition.x),
                 Mathf.Min(_startPosition.y, currentMousePosition.y)
@@ -64,7 +66,7 @@ public class UnitSelector : MonoBehaviour
                 _Units.Clear();
             }
 
-            Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_startPosition, Utils.GetMouseWorldPosition());
+            Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_startPosition, currentMousePosition);
 
             bool allUnitsSelected = true;
 
