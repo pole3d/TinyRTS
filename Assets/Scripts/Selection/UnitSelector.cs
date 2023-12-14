@@ -16,7 +16,7 @@ public class UnitSelector : MonoBehaviour
     [SerializeField] private bool IsHomogeneous;
 
     private Vector3 currentMousePosition;
-    
+
     private void Awake()
     {
         _selectedUnitList = new List<UnitSelectable>();
@@ -31,9 +31,16 @@ public class UnitSelector : MonoBehaviour
             _startPosition = Utils.GetMouseWorldPosition();
         }
 
-        if (Input.GetMouseButton(0) && EventSystem.current.IsPointerOverGameObject() == false)
+        if (Input.GetMouseButton(0))
         {
-            currentMousePosition = Utils.GetMouseWorldPosition();
+            if (EventSystem.current.IsPointerOverGameObject() == false)
+            {
+                currentMousePosition.x = Utils.GetMouseWorldPosition().x;
+            }
+
+            currentMousePosition.y = Utils.GetMouseWorldPosition().y;
+
+
             Vector3 lowerLeft = new Vector3(
                 Mathf.Min(_startPosition.x, currentMousePosition.x),
                 Mathf.Min(_startPosition.y, currentMousePosition.y)
