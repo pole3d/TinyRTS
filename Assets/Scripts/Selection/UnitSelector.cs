@@ -25,10 +25,13 @@ public class UnitSelector : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject() == false)
+        if (Input.GetMouseButtonDown(0))
         {
-            _selectionAreaTransform.gameObject.SetActive(true);
-            _startPosition = Utils.GetMouseWorldPosition();
+            if (EventSystem.current.IsPointerOverGameObject() == false)
+            {
+                _selectionAreaTransform.gameObject.SetActive(true);
+                _startPosition = Utils.GetMouseWorldPosition();
+            }
         }
 
         if (Input.GetMouseButton(0))
@@ -39,7 +42,6 @@ public class UnitSelector : MonoBehaviour
             }
 
             currentMousePosition.y = Utils.GetMouseWorldPosition().y;
-
 
             Vector3 lowerLeft = new Vector3(
                 Mathf.Min(_startPosition.x, currentMousePosition.x),
@@ -57,7 +59,7 @@ public class UnitSelector : MonoBehaviour
         {
             _selectionAreaTransform.gameObject.SetActive(false);
 
-            if (EventSystem.current.IsPointerOverGameObject() && _selectedUnitList == null)
+            if (EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
@@ -72,7 +74,7 @@ public class UnitSelector : MonoBehaviour
                 _selectedUnitList.Clear();
                 _Units.Clear();
             }
-
+            
             Collider2D[] collider2DArray = Physics2D.OverlapAreaAll(_startPosition, currentMousePosition);
 
             bool allUnitsSelected = true;
