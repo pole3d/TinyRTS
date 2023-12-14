@@ -8,6 +8,8 @@ public class UnitSelector : MonoBehaviour
     [SerializeField] private Transform _selectionAreaTransform;
 
     private Vector3 _startPosition;
+    [SerializeField] private int _maxUnitsSelected;
+
     public List<UnitSelectable> _selectedUnitList;
     public List<Unit> _Units;
 
@@ -45,6 +47,11 @@ public class UnitSelector : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             _selectionAreaTransform.gameObject.SetActive(false);
+
+            if (EventSystem.current.IsPointerOverGameObject() && _selectedUnitList == null)
+            {
+                return;
+            }
 
             if (!Input.GetKey(KeyCode.LeftShift))
             {
@@ -87,7 +94,7 @@ public class UnitSelector : MonoBehaviour
                     }
                     else
                     {
-                        if (_selectedUnitList.Contains(unit) == false)
+                        if (_selectedUnitList.Contains(unit) == false && _selectedUnitList.Count < _maxUnitsSelected)
                         {
                             unit.SetSelectedVisible(true);
                             _selectedUnitList.Add(unit);
@@ -102,7 +109,7 @@ public class UnitSelector : MonoBehaviour
             UISelection.Instance.UpdateUISelection(_selectedUnitList.Count, IsHomogeneous, _Units);
         }
     }
-    
+
     /// <summary>
     /// Check if all selected units have the same UnitType
     /// </summary>
