@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -30,8 +31,16 @@ public class FogOfWar : MonoBehaviour
     private List<Viewers> _discoveredTiles = new List<Viewers>();
 
     private int _fogRadiusBase = 8;
+    private int[,] _tileStatus;
+    private Vector2Int _offsetCell;
+
 
     private const float MinDistancePlayerMove = 0.01f;
+
+    private void Start()
+    {
+        Initialize();
+    }
 
     /// <summary>
     /// Initializes the Fog of War
@@ -70,10 +79,6 @@ public class FogOfWar : MonoBehaviour
         foreach (var viewer in _startViewers)
         {
             AddNewViewer(viewer, _fogRadiusBase);
-            // var position = viewer.position;
-            // _lastPlayerPosition.Add(position);
-            // Viewers newViewer = new Viewers(viewer, new List<Vector2Int>(), _fogRadiusBase);
-            // _discoveredTiles.Add(newViewer);
         }
     }
 
@@ -93,6 +98,12 @@ public class FogOfWar : MonoBehaviour
         {
             _fogOfWarTilemap.SetTile(position, _undiscoveredTile);
         }
+
+        _tileStatus = new int[_fogOfWarTilemap.size.x, _fogOfWarTilemap.size.y];
+
+        // Setup offset of the tileMap for the tileStatus
+        _offsetCell.x = Math.Abs(_fogOfWarTilemap.origin.x);
+        _offsetCell.y = Math.Abs(_fogOfWarTilemap.origin.y);
     }
 
     /// <summary>
@@ -123,8 +134,8 @@ public class FogOfWar : MonoBehaviour
         {
             if (Vector2.Distance(_lastPlayerPosition[i], _viewersTransforms[i].position) > MinDistancePlayerMove)
             {
-                CheckDiscoveredTiles(_viewersTransforms[i]);
                 _lastPlayerPosition[i] = _viewersTransforms[i].position;
+                CheckDiscoveredTiles(_viewersTransforms[i]);
             }
         }
     }
@@ -149,10 +160,21 @@ public class FogOfWar : MonoBehaviour
         }
 
         // Change these tiles with discoveredTile and remove them from the discoveredViewer.DiscoveredTiles list 
-        foreach (Vector2Int discoveredTile in tilesToRemove)
+        foreach (Vector2Int tileToRemove in tilesToRemove)
         {
-            _fogOfWarTilemap.SetTile(new Vector3Int(discoveredTile.x, discoveredTile.y, 0), _discoveredTile);
-            discoveredViewer.DiscoveredTiles.Remove(discoveredTile);
+            int cellPosX = tileToRemove.x + _offsetCell.x;
+            int cellPosY = tileToRemove.y + _offsetCell.y;
+            _tileStatus[cellPosX, cellPosY]--;
+            
+            // Check if status of the tile with no viewer and add the shadow tile
+            if (_tileStatus[cellPosX, cellPosY] <= 0)
+            {
+                _tileStatus[cellPosX, cellPosY] = 0;
+                _fogOfWarTilemap.SetTile(new Vector3Int(tileToRemove.x, tileToRemove.y, 0), _discoveredTile);
+            }
+
+            // Remove from the tile of the viewer's current list
+            discoveredViewer.DiscoveredTiles.Remove(tileToRemove);
         }
 
         AddDiscoveredTiles(viewer, discoveredViewer);
@@ -173,13 +195,16 @@ public class FogOfWar : MonoBehaviour
             {
                 Vector2Int cellPosition = new Vector2Int(x, y);
 
-                // Check if it is inside the FogRadius and not clear to avoid removing visibility to other viewers
-                var isNotShadow = _fogOfWarTilemap.GetTile(new Vector3Int(cellPosition.x, cellPosition.y, 0));
-
-                if (Vector2Int.Distance(viewerTilePos, cellPosition) <= FogRadius && isNotShadow)
+                // Check if it is inside the FogRadius
+                if (Vector2Int.Distance(viewerTilePos, cellPosition) <= FogRadius)
                 {
                     _fogOfWarTilemap.SetTile(new Vector3Int(cellPosition.x, cellPosition.y, 0), null);
                     discoveredViewer.DiscoveredTiles.Add(cellPosition);
+
+                    int cellPosX = cellPosition.x + _offsetCell.x;
+                    int cellPosY = cellPosition.y + _offsetCell.y;
+                    // Add 1 to the status of this tile
+                    _tileStatus[cellPosX, cellPosY]++;
                 }
             }
         }
