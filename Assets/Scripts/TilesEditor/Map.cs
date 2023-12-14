@@ -94,7 +94,7 @@ namespace TilesEditor
                     {
                         Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
 
-                        bool isInZone = position.x > 0 && position.x < MapSize.x && position.y < MapSize.y && position.y > 0;
+                        bool isInZone = pos.x >= 0 && pos.x < MapSize.x && pos.y < MapSize.y && pos.y >= 0;
                         
                         if (isInZone == false)
                         {
