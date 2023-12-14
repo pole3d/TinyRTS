@@ -26,7 +26,7 @@ namespace PathfindingNamespace
                 Vector3 currentPosition = transform.position;
                 float distanceToTargetPosition = Vector3.Distance(currentPosition, targetPosition);
 
-                if (distanceToTargetPosition > 1f) //if not close
+                if (distanceToTargetPosition > 0.2f) //if not close
                 {
                     //pathfinding.SetPathReserved(_pathVectorList, _currentPathIndex, this);
 

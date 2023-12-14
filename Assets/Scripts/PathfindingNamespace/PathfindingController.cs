@@ -48,5 +48,13 @@ namespace PathfindingNamespace
                 unitPathfinding.SetTargetPosition(position);
             }
         }
+
+        public void SetTileNotWalkablePathfinding(Vector2 position)
+        {
+            Pathfinding.Grid.GetXY(position, out int x, out int y);
+            PathNode node = Pathfinding.Grid.GetGridObject(x, y);
+            node.SetIsWalkable(0);
+            Debug.DrawLine(new Vector3(position.x, position.y, 0), new Vector3(position.x+1, position.y + 1, 0), Color.red, 10000);
+        }
     }
 }

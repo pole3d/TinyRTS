@@ -1,4 +1,5 @@
 ﻿using System;
+using GameManagement;
 using TilesEditor.Tiles;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -42,15 +43,26 @@ namespace TilesEditor
                     {
                         _mainTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
                     }
-                    else
-                    {
-                        _obstaclesTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
-                    }
                 }
-                else if (mapData.TileDatas[i].Tile != null)
+                
+                _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+            }
+        }
+
+        public void LoadObstacles()
+        {
+            MapData mapData = JsonUtility.FromJson<MapData>(_jsonFile.text);
+
+            for (int i = 0; i < mapData.TileDatas.Count; i++)
+            {
+                if (mapData.TileDatas[i].Tile == null ||
+                    mapData.TileDatas[i].AssociatedTilemap.Type != TilemapType.NonWalkable)
                 {
-                    _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+                    continue;
                 }
+                
+                _obstaclesTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                GameManager.Instance.PathfindingController.SetTileNotWalkablePathfinding((Vector2)(Vector2Int)mapData.TilePos[i]);
             }
         }
     }

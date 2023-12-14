@@ -70,12 +70,13 @@ namespace GameManagement
             OnGameStarted += GameStart;
             OnGameWon += GameWon;
             OnGameLost += GameLost;
-
+            
             Board = new BoardManager(this);
             
             MapLoader.Initialize();
-            FogOfWar.Initialize();
             PathfindingController.Initialize();
+            MapLoader.LoadObstacles();
+            FogOfWar.Initialize();
         }
 
         protected override void OnDisable()
