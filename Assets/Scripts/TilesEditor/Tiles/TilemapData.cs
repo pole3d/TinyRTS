@@ -13,9 +13,16 @@ namespace TilesEditor.Tiles
     public class TilemapData
     {
         public int TileMapIndex;
+        [field: SerializeField] public TilemapType Type { get; private set; }
         [field: SerializeField] public Tilemap CurrentTilemap { get; private set; }
         [field: SerializeField] public List<Tile> TilesAssociated { get; private set; } = new List<Tile>();
         public List<TileButton> TilesButtonsAssociated { get; set; } = new List<TileButton>();
         public List<TileData> TilesDataAssociated { get; } = new List<TileData>();
+    }
+    
+    public enum TilemapType
+    {
+        Walkable, 
+        NonWalkable
     }
 }

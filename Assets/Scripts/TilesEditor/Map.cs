@@ -16,7 +16,7 @@ namespace TilesEditor
     public class Map : MonoBehaviour
     {
         [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
-        [field: SerializeField] public UnitEditorData[] UnitTypes { get; private set; }
+        [field: SerializeField] public UnitEditor[] UnitTypes { get; private set; }
 
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
