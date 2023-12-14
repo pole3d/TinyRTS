@@ -116,11 +116,11 @@ namespace PathfindingNamespace
 
 
         #region Path
-        public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition)
+        public List<Vector3> FindPath(CharacterPathfindingMovementHandler character, Vector3 startWorldPosition, Vector3 endWorldPosition)
         {
             Grid.GetXY(startWorldPosition, out int startX, out int startY);
             Grid.GetXY(endWorldPosition, out int endX, out int endY);
-            List<PathNode> path = FindPath(startX, startY, endX, endY);
+            List<PathNode> path = FindPath(character, startX, startY, endX, endY);
             if (path == null)
             {
                 return null;
@@ -135,7 +135,7 @@ namespace PathfindingNamespace
             return vectorPath;
         }
 
-        public List<PathNode> FindPath(int startX, int startY, int endX, int endY)
+        public List<PathNode> FindPath(CharacterPathfindingMovementHandler character, int startX, int startY, int endX, int endY)
         {
             if (_openList != null && _openList.Count > 0)
             {
@@ -163,14 +163,20 @@ namespace PathfindingNamespace
 
             PathNode startNode = Grid.GetGridObject(startX, startY);
             PathNode endNode = Grid.GetGridObject(endX, endY);
-            if (endNode.NodeOccupier != null || endNode.IsWalkable == 0)
+            if (endNode.NodeOccupier == null)
+            {
+                endNode.NodeOccupier = character;
+            }
+
+            if (endNode.NodeOccupier != character || endNode.IsWalkable == 0)
             {
                 endNode = FindClosestFreePathNodeTo(endNode);
+
             }
 
             _openList = new List<PathNode> { startNode };
             _closedList = new List<PathNode>();
-            
+
 
             startNode.GCost = 0;
             startNode.HCost = CalculateDistance(startNode, endNode);
@@ -196,7 +202,7 @@ namespace PathfindingNamespace
                 {
                     if (_closedArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] != null) continue;
 
-                    if (neighbourNode.IsWalkable == 0)
+                    if (neighbourNode.IsWalkable == 0 || neighbourNode.NodeOccupier != null && neighbourNode.NodeOccupier != character)
                     {
                         _closedList.Add(neighbourNode);
                         _closedArray2D[neighbourNode.Coordinates.x, neighbourNode.Coordinates.y] = neighbourNode;
@@ -225,6 +231,8 @@ namespace PathfindingNamespace
             if (_closestToTarget != null)
             {
                 Debug.Log("closed path");
+
+                SetPathReserved(endNode, null);
                 return CalculatePath(_closestToTarget);
             }
 
@@ -232,16 +240,20 @@ namespace PathfindingNamespace
             return null;
         }
 
-        
+
 
         private PathNode FindClosestFreePathNodeTo(PathNode node)
         {
-            Vector2Int[] directions = new Vector2Int[4]
+            Vector2Int[] directions = new Vector2Int[]
             {
                 new Vector2Int(0, 1),
                 new Vector2Int(1, 0),
                 new Vector2Int(0, -1),
-                new Vector2Int(-1, 0)
+                new Vector2Int(-1, 0),
+                new Vector2Int(-1, 1),
+                new Vector2Int(-1, -1),
+                new Vector2Int(1, 1),
+                new Vector2Int(1, -1)
             };
 
             foreach (Vector2Int direction in directions)
@@ -250,7 +262,7 @@ namespace PathfindingNamespace
                 if (coordinateNodeToCheck.x < 0
                     || coordinateNodeToCheck.y < 0
                     || coordinateNodeToCheck.x >= Grid.GetWidth()
-                    || coordinateNodeToCheck.y > Grid.GetHeight())
+                    || coordinateNodeToCheck.y >= Grid.GetHeight())
                 {
                     continue;
                 }
@@ -262,22 +274,11 @@ namespace PathfindingNamespace
                 }
             }
 
-            foreach (Vector2Int direction in directions)
-            {
-                Vector2Int coordinateNodeToCheck = node.Coordinates + direction;
-                if (coordinateNodeToCheck.x < 0
-                    || coordinateNodeToCheck.y < 0
-                    || coordinateNodeToCheck.x >= Grid.GetWidth()
-                    || coordinateNodeToCheck.y > Grid.GetHeight())
-                {
-                    continue;
-                }
+            Vector2Int coordinateNodeToCheckRecursive = node.Coordinates + directions[0];
+            PathNode nodeToCheckRecursive = Grid.GridArray[coordinateNodeToCheckRecursive.x, coordinateNodeToCheckRecursive.y];
+            return FindClosestFreePathNodeTo(nodeToCheckRecursive);
 
-                PathNode nodeToCheck = Grid.GridArray[coordinateNodeToCheck.x, coordinateNodeToCheck.y];
-                return FindClosestFreePathNodeTo(nodeToCheck);
-            }
-
-            return null;
+            //return node;
         }
 
         private List<PathNode> CalculatePath(PathNode endNode)
@@ -333,17 +334,18 @@ namespace PathfindingNamespace
                 SetPathReserved(listPos, index, null);
             }
 
-            if (listPos.Count > 1 && index < listPos.Count - 1)
-            {
-                //next
-                SetPathReserved(listPos, index + 1, null);
-            }
+            SetPathReserved(listPos, listPos.Count - 1, null);
+
         }
 
         public void SetPathReserved(List<Vector3> listPos, int index, PathNodeOccupier occupier)
         {
             Grid.GetXY(listPos[index], out int x, out int y);
             Grid.GetGridObject(x, y).SetPathOwned(occupier);
+        }
+        public void SetPathReserved(PathNode node, PathNodeOccupier occupier)
+        {
+            Grid.GetGridObject(node.Coordinates.x, node.Coordinates.y).SetPathOwned(occupier);
         }
         #endregion
     }

@@ -13,7 +13,16 @@ namespace GameManagement
         public BoardManager(GameManager gameManager)
         {
             _gameManager = gameManager;
-            CreateTestUnitAt(Vector2.zero);
+
+            CreateTestUnitAt(Vector2.one*7);
+            CreateTestUnitAt(Vector2.one*8);
+            CreateTestUnitAt(Vector2.one*9);
+            CreateTestUnitAt(Vector2.one*10);
+            CreateTestUnitAt(Vector2.one*11);
+            CreateTestUnitAt(Vector2.one*12);
+            CreateTestUnitAt(Vector2.one*13);
+            CreateTestUnitAt(Vector2.one*14);
+            CreateTestUnitAt(Vector2.one*15);
         }
 
         public void Update()

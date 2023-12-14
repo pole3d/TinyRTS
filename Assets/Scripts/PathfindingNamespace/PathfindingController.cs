@@ -1,4 +1,5 @@
 using Selection;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,7 +11,7 @@ namespace PathfindingNamespace
     public class PathfindingController : MonoBehaviour
     {
         public Pathfinding Pathfinding { get; private set; }
-        
+
         [SerializeField] private UnitSelectionController _unitSelectionController;
         [SerializeField] private Tilemap _baseTileMap;
 
@@ -28,25 +29,49 @@ namespace PathfindingNamespace
         /// <summary>
         /// Check if the player has made an input to request units to move toward a position
         /// </summary>
+        Vector3 unitInCenter;
         private void CheckMovementInput()
         {
-            if (Input.GetMouseButtonDown(1) == false)
+            if (Input.GetMouseButtonDown(1) == false || _unitSelectionController.SelectedUnitList.Count <= 0)
             {
                 return;
             }
 
-            Debug.Log("movement pathfinding input");
-            
+            unitInCenter = _unitSelectionController.SelectedUnitList[0].transform.position;
             foreach (UnitSelectable unit in _unitSelectionController.SelectedUnitList)
             {
                 if (unit.TryGetComponent(out CharacterPathfindingMovementHandler unitPathfinding) == false)
                 {
                     continue;
                 }
-                
+
+                Vector3 unitOffset = unit.transform.position;
+                Vector3 offset = unitInCenter - unitOffset;
+                offset.z = unitOffset.z;
+
                 Vector3 position = Utils.GetMouseWorldPosition();
-                unitPathfinding.SetTargetPosition(position);
+
+                if (Vector3.Distance(unitInCenter, unitOffset) > 1.5f)
+                {
+                    CalculatePathFindingToPosition(unitPathfinding, position - offset.normalized);
+                }
+                else
+                {
+                    CalculatePathFindingToPosition(unitPathfinding, position - offset);
+                }
+
+
+
+
+
+                //unitPathfinding.SetTargetPosition(position - offset);
             }
+            unitInCenter = Vector3.zero;
+        }
+        private async void CalculatePathFindingToPosition(CharacterPathfindingMovementHandler unitPathfinding, Vector3 target)
+        {
+            unitPathfinding.SetTargetPosition(target);
+            await Task.Delay((int)(Time.deltaTime * 1000));
         }
     }
 }

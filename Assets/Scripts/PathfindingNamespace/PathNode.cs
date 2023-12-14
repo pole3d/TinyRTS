@@ -50,7 +50,6 @@ namespace PathfindingNamespace
 
         public void SetPathOwned(PathNodeOccupier occupier = null)
         {
-            //IsWalkable = occupier.Occupier;
             NodeOccupier = occupier;
         }
 

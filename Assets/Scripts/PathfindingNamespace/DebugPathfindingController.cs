@@ -50,22 +50,11 @@ namespace PathfindingNamespace
 
         private async void CalculatePathFindingToPosition(Vector3 position)
         {
-            double time = Time.realtimeSinceStartupAsDouble;
-
             for (int i = 0; i < NumberOfPathToCalculate; i++)
             {
-                _pathVectorList = Pathfinding.Instance.FindPath(Vector3.zero, position);
-                Debug.Log("calculated pathfinding " + i);
+                //_pathVectorList = Pathfinding.Instance.FindPath(Vector3.zero, position);
                 await Task.Delay((int)(Time.deltaTime * 1000));
             }
-
-            Debug.Log(time - Time.realtimeSinceStartupAsDouble + "s");
-
-            //foreach (var character in _characters)
-            //{
-            //    await Task.Delay((int)(Time.deltaTime * 1000));
-            //    character.SetTargetPosition(GetMouseWorldPosition());
-            //}
         }
 
         public static Vector3 GetMouseWorldPosition()
