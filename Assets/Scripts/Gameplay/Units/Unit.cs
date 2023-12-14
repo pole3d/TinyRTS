@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Common.ActorSystem;
+using GameManagement.Players;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -90,13 +91,15 @@ namespace Gameplay.Units
             foreach (Unit unit in _enemyUnitsInRange)
             {
                 float distance = Vector2.Distance(transform.position, unit.transform.position);
-                if (distance < Data.Range)
+                if (distance > Data.Range)
                 {
-                    if (closestUnit == null || distance < closestUnitDistance)
-                    {
-                        closestUnit = unit;
-                        closestUnitDistance = distance;
-                    }
+                    continue;
+                }
+                
+                if (closestUnit == null || distance < closestUnitDistance)
+                {
+                    closestUnit = unit;
+                    closestUnitDistance = distance;
                 }
             }
 
@@ -107,18 +110,28 @@ namespace Gameplay.Units
 
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.yellow;
+            Unit unitToAttack = GetUnitToAttack();
+
+            
+            Gizmos.color = new Color(1f, 0.92f, 0.02f, 0.5f);
             foreach (Unit unit in _enemyUnitsInRange)
             {
+                if (unitToAttack == unit)
+                {
+                    continue;
+                }
                 Gizmos.DrawLine(transform.position, unit.transform.position);
             }
-            
-            Gizmos.color = Color.red;
-            Unit unitToAttack = GetUnitToAttack();
-            if (unitToAttack != null)
+
+            if (Data.Team == PlayerTeamEnum.Team1)
             {
-                Gizmos.DrawLine(transform.position, unitToAttack.transform.position);
+                Gizmos.color = Color.red;
+                if (unitToAttack != null)
+                {
+                    Gizmos.DrawLine(transform.position, unitToAttack.transform.position);
+                }
             }
+            
         }
 
 #endif
