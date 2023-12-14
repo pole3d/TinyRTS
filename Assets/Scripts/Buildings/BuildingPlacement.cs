@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Building
+namespace Buildings
 {
     public class BuildingPlacement : MonoBehaviour
     {
@@ -24,6 +24,7 @@ namespace Building
             {
                 _buildingToPlace.SpriteRenderer.color = Color.white;
                 _buildingToPlace.IsGhost = false;
+
                 _buildingToPlace = null;
             }
             else if (Input.GetMouseButtonDown(1))
@@ -66,6 +67,7 @@ namespace Building
             _buildingToPlace = Instantiate(BuildingPrefabs.Find(building => building.Name == name));
             _buildingToPlace.SpriteRenderer.color = Color.green;
             _buildingToPlace.IsGhost = true;
+            _buildingToPlace.PlayBuiltAnimation();
         }
     }
 }

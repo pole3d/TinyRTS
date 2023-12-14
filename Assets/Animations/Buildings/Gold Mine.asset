@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86ef48df5c8dc0a45baa372460f05c38, type: 3}
+  m_Name: Gold Mine
+  m_EditorClassIdentifier: 
+  Animations:
+  - <Name>k__BackingField: build_stage_0
+    <FPS>k__BackingField: 2
+    <Sprites>k__BackingField:
+    - {fileID: 21300000, guid: e751b2190ea1e42ec80e6470bc9a15ac, type: 3}
+  - <Name>k__BackingField: build_stage_1
+    <FPS>k__BackingField: 2
+    <Sprites>k__BackingField:
+    - {fileID: 21300000, guid: ffcaf320ea665374189c65c071575d9f, type: 3}
+  - <Name>k__BackingField: build_stage_2
+    <FPS>k__BackingField: 2
+    <Sprites>k__BackingField:
+    - {fileID: 21300000, guid: 26c69ebfc75254d2d85011964359be73, type: 3}
+  - <Name>k__BackingField: built
+    <FPS>k__BackingField: 2
+    <Sprites>k__BackingField:
+    - {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+    - {fileID: 1458997084, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+    - {fileID: -1978696019, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+    - {fileID: -2059111874, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}

@@ -88,11 +88,11 @@ namespace Common.ActorSystem
                 if (_timerCurrentAction >= (1.0f / _currentAnimation.FPS) * (float)_currentAnimation.Sprites.Count)
                 {
                     _timerCurrentAction = 0;
-                    _currentAction = null;
 
+                    ActorViewAction lastAction = _currentAction;
                     EndAction();
 
-                    string nextAction = _currentAction.NextAction;
+                    string nextAction = lastAction.NextAction;
                     if (string.IsNullOrEmpty(nextAction) == false)
                         PlayAction(nextAction);
                     else

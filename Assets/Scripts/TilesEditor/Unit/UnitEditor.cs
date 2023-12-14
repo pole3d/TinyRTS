@@ -7,10 +7,10 @@ namespace Gameplay.Units
     [Serializable]
     public class UnitEditor : MonoBehaviour
     {
-        [field: SerializeField] public UnitType UnitType { get; set; }
+        [field: SerializeField] public Type UnitType { get; set; }
         [field: SerializeField] public Sprite Sprite { get; set; }
         
-        public void SetUnitData(UnitType type, Sprite sprite)
+        public void SetUnitData(Type type, Sprite sprite)
         {
             UnitType = type;
             Sprite = sprite;

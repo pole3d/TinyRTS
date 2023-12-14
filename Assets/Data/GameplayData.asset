@@ -18,3 +18,20 @@ MonoBehaviour:
     <Damage>k__BackingField: 1
     <Range>k__BackingField: 1
     <MoveSpeed>k__BackingField: 1
+    <BuiltStageName>k__BackingField: 
+    <BuildTime>k__BackingField: 0
+    <BuildStages>k__BackingField: []
+  - <UnitType>k__BackingField: 2
+    <Life>k__BackingField: 100
+    <Damage>k__BackingField: 0
+    <Range>k__BackingField: 0
+    <MoveSpeed>k__BackingField: 0
+    <BuiltStageName>k__BackingField: built
+    <BuildTime>k__BackingField: 15
+    <BuildStages>k__BackingField:
+    - Name: build_stage_0
+      PercentageOfBuildTime: 20
+    - Name: build_stage_1
+      PercentageOfBuildTime: 50
+    - Name: build_stage_2
+      PercentageOfBuildTime: 30

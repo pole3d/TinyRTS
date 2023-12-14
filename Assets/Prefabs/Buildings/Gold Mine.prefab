@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2138439832213498772}
   - component: {fileID: 605422887166961382}
-  - component: {fileID: 1449038729684565575}
+  - component: {fileID: -6657444182360987729}
+  - component: {fileID: 2935059472587121645}
   m_Layer: 0
   m_Name: Gold Mine
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &605422887166961382
 SpriteRenderer:
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1449038729684565575
+--- !u!114 &-6657444182360987729
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,16 +95,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 6436993261229289725}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40d5422f634a4ee2b15794623a5d044a, type: 3}
+  m_Script: {fileID: 11500000, guid: 7357c5a5969c4856a2bfa89d81c58cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SpriteRenderer: {fileID: 605422887166961382}
+  View: {fileID: 2935059472587121645}
   Name: Gold Mine
-  Sprite: {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
-  BuildTime: 10
-  TimeBetweenFrames: 0.5
-  Frames:
-  - {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
-  - {fileID: 1458997084, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
-  - {fileID: -1978696019, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
-  - {fileID: -2059111874, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+  InitialSprite: {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+  GameplayData: {fileID: 11400000, guid: 769565e0c5f6abe48822dd66e6103c1d, type: 2}
+--- !u!114 &2935059472587121645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6436993261229289725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e69f35a097cf0314d8002996622f5670, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Actions>k__BackingField: []
+  <States>k__BackingField:
+  - <Name>k__BackingField: built
+  - <Name>k__BackingField: build_stage_0
+  - <Name>k__BackingField: build_stage_1
+  - <Name>k__BackingField: build_stage_2
+  <AnimationsDatas>k__BackingField: {fileID: 11400000, guid: 01644d2bdc2daf646a1a9bfb16d29c6e, type: 2}
+  _spriteRenderer: {fileID: 605422887166961382}
