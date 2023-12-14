@@ -16,6 +16,7 @@ public class UnitData
     }
 
     [field: SerializeField] public Type UnitType{ get; set; }
+    [field: SerializeField] public Sprite Sprite{ get; set; }
     [field: SerializeField] public int Life { get; set; }
     [field: SerializeField] public int Damage { get; set; }
     [field: SerializeField] public int Range { get; set; }

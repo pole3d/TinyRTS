@@ -1,12 +1,14 @@
 using System.IO;
 using Gameplay.Units;
 using TilesEditor.Tiles;
+using TilesEditor.Units;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
+using Vector2 = System.Numerics.Vector2;
 
 namespace TilesEditor
 {
@@ -107,6 +109,13 @@ namespace TilesEditor
                     }
                 }
             }
+        }
+
+        public void AddUnitToMap(UnitForEditor prefab, UnitForEditorData data, Vector3 position, Sprite sprite)
+        {
+            UnitForEditor unit = Instantiate(prefab, position, Quaternion.identity);
+            unit.SetDisplay(sprite);
+            unit.UnitForEditorData = data;
         }
 
         /// <summary>

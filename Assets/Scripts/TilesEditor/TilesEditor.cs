@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using Gameplay.Units;
 using TilesEditor.Tiles;
+using TilesEditor.Units;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -21,24 +23,25 @@ namespace TilesEditor
         public static TilesEditor Instance;
 
         private TileData CurrentTile { get; set; }
+        private UnitForEditorData CurrentUnit { get; set; }
 
         [SerializeField] private Map _currentMap;
 
-        [Header("Object References")] [SerializeField]
-        private TileButton _tileButtonPrefab;
-
+        [Header("Object References")] 
+        [SerializeField] private TileButton _tileButtonPrefab;
+        [SerializeField] private GameplayData _gameplayData;
         [SerializeField] private TilemapButton _tilemapButtonPrefab;
         [SerializeField] private SpriteRenderer _previewObj;
-        [SerializeField] private SpriteRenderer _unitButtonPrefab;
+        [SerializeField] private UnitButton _unitButtonPrefab;
+        [SerializeField] private UnitForEditor _unitPrefab;
 
-        [Header("Layout References")] [SerializeField]
-        private LayoutGroup _scrollViewContentLayout;
-
+        [Header("Layout References")] 
+        [SerializeField] private LayoutGroup _scrollViewContentLayout;
         [SerializeField] private LayoutGroup _tilemapsButtonLayout;
+        [SerializeField] private LayoutGroup _unitsButtonLayout;
 
-        [Header("Map References")] [SerializeField]
-        private Transform _savePanel;
-
+        [Header("Map References")] 
+        [SerializeField] private Transform _savePanel;
         [SerializeField] private Transform _loadPanel;
         [SerializeField] private Button _loadMapButton;
 
@@ -69,7 +72,7 @@ namespace TilesEditor
             SetCameraPosition();
 
             _updateCurrentTile += UpdateTilePreview;
-            _updateCurrentUnit += UpdateTilePreview;
+            // _updateCurrentUnit += UpdateTilePreview;
 
             foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
@@ -86,6 +89,7 @@ namespace TilesEditor
 
             CreateTilemapButtons();
             CreateTileButtons();
+            CreateUnitButtons();
         }
 
         /// <summary>
@@ -104,7 +108,15 @@ namespace TilesEditor
         public void SetCurrentTile(TileData tile)
         {
             CurrentTile = tile;
+            CurrentUnit = null;
             _updateCurrentTile?.Invoke();
+        }
+
+        public void SetCurrentUnit(UnitForEditorData data)
+        {
+            CurrentUnit = data;
+            CurrentTile = null;
+            _updateCurrentUnit?.Invoke();
         }
 
         /// <summary>
@@ -157,6 +169,19 @@ namespace TilesEditor
             if (Input.GetMouseButton(0) && CurrentTile != null)
             {
                 _currentMap.AddTileToMap(CurrentTile, cellPos);
+            }
+
+            if (Input.GetMouseButtonDown(0) && CurrentUnit != null)
+            {
+                Sprite sprite = null;
+                foreach (var unit in _gameplayData.Units)
+                {
+                    if (unit.UnitType == CurrentUnit.UnitType)
+                    {
+                        sprite = unit.Sprite;
+                    }
+                }
+                _currentMap.AddUnitToMap(_unitPrefab, CurrentUnit, screenToWorldPoint, sprite);
             }
         }
 
@@ -258,6 +283,19 @@ namespace TilesEditor
                 button.SetTilemapData(tilemap);
 
                 _tilemapButtons[index] = button;
+            }
+        }
+
+        private void CreateUnitButtons()
+        {
+            foreach (UnitData unit in _gameplayData.Units)
+            {
+                UnitButton newButton = Instantiate(_unitButtonPrefab, _unitsButtonLayout.transform);
+                newButton.SetUnitData(new UnitForEditorData
+                {
+                    UnitType = unit.UnitType,
+                    Position = default
+                }, unit.Sprite);
             }
         }
 

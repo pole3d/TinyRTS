@@ -371,6 +371,7 @@ RectTransform:
   - {fileID: 522443048}
   - {fileID: 946250965}
   - {fileID: 2100830965}
+  - {fileID: 146632710}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -530,6 +531,107 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 137839354}
+  m_CullTransparentMesh: 1
+--- !u!1 &146632709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 146632710}
+  - component: {fileID: 146632713}
+  - component: {fileID: 146632712}
+  - component: {fileID: 146632711}
+  m_Layer: 5
+  m_Name: Units
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &146632710
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146632709}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 103410436}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -902.42, y: 18.799988}
+  m_SizeDelta: {x: -1804.83, y: -655.69}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &146632711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146632709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
+--- !u!114 &146632712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146632709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &146632713
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146632709}
   m_CullTransparentMesh: 1
 --- !u!1 &203569063
 GameObject:
@@ -4282,11 +4384,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentMap: {fileID: 413033637}
   _tileButtonPrefab: {fileID: 487441823971541542, guid: dc2bcbabae543a64ca72b67d35b83500, type: 3}
+  _gameplayData: {fileID: 11400000, guid: 769565e0c5f6abe48822dd66e6103c1d, type: 2}
   _tilemapButtonPrefab: {fileID: 8457967881110336401, guid: c54a5ef52504be44f81669ef703fe53c, type: 3}
   _previewObj: {fileID: 745179644}
-  _unitButtonPrefab: {fileID: 0}
+  _unitButtonPrefab: {fileID: 4371304828800407611, guid: 11d3fd609bcdb7f4f86e276d3c7e0147, type: 3}
+  _unitPrefab: {fileID: 9015548726072389478, guid: 75b509133f2d67d44806aafd43aa927f, type: 3}
   _scrollViewContentLayout: {fileID: 1041679676}
   _tilemapsButtonLayout: {fileID: 1649282705}
+  _unitsButtonLayout: {fileID: 146632711}
   _savePanel: {fileID: 1304981799}
   _loadPanel: {fileID: 1112266020}
   _loadMapButton: {fileID: 2638140285841497542, guid: 805cd6799fdb2d94a8b567e72e76a484, type: 3}
