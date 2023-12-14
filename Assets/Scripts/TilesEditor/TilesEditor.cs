@@ -21,7 +21,6 @@ namespace TilesEditor
         public static TilesEditor Instance;
 
         private TileData CurrentTile { get; set; }
-        private UnitEditor CurrentUnit { get; set; }
 
         [SerializeField] private Map _currentMap;
 
@@ -31,7 +30,6 @@ namespace TilesEditor
         [SerializeField] private TilemapButton _tilemapButtonPrefab;
         [SerializeField] private SpriteRenderer _previewObj;
         [SerializeField] private SpriteRenderer _unitButtonPrefab;
-        [SerializeField] private UnitEditor _unitEditor;
 
         [Header("Layout References")] [SerializeField]
         private LayoutGroup _scrollViewContentLayout;
@@ -106,15 +104,7 @@ namespace TilesEditor
         public void SetCurrentTile(TileData tile)
         {
             CurrentTile = tile;
-            CurrentUnit = null;
             _updateCurrentTile?.Invoke();
-        }
-
-        public void SetCurrentUnit(UnitEditor unit)
-        {
-            CurrentUnit = unit;
-            CurrentTile = null;
-            _updateCurrentUnit?.Invoke();
         }
 
         /// <summary>
@@ -164,26 +154,10 @@ namespace TilesEditor
                 return;
             }
 
-            if (CurrentUnit != null && CurrentTile == null)
+            if (Input.GetMouseButton(0) && CurrentTile != null)
             {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    PlaceUnit(screenToWorldPoint);
-                }
+                _currentMap.AddTileToMap(CurrentTile, cellPos);
             }
-            else
-            {
-                if (Input.GetMouseButton(0))
-                {
-                    _currentMap.AddTileToMap(CurrentTile, cellPos);
-                }
-            }
-        }
-
-        private void PlaceUnit(Vector3 pos)
-        {
-            UnitEditor newUnit = Instantiate(_unitEditor, pos, Quaternion.identity, null);
-            newUnit.SetUnitData(CurrentUnit.UnitType, CurrentUnit.Sprite);
         }
 
         public bool IsInZone(Vector3 position)
@@ -250,10 +224,6 @@ namespace TilesEditor
             if (CurrentTile != null)
             {
                 _previewObj.sprite = CurrentTile.Tile.sprite;
-            }
-            else if (CurrentUnit != null)
-            {
-                _previewObj.sprite = CurrentUnit.Sprite;
             }
         }
 
