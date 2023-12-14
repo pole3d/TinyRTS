@@ -3,7 +3,6 @@ using Gameplay.Units;
 using TilesEditor.Tiles;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnitEditor = Gameplay.Units.UnitEditor;
 
 namespace TilesEditor
 {
