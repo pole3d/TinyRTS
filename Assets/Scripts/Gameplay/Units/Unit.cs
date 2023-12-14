@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Common.ActorSystem;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Gameplay.Units
 {
@@ -11,17 +14,19 @@ namespace Gameplay.Units
     public class Unit : MonoBehaviour
     {
         public int Life { get; private set; }
-        public int Damage => _data.Damage;
-        public int Range => _data.Range;
-
+        public int Damage => Data.Damage;
+        public int Range => Data.Range;
+        
+        public UnitData Data { get; set; }
+        
         [SerializeField] ActorView _view;
 
-        UnitData _data;
-        Vector2? _destination;
-
+        private Vector2? _destination;
+        private List<Unit> _enemyUnitsInRange = new List<Unit>();
+        
         public void Initialize(UnitData data)
         {
-            _data = data;
+            Data = data;
 
             Life = data.Life;
         }
@@ -34,16 +39,17 @@ namespace Gameplay.Units
 
         public void Update()
         {
+            CheckForOtherUnitsInRange();
             Move();
         }
 
-        void Move()
+        private void Move()
         {
             if (_destination != null)
             {
                 Vector3 direction = _destination.Value - new Vector2(transform.position.x,transform.position.y);
                 float distance = direction.magnitude;
-                float moveStep = Time.deltaTime * _data.MoveSpeed;
+                float moveStep = Time.deltaTime * Data.MoveSpeed;
                 direction.Normalize();
 
                 if ( moveStep >= distance)
@@ -56,10 +62,38 @@ namespace Gameplay.Units
                 {
                     transform.position = transform.position +  moveStep * direction;
                 }
-
-
             }
         }
 
+        private void CheckForOtherUnitsInRange()
+        {
+            RaycastHit2D[] hits = new RaycastHit2D[100];
+            _enemyUnitsInRange.Clear();
+            Physics2D.CircleCastNonAlloc(transform.position, 5f, Vector2.zero, hits);
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider == null
+                    || hit.collider.TryGetComponent(out Unit unit) == false
+                    || unit.Data.Team == Data.Team)
+                {
+                    continue;
+                }
+
+                _enemyUnitsInRange.Add(unit);
+            }
+        }
+        
+#if UNITY_EDITOR
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            foreach (Unit unit in _enemyUnitsInRange)
+            {
+                Gizmos.DrawLine(transform.position, unit.transform.position);
+            }
+        }
+
+#endif
     }
 }

@@ -13,7 +13,14 @@ MonoBehaviour:
   m_Name: GameplayData
   m_EditorClassIdentifier: 
   <Units>k__BackingField:
-  - <UnitType>k__BackingField: 0
+  - <Team>k__BackingField: 0
+    <UnitType>k__BackingField: 0
+    <Life>k__BackingField: 100
+    <Damage>k__BackingField: 1
+    <Range>k__BackingField: 1
+    <MoveSpeed>k__BackingField: 1
+  - <Team>k__BackingField: 1
+    <UnitType>k__BackingField: 0
     <Life>k__BackingField: 100
     <Damage>k__BackingField: 1
     <Range>k__BackingField: 1
