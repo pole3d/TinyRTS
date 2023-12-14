@@ -1,4 +1,5 @@
 ﻿using System;
+using TilesEditor.Tiles;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TileData = TilesEditor.Tiles.TileData;
@@ -12,9 +13,10 @@ namespace TilesEditor
 
         [SerializeField, Tooltip("All the tiles will be placed in this.")]
         private Tilemap _mainTilemap;
+        [SerializeField, Tooltip("All the tiles with colliders will be placed in this.")]
+        private Tilemap _obstaclesTilemap;
 
-        [Header("Defaults values")]
-        [SerializeField, Tooltip("The tile to put when there is no tile assigned at this position.")]
+        [Header("Defaults values")] [SerializeField, Tooltip("The tile to put when there is no tile assigned at this position.")]
         private Tile _defaultTile;
 
         [SerializeField, Tooltip("The default tile will be placed in this.")]
@@ -36,9 +38,16 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    _mainTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    if (mapData.TileDatas[i].AssociatedTilemap.Type == TilemapType.Walkable)
+                    {
+                        _mainTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    }
+                    else
+                    {
+                        _obstaclesTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    }
                 }
-                else
+                else if (mapData.TileDatas[i].Tile != null)
                 {
                     _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
                 }

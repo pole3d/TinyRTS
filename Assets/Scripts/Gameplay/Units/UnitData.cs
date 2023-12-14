@@ -6,17 +6,17 @@ using UnityEngine;
 [Serializable]
 public class UnitData
 {
-    public enum Type
-    {
-        Builder,
-        Warrior
-    }
 
-    [field: SerializeField] public Type UnitType{ get; set; }
+    [field: SerializeField] public UnitType UnitType{ get; set; }
     [field: SerializeField] public int Life { get; set; }
     [field: SerializeField] public int Damage { get; set; }
     [field: SerializeField] public int Range { get; set; }
     [field: SerializeField] public float MoveSpeed { get; set; }
 }
+    public enum UnitType
+    {
+        Builder,
+        Warrior
+    }
 
 
