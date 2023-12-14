@@ -30,6 +30,7 @@ namespace GameManagement
             Unit unit = Object.Instantiate(_gameManager.UnitPrefab, position, Quaternion.identity);
             unit.Data = new UnitData();
             unit.Data.Team = team;
+            unit.Data.Range = 2;
             _gameManager.FogOfWar.AddNewViewer(unit.transform, 5);
         }
     }

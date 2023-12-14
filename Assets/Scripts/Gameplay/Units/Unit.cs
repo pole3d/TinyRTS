@@ -82,15 +82,42 @@ namespace Gameplay.Units
                 _enemyUnitsInRange.Add(unit);
             }
         }
+
+        private Unit GetUnitToAttack()
+        {
+            Unit closestUnit = null;
+            float closestUnitDistance = float.MaxValue;
+            foreach (Unit unit in _enemyUnitsInRange)
+            {
+                float distance = Vector2.Distance(transform.position, unit.transform.position);
+                if (distance < Data.Range)
+                {
+                    if (closestUnit == null || distance < closestUnitDistance)
+                    {
+                        closestUnit = unit;
+                        closestUnitDistance = distance;
+                    }
+                }
+            }
+
+            return closestUnit;
+        }
         
 #if UNITY_EDITOR
 
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.yellow;
             foreach (Unit unit in _enemyUnitsInRange)
             {
                 Gizmos.DrawLine(transform.position, unit.transform.position);
+            }
+            
+            Gizmos.color = Color.red;
+            Unit unitToAttack = GetUnitToAttack();
+            if (unitToAttack != null)
+            {
+                Gizmos.DrawLine(transform.position, unitToAttack.transform.position);
             }
         }
 
