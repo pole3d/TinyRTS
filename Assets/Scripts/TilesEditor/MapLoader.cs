@@ -1,9 +1,10 @@
 ﻿using System;
 using GameManagement;
+using Gameplay.Units;
 using TilesEditor.Tiles;
+using TilesEditor.Units;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using TileData = TilesEditor.Tiles.TileData;
 
 namespace TilesEditor
 {
@@ -19,9 +20,11 @@ namespace TilesEditor
 
         [Header("Defaults values")] [SerializeField, Tooltip("The tile to put when there is no tile assigned at this position.")]
         private Tile _defaultTile;
-
+        [SerializeField] private Unit _defaultUnit;
         [SerializeField, Tooltip("The default tile will be placed in this.")]
         private Tilemap _defaultTilemap;
+
+        [SerializeField] private GameplayData _gameplayData;
 
         public void Initialize()
         {
@@ -46,6 +49,25 @@ namespace TilesEditor
                 }
                 
                 _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+            }
+
+            LoadUnits(mapData);
+        }
+
+        private void LoadUnits(MapData mapData)
+        {
+            foreach (UnitForEditorData data in mapData.UnitEditorDatas)
+            {
+                Unit newUnit = Instantiate(_defaultUnit, data.Position, Quaternion.identity, null);
+
+                foreach (UnitData unit in _gameplayData.Units)
+                {
+                    if (data.UnitType == unit.UnitType)
+                    {
+                        newUnit.Initialize(unit);
+                        break;
+                    }
+                }
             }
         }
 

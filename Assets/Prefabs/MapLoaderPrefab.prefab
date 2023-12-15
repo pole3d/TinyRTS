@@ -444,8 +444,10 @@ MonoBehaviour:
   _jsonFile: {fileID: 0}
   _mainTilemap: {fileID: 6691007984310617743}
   _obstaclesTilemap: {fileID: 1465809851334820091}
-  _defaultTile: {fileID: 0}
+  _defaultTile: {fileID: 11400000, guid: 092f26ec92bc9a84282aab9a9def39be, type: 2}
+  _defaultUnit: {fileID: 1320608854012337860, guid: 3d71ab4773d0253478b713febb172adf, type: 3}
   _defaultTilemap: {fileID: 330719907337015712}
+  _gameplayData: {fileID: 11400000, guid: 769565e0c5f6abe48822dd66e6103c1d, type: 2}
 --- !u!1 &5943128099113905687
 GameObject:
   m_ObjectHideFlags: 0

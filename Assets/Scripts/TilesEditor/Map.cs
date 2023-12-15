@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using Gameplay.Units;
 using TilesEditor.Tiles;
@@ -18,7 +19,6 @@ namespace TilesEditor
     public class Map : MonoBehaviour
     {
         [field: SerializeField] public TilemapData[] TilemapDatas { get; private set; }
-
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
 
@@ -31,6 +31,8 @@ namespace TilesEditor
         [SerializeField] private Slider _brushSizeSlider;
 
         private TileData[,] _tilesPos;
+        private List<UnitForEditorData> _unitForEditorDatas = new List<UnitForEditorData>();
+        private List<UnitForEditor> _unitForEditor = new List<UnitForEditor>();
         private float _brushSize;
 
         private void Start()
@@ -115,7 +117,21 @@ namespace TilesEditor
         {
             UnitForEditor unit = Instantiate(prefab, position, Quaternion.identity);
             unit.SetDisplay(sprite);
-            unit.UnitForEditorData = data;
+
+            unit.UnitForEditorData = new UnitForEditorData
+            {
+                UnitType = data.UnitType,
+                Position = position
+            };
+
+            AddUnitToLists(unit);
+        }
+
+        private void AddUnitToLists(UnitForEditor unit)
+        {
+
+            _unitForEditorDatas.Add(unit.UnitForEditorData);
+            _unitForEditor.Add(unit);
         }
 
         /// <summary>
@@ -141,6 +157,8 @@ namespace TilesEditor
                     mapData.TilePos.Add(new Vector3Int(x, y, 0));
                 }
             }
+
+            mapData.UnitEditorDatas = _unitForEditorDatas;
 
             string json = JsonUtility.ToJson(mapData, true);
             File.WriteAllText(Application.dataPath + $"/Saves/{mapName.text}.json", json);
@@ -174,7 +192,49 @@ namespace TilesEditor
                 }
             }
 
+            foreach (UnitForEditorData unitEditorData in mapData.UnitEditorDatas)
+            {
+                UnitForEditor newUnit = Instantiate(TilesEditor.Instance.UnitPrefab, unitEditorData.Position, Quaternion.identity, null);
+
+                foreach (UnitData unit in TilesEditor.Instance.Data.Units)
+                {
+                    if (unitEditorData.UnitType == unit.UnitType)
+                    {
+                        newUnit.SetDisplay(unit.Sprite);
+                        newUnit.UnitForEditorData = new UnitForEditorData
+                        {
+                            UnitType = unit.UnitType,
+                            Position = unitEditorData.Position
+                        };
+                        break;
+                    }
+                }
+                
+                AddUnitToLists(newUnit);
+            }
+
             Debug.Log("Map loaded");
+        }
+
+        /// <summary>
+        /// Clear all the tiles of the map but set the background.
+        /// </summary>
+        public void ResetMap()
+        {
+            foreach (TilemapData tilemap in TilemapDatas)
+            {
+                tilemap.CurrentTilemap.ClearAllTiles();
+            }
+
+            foreach (UnitForEditor unit in _unitForEditor)
+            {
+                Destroy(unit.gameObject);
+            }
+            
+            _unitForEditor.Clear();
+            _unitForEditorDatas.Clear();
+
+            FillMap();
         }
     }
 }

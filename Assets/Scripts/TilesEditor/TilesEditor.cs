@@ -25,25 +25,30 @@ namespace TilesEditor
         private TileData CurrentTile { get; set; }
         private UnitForEditorData CurrentUnit { get; set; }
 
+        public UnitForEditor UnitPrefab => _unitPrefab;
+        public GameplayData Data => _gameplayData;
+
         [SerializeField] private Map _currentMap;
 
-        [Header("Object References")] 
-        [SerializeField] private TileButton _tileButtonPrefab;
+        [Header("Object References")]
         [SerializeField] private GameplayData _gameplayData;
-        [SerializeField] private TilemapButton _tilemapButtonPrefab;
         [SerializeField] private SpriteRenderer _previewObj;
-        [SerializeField] private UnitButton _unitButtonPrefab;
         [SerializeField] private UnitForEditor _unitPrefab;
+        
+        [Header("Button References")]
+        [SerializeField] private TileButton _tileButtonPrefab;
+        [SerializeField] private TilemapButton _tilemapButtonPrefab;
+        [SerializeField] private UnitButton _unitButtonPrefab;
+        [SerializeField] private Button _loadMapButton;
 
-        [Header("Layout References")] 
+        [Header("Layout References")]
         [SerializeField] private LayoutGroup _scrollViewContentLayout;
-        [SerializeField] private LayoutGroup _tilemapsButtonLayout;
         [SerializeField] private LayoutGroup _unitsButtonLayout;
+        [SerializeField] private LayoutGroup _tilemapsButtonLayout;
 
-        [Header("Map References")] 
+        [Header("Map References")]
         [SerializeField] private Transform _savePanel;
         [SerializeField] private Transform _loadPanel;
-        [SerializeField] private Button _loadMapButton;
 
         private Action _updateCurrentTile;
         private Action _updateCurrentUnit;
@@ -72,7 +77,7 @@ namespace TilesEditor
             SetCameraPosition();
 
             _updateCurrentTile += UpdateTilePreview;
-            // _updateCurrentUnit += UpdateTilePreview;
+            _updateCurrentUnit += UpdateTilePreview;
 
             foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
@@ -90,19 +95,6 @@ namespace TilesEditor
             CreateTilemapButtons();
             CreateTileButtons();
             CreateUnitButtons();
-        }
-
-        /// <summary>
-        /// Clear all the tiles of the map but set the background.
-        /// </summary>
-        public void ResetMap()
-        {
-            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
-            {
-                tilemap.CurrentTilemap.ClearAllTiles();
-            }
-
-            _currentMap.FillMap();
         }
 
         public void SetCurrentTile(TileData tile)
@@ -174,14 +166,14 @@ namespace TilesEditor
             if (Input.GetMouseButtonDown(0) && CurrentUnit != null)
             {
                 Sprite sprite = null;
-                foreach (var unit in _gameplayData.Units)
+                foreach (var unit in Data.Units)
                 {
                     if (unit.UnitType == CurrentUnit.UnitType)
                     {
                         sprite = unit.Sprite;
                     }
                 }
-                _currentMap.AddUnitToMap(_unitPrefab, CurrentUnit, screenToWorldPoint, sprite);
+                _currentMap.AddUnitToMap(UnitPrefab, CurrentUnit, screenToWorldPoint, sprite);
             }
         }
 
@@ -246,9 +238,13 @@ namespace TilesEditor
         /// </summary>
         private void UpdateTilePreview()
         {
-            if (CurrentTile != null)
+            if (CurrentTile != null && CurrentUnit == null)
             {
                 _previewObj.sprite = CurrentTile.Tile.sprite;
+            }
+            else
+            {
+                _previewObj.sprite = null;
             }
         }
 
@@ -288,14 +284,16 @@ namespace TilesEditor
 
         private void CreateUnitButtons()
         {
-            foreach (UnitData unit in _gameplayData.Units)
+            foreach (UnitData unit in Data.Units)
             {
                 UnitButton newButton = Instantiate(_unitButtonPrefab, _unitsButtonLayout.transform);
-                newButton.SetUnitData(new UnitForEditorData
-                {
-                    UnitType = unit.UnitType,
-                    Position = default
-                }, unit.Sprite);
+                newButton.SetUnitData(
+                    new UnitForEditorData
+                    {
+                        UnitType = unit.UnitType,
+                        Position = default
+                    },
+                    unit.Sprite);
             }
         }
 
