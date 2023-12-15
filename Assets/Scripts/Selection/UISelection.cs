@@ -33,10 +33,11 @@ public class UISelection : MonoBehaviour
     private void Start()
     {
         ActionIcons.Add(UnitData.ActionType.Move, ActionUnitsIcons[0]);
-        ActionIcons.Add(UnitData.ActionType.Attack, ActionUnitsIcons[1]);
-        ActionIcons.Add(UnitData.ActionType.Build, ActionUnitsIcons[2]);
-        ActionIcons.Add(UnitData.ActionType.Repair, ActionUnitsIcons[3]);
-        ActionIcons.Add(UnitData.ActionType.Protect, ActionUnitsIcons[4]);
+        ActionIcons.Add(UnitData.ActionType.Stop, ActionUnitsIcons[1]);
+        ActionIcons.Add(UnitData.ActionType.Attack, ActionUnitsIcons[2]);
+        ActionIcons.Add(UnitData.ActionType.Patrol, ActionUnitsIcons[3]);
+        ActionIcons.Add(UnitData.ActionType.Repair, ActionUnitsIcons[4]);
+        ActionIcons.Add(UnitData.ActionType.Build, ActionUnitsIcons[5]);
     }
 
     public void UpdateUISelection(int nbUnitSelected, bool isHomogeneous, List<Unit> unitsList)
@@ -65,21 +66,25 @@ public class UISelection : MonoBehaviour
         }
 
         //Check the types of the selection and active buttons
-        if (unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count() == 1)
+        if (unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count() != 0)
         {
-            for (int i = 0; i < unitsList[0]._unitData.UnitActions.Count; i++)
+            List<UnitData.ActionType> commonActions = new List<UnitData.ActionType>(unitsList[0]._unitData.UnitActions);
+
+            for (int i = 1; i < unitsList.Count; i++)
+            {
+                commonActions = commonActions.Intersect(unitsList[i]._unitData.UnitActions).ToList();
+            }
+            
+            //Debug.Log("Common Actions: " + string.Join(", ", commonActions.Select(action => action.ToString())));
+
+            for (int i = 0; i < commonActions.Count; i++)
             {
                 ActionUnitsButtons[i].gameObject.SetActive(true);
+                ActionUnitsButtons[i].GetComponent<Image>().sprite = ActionIcons[commonActions[i]];
 
-                if (ActionIcons.ContainsKey(unitsList[0]._unitData.UnitActions[i]))
-                {
-                    ActionUnitsButtons[i].GetComponent<Image>().sprite =
-                        ActionIcons[unitsList[0]._unitData.UnitActions[i]];
-
-                    // //Text Button Action
-                    // ActionUnitsButtons[i].GetComponentInChildren<TextMeshProUGUI>().text =
-                    //     unitsList[0]._unitData.UnitActions[i].ToString();
-                }
+                // //Text Button Action
+                // ActionUnitsButtons[i].GetComponentInChildren<TextMeshProUGUI>().text =
+                //     unitsList[0]._unitData.UnitActions[i].ToString();
             }
         }
     }
