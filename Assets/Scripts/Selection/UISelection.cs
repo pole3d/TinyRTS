@@ -14,9 +14,8 @@ public class UISelection : MonoBehaviour
     public List<Button> ActionUnitsButtons;
 
     public List<Sprite> ActionUnitsIcons;
-
-    [field: SerializeField]
-    public Dictionary<UnitData.ActionType, Sprite> ActionIcons = new Dictionary<UnitData.ActionType, Sprite>();
+    
+    private Dictionary<UnitData.ActionType, Sprite> ActionIcons = new Dictionary<UnitData.ActionType, Sprite>();
 
     private void Awake()
     {
@@ -34,9 +33,10 @@ public class UISelection : MonoBehaviour
     {
         ActionIcons.Add(UnitData.ActionType.Move, ActionUnitsIcons[0]);
         ActionIcons.Add(UnitData.ActionType.Attack, ActionUnitsIcons[1]);
-        ActionIcons.Add(UnitData.ActionType.Build, ActionUnitsIcons[2]);
-        ActionIcons.Add(UnitData.ActionType.Repair, ActionUnitsIcons[3]);
-        ActionIcons.Add(UnitData.ActionType.Protect, ActionUnitsIcons[4]);
+        ActionIcons.Add(UnitData.ActionType.Stop, ActionUnitsIcons[2]);
+        ActionIcons.Add(UnitData.ActionType.Patrol, ActionUnitsIcons[3]);
+        ActionIcons.Add(UnitData.ActionType.Repair, ActionUnitsIcons[4]);
+        ActionIcons.Add(UnitData.ActionType.Build, ActionUnitsIcons[5]);
     }
 
     public void UpdateUISelection(int nbUnitSelected, bool isHomogeneous, List<Unit> unitsList)
@@ -56,7 +56,7 @@ public class UISelection : MonoBehaviour
             UnitFaceImages[i].GetComponent<Image>().sprite = unitsList[i]._unitData.IconSprite;
         }
 
-        Debug.Log(unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count());
+        //Debug.Log(unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count());
 
         //Reset Unit Buttons
         foreach (var button in ActionUnitsButtons)
@@ -81,6 +81,33 @@ public class UISelection : MonoBehaviour
                     //     unitsList[0]._unitData.UnitActions[i].ToString();
                 }
             }
+        }
+        else if(unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count() == 2)
+        {
+            List<UnitData.ActionType> commonActions = new List<UnitData.ActionType>(unitsList[0]._unitData.UnitActions);
+
+            for (int i = 1; i < unitsList.Count; i++)
+            {
+                commonActions = commonActions.Intersect(unitsList[i]._unitData.UnitActions).ToList();
+            }
+
+            // Now 'commonActions' contains the ActionType(s) that are common to all units
+            Debug.Log("Common Actions: " + string.Join(", ", commonActions.Select(action => action.ToString())));
+
+
+            for (int i = 0; i < commonActions.Count; i++)
+            {
+                ActionUnitsButtons[i].gameObject.SetActive(true);
+                ActionUnitsButtons[i].GetComponent<Image>().sprite = ActionIcons[commonActions[i]];
+            }
+
+            // foreach (UnitData.ActionType action in commonActions)
+            // {
+            //     GameObject buttonGO = Instantiate(buttonPrefab, buttonParent);
+            //     Button button = buttonGO.GetComponent<Button>();
+            //     button.onClick.AddListener(() => HandleButtonClick(action));
+            //     // Set button text, image, etc., based on the action type
+            // }
         }
     }
 }

@@ -3060,9 +3060,10 @@ MonoBehaviour:
   ActionUnitsIcons:
   - {fileID: 21300000, guid: b8d1593ca92334e4aa9f49a7215320d0, type: 3}
   - {fileID: 21300000, guid: 23dd7e0b5cadd344fa193fee36b3e6bf, type: 3}
+  - {fileID: 21300000, guid: 0bb53763ea447904dbb322d3786714fc, type: 3}
+  - {fileID: 21300000, guid: b66493e218f1fab479b1a874dc15a01a, type: 3}
   - {fileID: 21300000, guid: b521e398eaf2d714494277fee0eb786f, type: 3}
   - {fileID: 21300000, guid: d7f23f3694b7ef84d95f4c5afd7bf19e, type: 3}
-  - {fileID: 21300000, guid: 0bb53763ea447904dbb322d3786714fc, type: 3}
 --- !u!1 &719515520
 GameObject:
   m_ObjectHideFlags: 0
