@@ -16,11 +16,10 @@ public class UnitData
     public enum ActionType
     {
         Move,
-        Stop,
         Attack,
-        Patrol,
+        Build,
         Repair,
-        Build
+        Protect,
     }
 
     [field: SerializeField] public Type UnitType{ get; set; }

@@ -19,11 +19,11 @@ MonoBehaviour:
     <Range>k__BackingField: 1
     <MoveSpeed>k__BackingField: 1
     <IconSprite>k__BackingField: {fileID: 21300000, guid: 2284e88ea5413de4aa65097e27eb8fde, type: 3}
-    <UnitActions>k__BackingField: 0000000001000000020000000400000005000000
+    <UnitActions>k__BackingField: 00000000010000000200000003000000
   - <UnitType>k__BackingField: 1
     <Life>k__BackingField: 10
     <Damage>k__BackingField: 2
     <Range>k__BackingField: 1
     <MoveSpeed>k__BackingField: 1
     <IconSprite>k__BackingField: {fileID: 21300000, guid: d25ef7f0f4c391a49866e1f1499c28f3, type: 3}
-    <UnitActions>k__BackingField: 00000000010000000200000003000000
+    <UnitActions>k__BackingField: 000000000100000004000000
