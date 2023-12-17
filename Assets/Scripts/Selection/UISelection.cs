@@ -55,10 +55,10 @@ public class UISelection : MonoBehaviour
         {
             UnitFaceImages[i].SetActive(true);
 
-            UnitFaceImages[i].GetComponent<Image>().sprite = unitsList[i]._unitData.IconSprite;
+            UnitFaceImages[i].GetComponent<Image>().sprite = unitsList[i].UnitData.IconSprite;
         }
 
-        Debug.Log(unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count());
+        Debug.Log(unitsList.Select(unit => unit.UnitData.UnitType).Distinct().Count());
 
         //Reset Unit Buttons
         foreach (var button in ActionUnitsButtons)
@@ -67,13 +67,13 @@ public class UISelection : MonoBehaviour
         }
 
         //Check the types of the selection and active buttons
-        if (unitsList.Select(unit => unit._unitData.UnitType).Distinct().Count() != 0)
+        if (unitsList.Select(unit => unit.UnitData.UnitType).Distinct().Count() != 0)
         {
-            List<UnitData.ActionType> commonActions = new List<UnitData.ActionType>(unitsList[0]._unitData.UnitActions);
+            List<UnitData.ActionType> commonActions = new List<UnitData.ActionType>(unitsList[0].UnitData.UnitActions);
 
             for (int i = 1; i < unitsList.Count; i++)
             {
-                commonActions = commonActions.Intersect(unitsList[i]._unitData.UnitActions).ToList();
+                commonActions = commonActions.Intersect(unitsList[i].UnitData.UnitActions).ToList();
             }
             
             //Debug.Log("Common Actions: " + string.Join(", ", commonActions.Select(action => action.ToString())));

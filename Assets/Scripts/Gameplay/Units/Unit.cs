@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Common.ActorSystem;
+using GameManagement.Players;
 using UnityEngine;
 
 namespace Gameplay.Units
@@ -12,27 +13,28 @@ namespace Gameplay.Units
     public class Unit : MonoBehaviour
     {
         public int Life { get; private set; }
-        public int Damage => _unitData.Damage;
-        public int Range => _unitData.Range;
-        public float MoveSpeed => _unitData.MoveSpeed;
-        public Sprite IconSprite => _unitData.IconSprite;
-        public List<UnitData.ActionType> Actions => _unitData.UnitActions;
+        public int Damage => UnitData.Damage;
+        public int Range => UnitData.Range;
+        public float MoveSpeed => UnitData.MoveSpeed;
+        public Sprite IconSprite => UnitData.IconSprite;
+        public List<UnitData.ActionType> Actions => UnitData.UnitActions;
+        public UnitData UnitData { get; set; }
+        [field:Space (10)][field:Header("Unit Data")][field:SerializeField] public GameplayData Data { get; set; }
 
-        [SerializeField] ActorView _view;
-        Vector2? _destination;
+        [SerializeField] private ActorView _view;
+        private Vector2? _destination;
+        
+        private List<Unit> _enemyUnitsInRange = new List<Unit>();
 
-        [Space (10)][Header("Unit Data")]
-        [SerializeField] GameplayData _data;
-        public UnitData _unitData;
 
         private void Start()
         {
-            Initialize(_data.GetUnitData(_unitData.UnitType));
+            Initialize(Data.GetUnitData(UnitData.UnitType));
         }
 
         public void Initialize(UnitData data)
         {
-            _unitData = data;
+            UnitData = data;
 
             Life = data.Life;
         }
@@ -48,13 +50,13 @@ namespace Gameplay.Units
             Move();
         }
 
-        void Move()
+        private void Move()
         {
             if (_destination != null)
             {
                 Vector3 direction = _destination.Value - new Vector2(transform.position.x, transform.position.y);
                 float distance = direction.magnitude;
-                float moveStep = Time.deltaTime * _unitData.MoveSpeed;
+                float moveStep = Time.deltaTime * UnitData.MoveSpeed;
                 direction.Normalize();
 
                 if (moveStep >= distance)
@@ -69,5 +71,75 @@ namespace Gameplay.Units
                 }
             }
         }
+
+        private void CheckForOtherUnitsInRange()
+        {
+            RaycastHit2D[] hits = new RaycastHit2D[100];
+            _enemyUnitsInRange.Clear();
+            Physics2D.CircleCastNonAlloc(transform.position, 5f, Vector2.zero, hits);
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider == null
+                    || hit.collider.TryGetComponent(out Unit unit) == false
+                    || unit.UnitData.Team == UnitData.Team)
+                {
+                    continue;
+                }
+
+                _enemyUnitsInRange.Add(unit);
+            }
+        }
+
+        private Unit GetUnitToAttack()
+        {
+            Unit closestUnit = null;
+            float closestUnitDistance = float.MaxValue;
+            foreach (Unit unit in _enemyUnitsInRange)
+            {
+                float distance = Vector2.Distance(transform.position, unit.transform.position);
+                if (distance > UnitData.Range)
+                {
+                    continue;
+                }
+                
+                if (closestUnit == null || distance < closestUnitDistance)
+                {
+                    closestUnit = unit;
+                    closestUnitDistance = distance;
+                }
+            }
+
+            return closestUnit;
+        }
+        
+#if UNITY_EDITOR
+
+        private void OnDrawGizmos()
+        {
+            Unit unitToAttack = GetUnitToAttack();
+
+            
+            Gizmos.color = new Color(1f, 0.92f, 0.02f, 0.5f);
+            foreach (Unit unit in _enemyUnitsInRange)
+            {
+                if (unitToAttack == unit)
+                {
+                    continue;
+                }
+                Gizmos.DrawLine(transform.position, unit.transform.position);
+            }
+
+            if (UnitData.Team == PlayerTeamEnum.Team1)
+            {
+                Gizmos.color = Color.red;
+                if (unitToAttack != null)
+                {
+                    Gizmos.DrawLine(transform.position, unitToAttack.transform.position);
+                }
+            }
+            
+        }
+
+#endif
     }
 }

@@ -28,9 +28,9 @@ namespace GameManagement
         private void CreateTestUnitAt(Vector2 position, PlayerTeamEnum team)
         {
             Unit unit = Object.Instantiate(_gameManager.UnitPrefab, position, Quaternion.identity);
-            unit.Data = new UnitData();
-            unit.Data.Team = team;
-            unit.Data.Range = 2;
+            unit.UnitData = new UnitData();
+            unit.UnitData.Team = team;
+            unit.UnitData.Range = 2;
             _gameManager.FogOfWar.AddNewViewer(unit.transform, 5);
         }
     }
