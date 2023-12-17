@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Buildings;
 using UnityEngine;
 /// <summary>
 /// Contains data about units like initial life, damage, range etc... 
@@ -10,7 +11,8 @@ public class UnitData
     public enum Type
     {
         Builder,
-        Warrior
+        Warrior,
+        GoldMine,
     }
 
     public enum ActionType
@@ -32,4 +34,10 @@ public class UnitData
     [field: SerializeField] public Sprite  IconSprite { get; set; }
     
     [field: SerializeField] public List<ActionType> UnitActions { get; set; }
+    
+    [field: SerializeField] public Sprite Sprite{ get; set; }
+
+    [field: SerializeField] public string BuiltStageName { get; set; }
+    [field: SerializeField] public float BuildTime { get; set; }
+    [field: SerializeField] public List<BuildStage> BuildStages { get; set; }
 }
