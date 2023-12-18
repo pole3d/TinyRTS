@@ -14,20 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Units>k__BackingField:
   - <UnitType>k__BackingField: 0
-    <Sprite>k__BackingField: {fileID: 21300000, guid: d8bb782492897604eba83a044126c205, type: 3}
     <Life>k__BackingField: 100
     <Damage>k__BackingField: 1
-    <Range>k__BackingField: 1
+    <Range>k__BackingField: 2
     <MoveSpeed>k__BackingField: 1
+    <Team>k__BackingField: 1
+    <IconSprite>k__BackingField: {fileID: 0}
+    <UnitActions>k__BackingField: 
+    <Sprite>k__BackingField: {fileID: 21300000, guid: d8bb782492897604eba83a044126c205, type: 3}
     <BuiltStageName>k__BackingField: 
     <BuildTime>k__BackingField: 0
     <BuildStages>k__BackingField: []
   - <UnitType>k__BackingField: 2
-    <Sprite>k__BackingField: {fileID: 21300000, guid: c5d268eb4e345c342aed9567488381ab, type: 3}
     <Life>k__BackingField: 100
     <Damage>k__BackingField: 0
-    <Range>k__BackingField: 0
+    <Range>k__BackingField: 2
     <MoveSpeed>k__BackingField: 0
+    <Team>k__BackingField: 0
+    <IconSprite>k__BackingField: {fileID: 0}
+    <UnitActions>k__BackingField: 
+    <Sprite>k__BackingField: {fileID: 21300000, guid: c5d268eb4e345c342aed9567488381ab, type: 3}
     <BuiltStageName>k__BackingField: built
     <BuildTime>k__BackingField: 15
     <BuildStages>k__BackingField:
