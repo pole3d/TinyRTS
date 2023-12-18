@@ -47,6 +47,7 @@ namespace Gameplay.Units
 
         public void Update()
         {
+            CheckForOtherUnitsInRange();
             Move();
         }
 
@@ -54,12 +55,12 @@ namespace Gameplay.Units
         {
             if (_destination != null)
             {
-                Vector3 direction = _destination.Value - new Vector2(transform.position.x, transform.position.y);
+                Vector3 direction = _destination.Value - new Vector2(transform.position.x,transform.position.y);
                 float distance = direction.magnitude;
                 float moveStep = Time.deltaTime * UnitData.MoveSpeed;
                 direction.Normalize();
 
-                if (moveStep >= distance)
+                if ( moveStep >= distance)
                 {
                     transform.position = _destination.Value;
                     _destination = null;
@@ -67,7 +68,7 @@ namespace Gameplay.Units
                 }
                 else
                 {
-                    transform.position = transform.position + moveStep * direction;
+                    transform.position = transform.position +  moveStep * direction;
                 }
             }
         }
@@ -117,7 +118,6 @@ namespace Gameplay.Units
         private void OnDrawGizmos()
         {
             Unit unitToAttack = GetUnitToAttack();
-
             
             Gizmos.color = new Color(1f, 0.92f, 0.02f, 0.5f);
             foreach (Unit unit in _enemyUnitsInRange)
