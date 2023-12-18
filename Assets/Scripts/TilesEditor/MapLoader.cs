@@ -1,7 +1,10 @@
 ﻿using System;
+using GameManagement;
+using Gameplay.Units;
+using TilesEditor.Tiles;
+using TilesEditor.Units;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using TileData = TilesEditor.Tiles.TileData;
 
 namespace TilesEditor
 {
@@ -12,15 +15,18 @@ namespace TilesEditor
 
         [SerializeField, Tooltip("All the tiles will be placed in this.")]
         private Tilemap _mainTilemap;
+        [SerializeField, Tooltip("All the tiles with colliders will be placed in this.")]
+        private Tilemap _obstaclesTilemap;
 
-        [Header("Defaults values")]
-        [SerializeField, Tooltip("The tile to put when there is no tile assigned at this position.")]
+        [Header("Defaults values")] [SerializeField, Tooltip("The tile to put when there is no tile assigned at this position.")]
         private Tile _defaultTile;
-
+        [SerializeField] private Unit _defaultUnit;
         [SerializeField, Tooltip("The default tile will be placed in this.")]
         private Tilemap _defaultTilemap;
 
-        private void Start()
+        [SerializeField] private GameplayData _gameplayData;
+
+        public void Initialize()
         {
             LoadMapFromFile();
         }
@@ -36,12 +42,49 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    _mainTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    if (mapData.TileDatas[i].AssociatedTilemap.Type == TilemapType.Walkable)
+                    {
+                        _mainTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    }
                 }
-                else
+                
+                _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+            }
+
+            LoadUnits(mapData);
+        }
+
+        private void LoadUnits(MapData mapData)
+        {
+            foreach (UnitForEditorData data in mapData.UnitEditorDatas)
+            {
+                Unit newUnit = Instantiate(_defaultUnit, data.Position, Quaternion.identity, null);
+
+                foreach (UnitData unit in _gameplayData.Units)
                 {
-                    _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
+                    if (data.UnitType == unit.UnitType)
+                    {
+                        newUnit.Initialize(unit);
+                        break;
+                    }
                 }
+            }
+        }
+
+        public void LoadObstacles()
+        {
+            MapData mapData = JsonUtility.FromJson<MapData>(_jsonFile.text);
+
+            for (int i = 0; i < mapData.TileDatas.Count; i++)
+            {
+                if (mapData.TileDatas[i].Tile == null ||
+                    mapData.TileDatas[i].AssociatedTilemap.Type != TilemapType.NonWalkable)
+                {
+                    continue;
+                }
+                
+                _obstaclesTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                GameManager.Instance.PathfindingController.SetTileNotWalkablePathfinding((Vector2)(Vector2Int)mapData.TilePos[i]);
             }
         }
     }

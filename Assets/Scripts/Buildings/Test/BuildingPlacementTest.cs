@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Building.Test
+namespace Buildings.Test
 {
     public class BuildingPlacementTest : MonoBehaviour
     {

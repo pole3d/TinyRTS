@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Gameplay.Units;
 using TilesEditor.Tiles;
+using TilesEditor.Units;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
@@ -19,24 +23,35 @@ namespace TilesEditor
         public static TilesEditor Instance;
 
         private TileData CurrentTile { get; set; }
+        private UnitForEditorData CurrentUnit { get; set; }
+
+        public UnitForEditor UnitPrefab => _unitPrefab;
+        public GameplayData Data => _gameplayData;
 
         [SerializeField] private Map _currentMap;
 
         [Header("Object References")]
+        [SerializeField] private GameplayData _gameplayData;
+        [SerializeField] private SpriteRenderer _previewObj;
+        [SerializeField] private UnitForEditor _unitPrefab;
+        
+        [Header("Button References")]
         [SerializeField] private TileButton _tileButtonPrefab;
         [SerializeField] private TilemapButton _tilemapButtonPrefab;
-        [SerializeField] private SpriteRenderer _tilePreviewObj;
+        [SerializeField] private UnitButton _unitButtonPrefab;
+        [SerializeField] private Button _loadMapButton;
 
         [Header("Layout References")]
         [SerializeField] private LayoutGroup _scrollViewContentLayout;
+        [SerializeField] private LayoutGroup _unitsButtonLayout;
         [SerializeField] private LayoutGroup _tilemapsButtonLayout;
 
         [Header("Map References")]
         [SerializeField] private Transform _savePanel;
         [SerializeField] private Transform _loadPanel;
-        [SerializeField] private Button _loadMapButton;
 
         private Action _updateCurrentTile;
+        private Action _updateCurrentUnit;
         private Camera _mainCamera;
         private List<string> _filesButtons = new List<string>();
         private TilemapButton[] _tilemapButtons;
@@ -62,6 +77,7 @@ namespace TilesEditor
             SetCameraPosition();
 
             _updateCurrentTile += UpdateTilePreview;
+            _updateCurrentUnit += UpdateTilePreview;
 
             foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
@@ -78,25 +94,21 @@ namespace TilesEditor
 
             CreateTilemapButtons();
             CreateTileButtons();
-        }
-
-        /// <summary>
-        /// Clear all the tiles of the map but set the background.
-        /// </summary>
-        public void ResetMap()
-        {
-            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
-            {
-                tilemap.CurrentTilemap.ClearAllTiles();
-            }
-
-            _currentMap.FillMap();
+            CreateUnitButtons();
         }
 
         public void SetCurrentTile(TileData tile)
         {
             CurrentTile = tile;
-            _updateCurrentTile();
+            CurrentUnit = null;
+            _updateCurrentTile?.Invoke();
+        }
+
+        public void SetCurrentUnit(UnitForEditorData data)
+        {
+            CurrentUnit = data;
+            CurrentTile = null;
+            _updateCurrentUnit?.Invoke();
         }
 
         /// <summary>
@@ -120,32 +132,49 @@ namespace TilesEditor
         /// </summary>
         private void PaintMap()
         {
-            if (CurrentTile == null || MenuIsOpen())
+            PaintTile();
+        }
+
+        private void PaintTile()
+        {
+            if (MenuIsOpen())
             {
                 return;
             }
 
             Vector3 screenToWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            screenToWorldPoint.z = 0;
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
+
+            _previewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
 
             if (IsOverUI(Input.mousePosition))
             {
                 return;
             }
 
-            _tilePreviewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
-
-            if (!Input.GetMouseButton(0))
+            if (IsInZone(screenToWorldPoint) == false)
             {
                 return;
             }
 
-            if (IsInZone(cellPos) == false)
+            if (Input.GetMouseButton(0) && CurrentTile != null)
             {
-                return;
+                _currentMap.AddTileToMap(CurrentTile, cellPos);
             }
 
-            _currentMap.AddTileToMap(CurrentTile, cellPos);
+            if (Input.GetMouseButtonDown(0) && CurrentUnit != null)
+            {
+                Sprite sprite = null;
+                foreach (var unit in Data.Units)
+                {
+                    if (unit.UnitType == CurrentUnit.UnitType)
+                    {
+                        sprite = unit.Sprite;
+                    }
+                }
+                _currentMap.AddUnitToMap(UnitPrefab, CurrentUnit, screenToWorldPoint, sprite);
+            }
         }
 
         public bool IsInZone(Vector3 position)
@@ -209,7 +238,14 @@ namespace TilesEditor
         /// </summary>
         private void UpdateTilePreview()
         {
-            _tilePreviewObj.sprite = CurrentTile.Tile.sprite;
+            if (CurrentTile != null && CurrentUnit == null)
+            {
+                _previewObj.sprite = CurrentTile.Tile.sprite;
+            }
+            else
+            {
+                _previewObj.sprite = null;
+            }
         }
 
         /// <summary>
@@ -243,6 +279,21 @@ namespace TilesEditor
                 button.SetTilemapData(tilemap);
 
                 _tilemapButtons[index] = button;
+            }
+        }
+
+        private void CreateUnitButtons()
+        {
+            foreach (UnitData unit in Data.Units)
+            {
+                UnitButton newButton = Instantiate(_unitButtonPrefab, _unitsButtonLayout.transform);
+                newButton.SetUnitData(
+                    new UnitForEditorData
+                    {
+                        UnitType = unit.UnitType,
+                        Position = default
+                    },
+                    unit.Sprite);
             }
         }
 

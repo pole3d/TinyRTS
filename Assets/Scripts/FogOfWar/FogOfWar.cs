@@ -36,7 +36,7 @@ public class FogOfWar : MonoBehaviour
     /// <summary>
     /// Initializes the Fog of War
     /// </summary>
-    private void Start()
+    public void Initialize()
     {
         PaintAllFogOfWarTilemap();
         AddStartViewers();

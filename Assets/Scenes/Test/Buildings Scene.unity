@@ -171,7 +171,7 @@ MonoBehaviour:
   Camera: {fileID: 1342455288}
   Grid: {fileID: 1976958836}
   BuildingPrefabs:
-  - {fileID: 1449038729684565575, guid: a772a6ef134914045b82e229023e85b6, type: 3}
+  - {fileID: -6657444182360987729, guid: a772a6ef134914045b82e229023e85b6, type: 3}
 --- !u!114 &185087231
 MonoBehaviour:
   m_ObjectHideFlags: 0
