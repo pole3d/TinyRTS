@@ -188,6 +188,7 @@ namespace PathfindingNamespace
 
                 if (currentNode == endNode)
                 {
+                    SetPathReserved(endNode, character);
                     return CalculatePath(endNode);
                 }
 
@@ -228,13 +229,14 @@ namespace PathfindingNamespace
                 }
             }
 
-            if (_closestToTarget != null)
-            {
-                Debug.Log("closed path");
+            //if (_closestToTarget != null)
+            //{
+            //    Debug.Log("closed path");
 
-                SetPathReserved(endNode, null);
-                return CalculatePath(_closestToTarget);
-            }
+            //    SetPathReserved(endNode, null);
+            //    SetPathReserved(_closestToTarget, character);
+            //    return CalculatePath(_closestToTarget);
+            //}
 
             Debug.Log("nopath");
             return null;
@@ -327,21 +329,28 @@ namespace PathfindingNamespace
 
 
         #region Other
-        public void ResetNodeWalkable(List<Vector3> listPos, int index)
+        public void ResetNodeWalkable(CharacterPathfindingMovementHandler owner, List<Vector3> listPos, int index)
         {
-            if (listPos.Count > 0)
+            SetPathReserved(owner, null, listPos, index);
+
+            if (index > 0)
             {
-                SetPathReserved(listPos, index, null);
+                SetPathReserved(owner, null, listPos, index - 1);
             }
 
-            SetPathReserved(listPos, listPos.Count - 1, null);
+            SetPathReserved(owner, null, listPos, listPos.Count - 1);
 
         }
 
-        public void SetPathReserved(List<Vector3> listPos, int index, PathNodeOccupier occupier)
+        public void SetPathReserved(CharacterPathfindingMovementHandler owner, PathNodeOccupier occupier, List<Vector3> listPos, int index)
         {
             Grid.GetXY(listPos[index], out int x, out int y);
-            Grid.GetGridObject(x, y).SetPathOwned(occupier);
+
+            PathNode targetNode = Grid.GetGridObject(x, y);
+            if (targetNode.NodeOccupier == owner || targetNode.NodeOccupier == null)
+            {
+                Grid.GetGridObject(x, y).SetPathOwned(occupier);
+            }
         }
         public void SetPathReserved(PathNode node, PathNodeOccupier occupier)
         {

@@ -1,4 +1,5 @@
 using Selection;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -30,6 +31,7 @@ namespace PathfindingNamespace
         /// Check if the player has made an input to request units to move toward a position
         /// </summary>
         Vector3 unitInCenter;
+        List<Vector3> pathCenter;
         private void CheckMovementInput()
         {
             if (Input.GetMouseButtonDown(1) == false || _unitSelectionController.SelectedUnitList.Count <= 0)
@@ -37,35 +39,83 @@ namespace PathfindingNamespace
                 return;
             }
 
-            unitInCenter = _unitSelectionController.SelectedUnitList[0].transform.position;
-            foreach (UnitSelectable unit in _unitSelectionController.SelectedUnitList)
+
+
+
+
+            //_unitSelectionController.SelectedUnitList.Count <= 9
+            //_unitSelectionController.SelectedUnitList.Count <= 18
+            var unit = _unitSelectionController.SelectedUnitList;
+
+            unitInCenter = unit[0].transform.position;
+
+            if (unit[0].TryGetComponent(out CharacterPathfindingMovementHandler unitCenter) == true)
             {
-                if (unit.TryGetComponent(out CharacterPathfindingMovementHandler unitPathfinding) == false)
+                Vector3 position = Utils.GetMouseWorldPosition();
+                unitCenter.SetTargetPosition(position);
+                pathCenter = unitCenter.GetPathList;
+            }
+
+            for (int i = 1; i < _unitSelectionController.SelectedUnitList.Count; i++)
+            {
+                if (unit[i].TryGetComponent(out CharacterPathfindingMovementHandler unitPathfinding) == false)
                 {
                     continue;
                 }
 
-                Vector3 unitOffset = unit.transform.position;
+
+                Vector3 unitOffset = unitPathfinding.transform.position;
                 Vector3 offset = unitInCenter - unitOffset;
+
+
+                offset.x = Mathf.Round(offset.x);
+                offset.y = Mathf.Round(offset.y);
                 offset.z = unitOffset.z;
 
-                Vector3 position = Utils.GetMouseWorldPosition();
 
-                if (Vector3.Distance(unitInCenter, unitOffset) > 1.5f)
-                {
-                    CalculatePathFindingToPosition(unitPathfinding, position - offset.normalized);
-                }
-                else
-                {
-                    CalculatePathFindingToPosition(unitPathfinding, position - offset);
-                }
+                unitPathfinding.SetPath(pathCenter, offset);
 
 
 
-
-
-                //unitPathfinding.SetTargetPosition(position - offset);
+                //if (Vector3.Distance(unitInCenter, unitOffset) > 1.5f)
+                //{
+                //    CalculatePathFindingToPosition(unitPathfinding, position - offset.normalized);
+                //}
+                //else
+                //{
+                //    CalculatePathFindingToPosition(unitPathfinding, position - offset);
+                //}
             }
+
+
+            //foreach (UnitSelectable unit in _unitSelectionController.SelectedUnitList)
+            //{
+            //    if (unit.TryGetComponent(out CharacterPathfindingMovementHandler unitPathfinding) == false)
+            //    {
+            //        continue;
+            //    }
+
+            //    Vector3 unitOffset = unit.transform.position;
+            //    Vector3 offset = unitInCenter - unitOffset;
+            //    offset.z = unitOffset.z;
+
+            //    Vector3 position = Utils.GetMouseWorldPosition();
+
+            //    if (Vector3.Distance(unitInCenter, unitOffset) > 1.5f)
+            //    {
+            //        CalculatePathFindingToPosition(unitPathfinding, position - offset.normalized);
+            //    }
+            //    else
+            //    {
+            //        CalculatePathFindingToPosition(unitPathfinding, position - offset);
+            //    }
+
+
+
+
+
+            //    //unitPathfinding.SetTargetPosition(position - offset);
+            //}
             unitInCenter = Vector3.zero;
         }
         private async void CalculatePathFindingToPosition(CharacterPathfindingMovementHandler unitPathfinding, Vector3 target)
