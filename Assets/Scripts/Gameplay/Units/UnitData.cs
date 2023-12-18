@@ -32,7 +32,6 @@ public class UnitData
     [field: SerializeField] public int Range { get; set; }
     [field: SerializeField] public float MoveSpeed { get; set; }
     
-    [field: SerializeField] public PlayerTeamEnum Team { get; set; }
     [field: SerializeField] public Sprite  IconSprite { get; set; }
     
     [field: SerializeField] public List<ActionType> UnitActions { get; set; }

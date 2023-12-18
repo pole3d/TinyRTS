@@ -13,6 +13,7 @@ namespace Gameplay.Units
     public class Unit : MonoBehaviour
     {
         public int Life { get; private set; }
+        public PlayerTeamEnum Team { get; set; }
         public int Damage => UnitData.Damage;
         public int Range => UnitData.Range;
         public float MoveSpeed => UnitData.MoveSpeed;
@@ -26,7 +27,6 @@ namespace Gameplay.Units
         
         private List<Unit> _enemyUnitsInRange = new List<Unit>();
 
-
         private void Start()
         {
             Initialize(Data.GetUnitData(UnitData.UnitType));
@@ -35,7 +35,6 @@ namespace Gameplay.Units
         public void Initialize(UnitData data)
         {
             UnitData = data;
-
             Life = data.Life;
         }
 
@@ -73,20 +72,20 @@ namespace Gameplay.Units
             }
         }
 
+        private RaycastHit2D[] _hits = new RaycastHit2D[100];
         private void CheckForOtherUnitsInRange()
         {
-            RaycastHit2D[] hits = new RaycastHit2D[100];
             _enemyUnitsInRange.Clear();
-            Physics2D.CircleCastNonAlloc(transform.position, 5f, Vector2.zero, hits);
-            foreach (RaycastHit2D hit in hits)
+            Physics2D.CircleCastNonAlloc(transform.position, 5f, Vector2.zero, _hits);
+            foreach (RaycastHit2D hit in _hits)
             {
                 if (hit.collider == null
                     || hit.collider.TryGetComponent(out Unit unit) == false
-                    || unit.UnitData.Team == UnitData.Team)
+                    || unit.Team == Team)
                 {
                     continue;
                 }
-
+                
                 _enemyUnitsInRange.Add(unit);
             }
         }
@@ -129,7 +128,7 @@ namespace Gameplay.Units
                 Gizmos.DrawLine(transform.position, unit.transform.position);
             }
 
-            if (UnitData.Team == PlayerTeamEnum.Team1)
+            if (Team == PlayerTeamEnum.Team1)
             {
                 Gizmos.color = Color.red;
                 if (unitToAttack != null)
