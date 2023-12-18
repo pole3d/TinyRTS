@@ -56,6 +56,17 @@ public class FogOfWar : MonoBehaviour
     }
 
     /// <summary>
+    /// Adds start viewers to the Fog of War system
+    /// </summary>
+    private void AddStartViewers()
+    {
+        foreach (var viewer in _startViewers)
+        {
+            AddNewViewer(viewer, _fogRadiusBase);
+        }
+    }
+    
+    /// <summary>
     /// Add new viewer to the Fog of War system
     /// </summary>
     public void AddNewViewer(Transform newViewer, int fogRadius)
@@ -67,22 +78,27 @@ public class FogOfWar : MonoBehaviour
             fogRadius = _fogRadiusBase;
         }
 
-        Viewers viewer = new Viewers(newViewer, new HashSet<Vector2Int>(), fogRadius);
+        Viewers viewer = new Viewers(newViewer, fogRadius);
         _allViewers.Add(viewer);
         
-        // Init the good number of viewer calculated by frame
-        _calculateViewerByFrame = _viewersTransforms.Count < Max_Viewer_Calculated_By_Frame ? _viewersTransforms.Count : Max_Viewer_Calculated_By_Frame;
+        CheckIfMaxViewerCalculatedByFrame();
     }
 
     /// <summary>
-    /// Adds start viewers to the Fog of War system
+    /// Remove a dead viewer 
     /// </summary>
-    private void AddStartViewers()
+    public void RemoveViewer(Transform viewer)
     {
-        foreach (var viewer in _startViewers)
-        {
-            AddNewViewer(viewer, _fogRadiusBase);
-        }
+        _viewersTransforms.Remove(viewer);
+        CheckIfMaxViewerCalculatedByFrame();
+    }
+
+    /// <summary>
+    /// Init the good number of viewer calculated by frame
+    /// </summary>
+    private void CheckIfMaxViewerCalculatedByFrame()
+    {
+        _calculateViewerByFrame = _viewersTransforms.Count < Max_Viewer_Calculated_By_Frame ? _viewersTransforms.Count : Max_Viewer_Calculated_By_Frame;
     }
 
     /// <summary>
@@ -304,13 +320,11 @@ public class FogOfWar : MonoBehaviour
 public class Viewers
 {
     public readonly Transform Transform;
-    public readonly HashSet<Vector2Int> DiscoveredTiles;
     public readonly int FogRadius;
 
-    public Viewers(Transform transform, HashSet<Vector2Int> discoveredTiles, int fogRadius)
+    public Viewers(Transform transform, int fogRadius)
     {
         Transform = transform;
-        DiscoveredTiles = discoveredTiles;
         FogRadius = fogRadius;
     }
 }
