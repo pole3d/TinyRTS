@@ -22,6 +22,8 @@ namespace TilesEditor
         [field: SerializeField] public Vector2Int MapSize { get; private set; }
         [field: SerializeField] public Grid Grid { get; private set; }
 
+        [SerializeField] private CameraController _cameraController;
+        
         [Header("Defaults references")]
         [SerializeField] private Tilemap _defaultTilemap;
         [SerializeField] private Tile _defaultTile;
@@ -42,7 +44,7 @@ namespace TilesEditor
 
             SetBrushSizeSliderValues();
         }
-        
+
         /// <summary>
         /// Set the brush size slider's values.
         /// </summary>
@@ -53,7 +55,7 @@ namespace TilesEditor
             _brushSizeSlider.maxValue = _brushSizeMax;
             _brushSizeSlider.onValueChanged.AddListener(SetBrushSize);
         }
-        
+
         /// <summary>
         /// Set the brush size according to the slider.
         /// </summary>
@@ -90,7 +92,7 @@ namespace TilesEditor
                 {
                     continue;
                 }
-                
+
                 for (int x = 0; x < _brushSize; x++)
                 {
                     for (int y = 0; y < _brushSize; y++)
@@ -98,7 +100,7 @@ namespace TilesEditor
                         Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
 
                         bool isInZone = pos.x >= 0 && pos.x < MapSize.x && pos.y < MapSize.y && pos.y >= 0;
-                        
+
                         if (isInZone == false)
                         {
                             continue;
@@ -159,6 +161,7 @@ namespace TilesEditor
             }
 
             mapData.UnitEditorDatas = _unitForEditorDatas;
+            mapData.CameraPosition = Camera.main.transform.position;
 
             string json = JsonUtility.ToJson(mapData, true);
             File.WriteAllText(Application.dataPath + $"/Saves/{mapName.text}.json", json);
@@ -209,9 +212,11 @@ namespace TilesEditor
                         break;
                     }
                 }
-                
+
                 AddUnitToLists(newUnit);
             }
+
+            Camera.main.transform.position = mapData.CameraPosition;
 
             Debug.Log("Map loaded");
         }
@@ -230,9 +235,11 @@ namespace TilesEditor
             {
                 Destroy(unit.gameObject);
             }
-            
+
             _unitForEditor.Clear();
             _unitForEditorDatas.Clear();
+            
+            _cameraController.SetStartCameraPosition();
 
             FillMap();
         }

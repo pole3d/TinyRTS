@@ -51,6 +51,8 @@ namespace TilesEditor
                 _defaultTilemap.SetTile(mapData.TilePos[i], _defaultTile);
             }
 
+            Camera.main.transform.position = mapData.CameraPosition;
+
             LoadUnits(mapData);
         }
 

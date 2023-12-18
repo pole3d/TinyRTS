@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -8,9 +9,11 @@ namespace TilesEditor
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField, Range(5,30)] private float _maxSpeed;
+        [SerializeField, Range(5, 30)] private float _minSpeed;
+        [SerializeField, Range(5, 30)] private float _maxSpeed;
         [SerializeField] private Slider _slider;
         [SerializeField] private Map _map;
+        [SerializeField] private TMP_Text _cameraPositionValue;
 
         private Camera _camera;
         private float _speed;
@@ -26,9 +29,14 @@ namespace TilesEditor
             _halfHeight = _camera.orthographicSize + 1;
 
             SetSizeSliderValues();
-            SetCameraPosition();
+            SetStartCameraPosition();
         }
-        
+
+        private void SetPositionText()
+        {
+            _cameraPositionValue.text = $"Camera set to x {Math.Round(transform.position.x, 2)}, y {Math.Round(transform.position.y, 2)}";
+        }
+
         /// <summary>
         /// Set the slider's initial values.
         /// </summary>
@@ -36,7 +44,7 @@ namespace TilesEditor
         {
             SetSpeed(_slider.value);
             _slider.onValueChanged.AddListener(SetSpeed);
-            _slider.minValue = 1;
+            _slider.minValue = _minSpeed;
             _slider.maxValue = _maxSpeed;
         }
 
@@ -52,9 +60,10 @@ namespace TilesEditor
         /// <summary>
         /// Set the camera to the left bottom corner of the map.
         /// </summary>
-        private void SetCameraPosition()
+        public void SetStartCameraPosition()
         {
             transform.position = new Vector3(_halfWidth, _halfHeight, -10);
+            SetPositionText();
         }
 
         void Update()
@@ -76,8 +85,14 @@ namespace TilesEditor
 
             float clampX = Mathf.Clamp(newPos.x, _halfWidth, _map.MapSize.x - _halfWidth);
             float clampY = Mathf.Clamp(newPos.y, _halfHeight, _map.MapSize.y - _halfHeight);
-            
+
+            if (newPos != transform.position)
+            {
+                SetPositionText();
+            }
+
             transform.position = new Vector3(clampX, clampY, -10);
+
         }
     }
 }
