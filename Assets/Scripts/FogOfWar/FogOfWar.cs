@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -35,7 +36,6 @@ public class FogOfWar : MonoBehaviour
     private List<Vector3Int> _removeTiles = new List<Vector3Int>();
     private List<Viewers> _allViewers = new List<Viewers>();
 
-
     private int _fogRadiusBase = 8;
     private int[,] _tileStatus;
     private bool[,] _tileActivatedCurrent;
@@ -43,7 +43,7 @@ public class FogOfWar : MonoBehaviour
     private TileBase[] _tileShadow;
     private Vector2Int _offsetCell;
     private Vector2Int _mapSize;
-    private Vector3Int[] _allMap;
+    
 
     private const float MinDistancePlayerMove = 0.01f;
 
@@ -104,7 +104,6 @@ public class FogOfWar : MonoBehaviour
             return;
         }
 
-        _allMap = new Vector3Int[_mapSize.x * _mapSize.y];
 
         BoundsInt bounds = _underTilemap.cellBounds;
         foreach (var position in bounds.allPositionsWithin)
@@ -135,58 +134,23 @@ public class FogOfWar : MonoBehaviour
     /// </summary>
     private void StartDiscoveredTiles()
     {
-        foreach (var viewer in _viewersTransforms)
-        {
-            // CheckDiscoveredTiles(viewer);
-            var discoveredViewer = GetGoodViewers(viewer);
-            //AddDiscoveredTiles(viewer, discoveredViewer);
-        }
+        StartCoroutine(WaitToUpdateFogOfWar());
+    }
 
+    IEnumerator WaitToUpdateFogOfWar()
+    {
         ClearBuffer();
         WriteViewer();
         CompareToOldList();
-    }
-
-    /// <summary>
-    /// Update is called once per frame, checks if viewers have moved
-    /// </summary>
-    private void Update()
-    {
-        CheckIfViewersMove();
-    }
-
-    /// <summary>
-    /// Checks if viewers have moved and updates discovered tiles accordingly
-    /// </summary>
-    private void CheckIfViewersMove()
-    {
-        for (int i = 0; i < _viewersTransforms.Count; i++)
-        {
-            if (Vector2.Distance(_lastPlayerPosition[i], _viewersTransforms[i].position) > MinDistancePlayerMove)
-            {
-                _lastPlayerPosition[i] = _viewersTransforms[i].position;
-
-                //var discoveredViewer = GetGoodViewers(_viewersTransforms[i]);
-                //AddDiscoveredTiles(_viewersTransforms[i], discoveredViewer);
-                // ClearBuffer();
-                // WriteViewer();
-                // CompareToOldList();
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            ClearBuffer();
-            WriteViewer();
-            CompareToOldList();
-        }
+        yield return new WaitForSeconds(.5f);
+        StartCoroutine(WaitToUpdateFogOfWar());
     }
 
     private void ClearBuffer()
     {
-        for (int x = _mapSize.x; x < 0; x++)
+        for (int x = 0; x < _mapSize.x; x++)
         {
-            for (int y = _mapSize.y; y < 0; y++)
+            for (int y = 0; y < _mapSize.y; y++)
             {
                 _tileActivatedCurrent[x, y] = false;
             }
@@ -203,6 +167,7 @@ public class FogOfWar : MonoBehaviour
             var fogRadiusSq = fogRadius * fogRadius;
 
             // For all tiles in the radius
+            int count = 0;
             for (int x = viewerTilePos.x - fogRadius; x <= viewerTilePos.x + fogRadius; x++)
             {
                 for (int y = viewerTilePos.y - fogRadius; y <= viewerTilePos.y + fogRadius; y++)
@@ -212,11 +177,13 @@ public class FogOfWar : MonoBehaviour
 
                     var cellPos = GetTileStatusPos(cellPosition.x, cellPosition.y);
 
-                    // print($"cellPos : {cellPos}");
                     // Check if it is inside the FogRadius
                     if (direction.sqrMagnitude <= fogRadiusSq)
                     {
-                        print("go activated");
+                        if(!CheckIfInsideOfMap(new Vector2Int(cellPos.x,cellPos.y)))
+                            continue;
+                        
+                        count++;
                         _tileActivatedCurrent[cellPos.x, cellPos.y] = true;
                     }
                 }
@@ -230,26 +197,31 @@ public class FogOfWar : MonoBehaviour
         {
             for (int y = 0; y < _mapSize.y; y++)
             {
-                // print($"current : {_tileActivatedCurrent[x,y]} / old : {_tileActivatedOld[x,y]}");
                 if (_tileActivatedOld[x, y] == true && _tileActivatedCurrent[x, y] == false)
                 {
                     _removeTiles.Add(GetWorldPosTile(x,y));
+                    _tileActivatedOld[x, y] = false;
+
                     _fogOfWarTilemap.SetTile(GetWorldPosTile(x,y), _discoveredTile);
                 }
                 else if (_tileActivatedOld[x, y] == false && _tileActivatedCurrent[x, y] == true)
                 {
                     _addTiles.Add(GetWorldPosTile(x,y));
+                    _tileActivatedOld[x, y] = true;
+
                     _fogOfWarTilemap.SetTile(GetWorldPosTile(x,y), null);
                 }
             }
         }
 
-        print($"_removeTiles : {_removeTiles.Count}");
-        print($"_addTiles : {_addTiles.Count}");
+        // print($"_removeTiles : {_removeTiles.Count}");
+        // print($"_addTiles : {_addTiles.Count}");
 
-        TileBase[] removeAdd = new TileBase[_removeTiles.Count + _addTiles.Count];
-        Vector3Int[] removeAddPos = new Vector3Int[_removeTiles.Count + _addTiles.Count];
-
+        // TileBase[] removeAdd = new TileBase[_removeTiles.Count + _addTiles.Count];
+        // Vector3Int[] removeAddPos = new Vector3Int[_removeTiles.Count + _addTiles.Count];
+        
+        // print(removeAdd.Length + " " + removeAddPos.Length);
+        
         // for (int i = 0; i < removeAdd.Length; i++)
         // {
         //     if (i < _removeTiles.Count)
@@ -260,8 +232,8 @@ public class FogOfWar : MonoBehaviour
         //     else
         //     {
         //         removeAdd[i] = null;
-        //         // print($"add : {_addTiles[i]}");
-        //         removeAddPos[i] = _addTiles[i];
+        //         //print($"add : {_addTiles[i]} / i : {i}");
+        //         removeAddPos[i] = _addTiles[i-_removeTiles.Count];
         //     }
         // }
         //
@@ -270,91 +242,9 @@ public class FogOfWar : MonoBehaviour
         
         _removeTiles.Clear();
         _addTiles.Clear();
-
-        (_tileActivatedOld, _tileActivatedCurrent) = (_tileActivatedCurrent, _tileActivatedOld);
     }
-
-
-    /// <summary>
-    /// Checks and updates discovered tiles based on viewer movement
-    /// </summary>
-    private void CheckDiscoveredTiles(Transform viewer)
-    {
-        var viewerTilePos = new Vector2Int((int)viewer.position.x, (int)viewer.position.y);
-
-        // Check for discovered tiles if they are outside the FogRadius range
-        var discoveredViewer = GetGoodViewers(viewer);
-
-        foreach (var discoveredTile in discoveredViewer.DiscoveredTiles)
-        {
-            if (Vector2Int.Distance(viewerTilePos, discoveredTile) > discoveredViewer.FogRadius)
-            {
-                // Change these tiles with discoveredTile and remove them from the discoveredViewer.DiscoveredTiles list 
-                Vector2Int cellPos = GetTileStatusPos(discoveredTile.x, discoveredTile.y);
-
-                if (!CheckIfInsideOfMap(cellPos))
-                    continue;
-
-                _tileStatus[cellPos.x, cellPos.y]--;
-                // print($"reduce {_tileStatus[cellPos.x, cellPos.y]}");
-
-                // Check if status of the tile with no viewer and add the shadow tile
-                if (_tileStatus[cellPos.x, cellPos.y] <= 0)
-                {
-                    _tileStatus[cellPos.x, cellPos.y] = 0;
-                    _toAdd.Add(new Vector3Int(discoveredTile.x, discoveredTile.y, 0));
-                }
-            }
-        }
-
-        // Remove from the tile of the viewer's current list
-        TileBase[] tilesDiscovered = new TileBase[_toAdd.Count];
-        _fogOfWarTilemap.SetTiles(_toAdd.ToArray(), tilesDiscovered);
-
-        _toAdd.Clear();
-        discoveredViewer.DiscoveredTiles.Clear();
-
-        AddDiscoveredTiles(viewer, discoveredViewer);
-    }
-
-
-    /// <summary>
-    /// Adds newly discovered tiles to the Fog of War
-    /// </summary>
-    private void AddDiscoveredTiles(Transform viewer, Viewers discoveredViewer)
-    {
-        var viewerTilePos = new Vector2Int((int)viewer.position.x, (int)viewer.position.y);
-        var fogRadius = discoveredViewer.FogRadius;
-        var fogRadiusSq = fogRadius * fogRadius;
-
-        // For all tiles in the radius
-        for (int x = viewerTilePos.x - fogRadius; x <= viewerTilePos.x + fogRadius; x++)
-        {
-            for (int y = viewerTilePos.y - fogRadius; y <= viewerTilePos.y + fogRadius; y++)
-            {
-                Vector2Int cellPosition = new Vector2Int(x, y);
-                Vector2Int direction = viewerTilePos - cellPosition;
-
-                // Check if it is inside the FogRadius
-                if (direction.sqrMagnitude <=
-                    fogRadiusSq) // && !discoveredViewer.DiscoveredTiles.Contains(cellPosition))
-                {
-                    _fogOfWarTilemap.SetTile(new Vector3Int(cellPosition.x, cellPosition.y, 0), null);
-                    // discoveredViewer.DiscoveredTiles.Add(cellPosition);
-
-                    _toAdd.Add(new Vector3Int(cellPosition.x, cellPosition.y, 0));
-
-                    Vector2Int cellPos = GetTileStatusPos(cellPosition.x, cellPosition.y);
-                    // Add 1 to the status of this tile
-                    if (CheckIfInsideOfMap(cellPos))
-                        _tileStatus[cellPos.x, cellPos.y]++;
-
-                    // print($"add : {_tileStatus[cellPos.x, cellPos.y]}");
-                }
-            }
-        }
-    }
-
+    
+    
     /// <summary>
     /// Returns the Viewers object associated with the given viewer transform
     /// </summary>
