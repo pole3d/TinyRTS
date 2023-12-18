@@ -13,6 +13,8 @@ namespace Buildings
         [Header("Building")]
         public string Name;
         public Sprite InitialSprite;
+        public int Width;
+        public int Height;
         
         [Header("Stages")]
         private readonly Queue<BuildStage> _buildStages = new Queue<BuildStage>();
@@ -83,6 +85,16 @@ namespace Buildings
         public void PlayBuiltAnimation()
         {
             View.PlayState(_data.BuiltStageName);
+        }
+
+        public IEnumerable<Vector2Int> GetBuildingFootprint() {
+            Vector3 position = transform.position;
+            
+            for (float y = position.y; y < position.y + Height; y++) {
+                for (float x = position.x; x < position.x + Width; x++) {
+                    yield return new Vector2Int((int) x, (int) y);
+                }
+            }
         }
     }    
 }

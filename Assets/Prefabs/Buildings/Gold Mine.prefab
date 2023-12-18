@@ -102,6 +102,8 @@ MonoBehaviour:
   View: {fileID: 2935059472587121645}
   Name: Gold Mine
   InitialSprite: {fileID: -785419296, guid: 67c977c5b027c5148901dc5ede30be30, type: 3}
+  Width: 2
+  Height: 2
   GameplayData: {fileID: 11400000, guid: 769565e0c5f6abe48822dd66e6103c1d, type: 2}
 --- !u!114 &2935059472587121645
 MonoBehaviour:

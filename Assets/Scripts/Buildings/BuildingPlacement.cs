@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GameManagement;
 using UnityEngine;
 
 namespace Buildings
@@ -10,6 +11,7 @@ namespace Buildings
         public List<Building> BuildingPrefabs;
 
         private Building _buildingToPlace;
+        private Vector3 _previousMousePosition;
 
         void Update()
         {
@@ -24,6 +26,11 @@ namespace Buildings
             {
                 _buildingToPlace.SpriteRenderer.color = Color.white;
                 _buildingToPlace.IsGhost = false;
+
+                foreach (Vector2Int position in _buildingToPlace.GetBuildingFootprint())
+                {
+                    GameManager.Instance.PathfindingController.SetTileNotWalkablePathfinding(position);
+                }
 
                 _buildingToPlace = null;
             }
@@ -43,11 +50,35 @@ namespace Buildings
         private void UpdateBuildingShadow()
         {
             Vector3Int coordinates = GetMouseCoordinatesOnGrid();
+            if (coordinates == _previousMousePosition)
+            {
+                return;
+            }
 
-            _buildingToPlace.transform.position = new Vector3(
-                    coordinates.x + 1,
-                    coordinates.y + 1
-            );
+            _previousMousePosition = coordinates;
+
+            _buildingToPlace.transform.position = new Vector3(coordinates.x, coordinates.y);
+
+            if (IsIllegalPosition()) 
+            {
+                _buildingToPlace.SpriteRenderer.color = Color.red;
+            }
+            else
+            {
+                _buildingToPlace.SpriteRenderer.color = Color.green;
+            }
+        }
+
+        private bool IsIllegalPosition() {
+            foreach (Vector2Int position in _buildingToPlace.GetBuildingFootprint())
+            {
+                if (GameManager.Instance.PathfindingController.Pathfinding.Grid.GetGridObject(position.x, position.y).IsWalkable == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private Vector3Int GetMouseCoordinatesOnGrid()
