@@ -554,6 +554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camSpeed: 10
   _edgeSize: 35
+  _mapReference: {fileID: 1012043824}
 --- !u!114 &1881537367
 MonoBehaviour:
   m_ObjectHideFlags: 0
