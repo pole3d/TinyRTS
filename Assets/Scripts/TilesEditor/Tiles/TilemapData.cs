@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 namespace TilesEditor.Tiles
 {
     /// <summary>
-    /// Used to set the tiles associated to the tiles in the inspector.
+    /// The values required to correctly load the tilemaps and initialize the buttons.
     /// </summary>
     [Serializable]
     public class TilemapData

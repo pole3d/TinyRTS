@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 namespace TilesEditor.Units
 {
+    /// <summary>
+    /// Set the unit buttons values.
+    /// </summary>
     public class UnitButton : MonoBehaviour
     {
         [SerializeField] private Button _button;

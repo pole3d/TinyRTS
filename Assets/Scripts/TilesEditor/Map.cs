@@ -14,7 +14,7 @@ using Vector2 = System.Numerics.Vector2;
 namespace TilesEditor
 {
     /// <summary>
-    /// Used to get and set map datas.
+    /// Handle all the changes in the map like tile placement, unit and mainly Save and Load functions. 
     /// </summary>
     public class Map : MonoBehaviour
     {
@@ -45,9 +45,6 @@ namespace TilesEditor
             SetBrushSizeSliderValues();
         }
 
-        /// <summary>
-        /// Set the brush size slider's values.
-        /// </summary>
         private void SetBrushSizeSliderValues()
         {
             SetBrushSize(_brushSizeSlider.value);
@@ -114,7 +111,14 @@ namespace TilesEditor
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Add unit to the map.
+        /// </summary>
+        /// <param name="prefab"> The default prefab to instantiate. </param>
+        /// <param name="data"> The data we want to give it. </param>
+        /// <param name="position"> The position it will spawns. </param>
+        /// <param name="sprite"> The sprite we give it. </param>
         public void AddUnitToMap(UnitForEditor prefab, UnitForEditorData data, Vector3 position, Sprite sprite)
         {
             UnitForEditor unit = Instantiate(prefab, position, Quaternion.identity);
@@ -129,9 +133,13 @@ namespace TilesEditor
             AddUnitToLists(unit);
         }
 
+        
+        /// <summary>
+        /// Add the unit to the list in the editor.
+        /// </summary>
+        /// <param name="unit"> The unit to add to the list. </param>
         private void AddUnitToLists(UnitForEditor unit)
         {
-
             _unitForEditorDatas.Add(unit.UnitForEditorData);
             _unitForEditor.Add(unit);
         }

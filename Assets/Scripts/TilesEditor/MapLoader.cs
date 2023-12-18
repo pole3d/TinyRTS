@@ -10,6 +10,9 @@ namespace TilesEditor
 {
     public class MapLoader : MonoBehaviour
     {
+        /// <summary>
+        /// Load the map in a different scene than the Editor scene. It converts the datas into values in scene.
+        /// </summary>
         [Header("Map to load values")] [SerializeField]
         private TextAsset _jsonFile;
 
@@ -56,6 +59,10 @@ namespace TilesEditor
             LoadUnits(mapData);
         }
 
+        /// <summary>
+        /// Load the units data and its positions.
+        /// </summary>
+        /// <param name="mapData"> The data of the map we load. </param>
         private void LoadUnits(MapData mapData)
         {
             foreach (UnitForEditorData data in mapData.UnitEditorDatas)
@@ -73,6 +80,10 @@ namespace TilesEditor
             }
         }
 
+        
+        /// <summary>
+        /// Load the tiles in a specific tilemap which contains a tilemap collider component.
+        /// </summary>
         public void LoadObstacles()
         {
             MapData mapData = JsonUtility.FromJson<MapData>(_jsonFile.text);

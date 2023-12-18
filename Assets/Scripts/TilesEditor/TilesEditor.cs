@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Gameplay.Units;
 using TilesEditor.Tiles;
 using TilesEditor.Units;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -16,7 +14,7 @@ using TileData = TilesEditor.Tiles.TileData;
 namespace TilesEditor
 {
     /// <summary>
-    /// Handle the editor system.
+    /// Manage all the player actions and has all the current datas.
     /// </summary>
     public class TilesEditor : MonoBehaviour
     {
@@ -124,18 +122,13 @@ namespace TilesEditor
 
         private void Update()
         {
-            PaintMap();
+            AddTileAndUnitToScene();
         }
 
         /// <summary>
-        /// If the player is pressing the left button on the mouse, it will paint the selected tile.
+        /// Detects if the player is clicking and place a tile or a unit.
         /// </summary>
-        private void PaintMap()
-        {
-            PaintTile();
-        }
-
-        private void PaintTile()
+        private void AddTileAndUnitToScene()
         {
             if (MenuIsOpen())
             {
@@ -177,22 +170,24 @@ namespace TilesEditor
             }
         }
 
-        public bool IsInZone(Vector3 position)
+        /// <summary>
+        /// Is in a grid boundaries.
+        /// </summary>
+        /// <param name="position"> The position we want to check. </param>
+        /// <returns></returns>
+        private bool IsInZone(Vector3 position)
         {
             return position.x > 0 && position.x < _currentMap.MapSize.x && position.y < _currentMap.MapSize.y && position.y > 0;
         }
 
         public void DisplaySavePanel()
         {
-            _savePanel.gameObject.SetActive(!_savePanel.gameObject.activeSelf);
+            _savePanel.gameObject.SetActive(!_savePanel.gameObject.activeSelf && _loadPanel.gameObject.activeSelf == false);
         }
 
-        /// <summary>
-        /// Display the load panel.
-        /// </summary>
         public void DisplayLoadPanel()
         {
-            _loadPanel.gameObject.SetActive(!_loadPanel.gameObject.activeSelf);
+            _loadPanel.gameObject.SetActive(!_loadPanel.gameObject.activeSelf && _savePanel.gameObject.activeSelf == false);
 
             foreach (FileInfo file in GetMapSaves())
             {
@@ -282,6 +277,9 @@ namespace TilesEditor
             }
         }
 
+        /// <summary>
+        /// Instantiate the unit buttons in the viewport.
+        /// </summary>
         private void CreateUnitButtons()
         {
             foreach (UnitData unit in Data.Units)
@@ -297,11 +295,10 @@ namespace TilesEditor
             }
         }
 
-
         /// <summary>
-        /// Set active false all the tiles buttons that are not 
+        /// Set active false all the tiles buttons that are not associated to the tilemaps.
         /// </summary>
-        /// <param name="currentTilemapButton"></param>
+        /// <param name="currentTilemapButton"> The button to check. </param>
         public void DontDisplayTiles(TilemapButton currentTilemapButton)
         {
             foreach (TilemapButton button in _tilemapButtons)
@@ -318,12 +315,7 @@ namespace TilesEditor
             }
         }
 
-        /// <summary>
-        /// Detect if mouse is over UI or not.
-        /// </summary>
-        /// <param name="position"> Mouse position. </param>
-        /// <returns></returns>
-        public bool IsOverUI(Vector2 position)
+        private bool IsOverUI(Vector2 position)
         {
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = position;

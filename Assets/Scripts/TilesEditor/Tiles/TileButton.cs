@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace TilesEditor.Tiles
 {
     /// <summary>
-    /// Used to set the tiles buttons data.
+    /// Set the tile buttons values.
     /// </summary>
     public class TileButton : MonoBehaviour
     {
@@ -19,11 +19,6 @@ namespace TilesEditor.Tiles
             _button.onClick.AddListener(() => TilesEditor.Instance.SetCurrentTile(_tile));
         }
 
-        /// <summary>
-        /// Set the tile.
-        /// </summary>
-        /// <param name="tile"> The tile to set. </param> 
-        /// <param name="sprite"> The sprite to display. </param>
         public void SetTileDisplay(TileData tile, Sprite sprite)
         {
             _tile = tile;

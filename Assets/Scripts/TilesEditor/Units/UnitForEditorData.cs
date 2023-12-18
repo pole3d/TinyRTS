@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace TilesEditor.Units
 {
+    /// <summary>
+    /// Class with the values needed to associate a unit for editor data to the unit data corresponding during the loading step, outside the editor scene. 
+    /// </summary>
     [Serializable]
     public class UnitForEditorData
     {

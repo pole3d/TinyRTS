@@ -1,12 +1,13 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TilesEditor
 {
+    /// <summary>
+    /// The movement manager of the camera in the editor scene according to the player's inputs. 
+    /// </summary>
     public class CameraController : MonoBehaviour
     {
         [SerializeField, Range(5, 30)] private float _minSpeed;
@@ -32,14 +33,14 @@ namespace TilesEditor
             SetStartCameraPosition();
         }
 
-        private void SetPositionText()
+        /// <summary>
+        /// Update the text values.
+        /// </summary>
+        private void SetPositionTextValues()
         {
             _cameraPositionValue.text = $"Camera set to x {Math.Round(transform.position.x, 2)}, y {Math.Round(transform.position.y, 2)}";
         }
 
-        /// <summary>
-        /// Set the slider's initial values.
-        /// </summary>
         private void SetSizeSliderValues()
         {
             SetSpeed(_slider.value);
@@ -63,7 +64,7 @@ namespace TilesEditor
         public void SetStartCameraPosition()
         {
             transform.position = new Vector3(_halfWidth, _halfHeight, -10);
-            SetPositionText();
+            SetPositionTextValues();
         }
 
         void Update()
@@ -88,7 +89,7 @@ namespace TilesEditor
 
             if (newPos != transform.position)
             {
-                SetPositionText();
+                SetPositionTextValues();
             }
 
             transform.position = new Vector3(clampX, clampY, -10);

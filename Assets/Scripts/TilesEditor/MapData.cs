@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TilesEditor
 {
     /// <summary>
-    /// The map data to load and save tilemaps.
+    /// The datas needed to load a map without the main script (TilesEditor).
     /// </summary>
     public class MapData
     {

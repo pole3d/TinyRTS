@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 namespace TilesEditor.Tiles
 {
     /// <summary>
-    /// Used to know on which tilemap the tile must be paint.
+    /// Associate the tile and its tilemap.
     /// </summary>
     [Serializable]
     public class TileData
