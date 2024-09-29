@@ -247,7 +247,7 @@ namespace TilesEditor
             _unitForEditor.Clear();
             _unitForEditorDatas.Clear();
             
-            _cameraController.SetStartCameraPosition();
+            _cameraController.Reset();
 
             FillMap();
         }

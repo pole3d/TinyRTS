@@ -6,7 +6,6 @@ using TilesEditor.Units;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
@@ -62,7 +61,7 @@ namespace TilesEditor
             }
             else
             {
-                Debug.Log("There is already an Instance in the scene");
+                Debug.LogError("There is already an Instance in the scene");
             }
         }
 
