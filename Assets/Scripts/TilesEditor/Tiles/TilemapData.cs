@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace TilesEditor.Tiles
@@ -15,9 +14,9 @@ namespace TilesEditor.Tiles
         public int TileMapIndex;
         [field: SerializeField] public TilemapType Type { get; private set; }
         [field: SerializeField] public Tilemap CurrentTilemap { get; private set; }
-        [field: SerializeField] public List<Tile> TilesAssociated { get; private set; } = new List<Tile>();
+        //[field: SerializeField] public List<Tile> TilesAssociated { get; private set; } = new List<Tile>();
+        [field: SerializeField] public List<TileDataScriptable> TilesDataAssociated { get; private set; } = new List<TileDataScriptable>();
         public List<TileButton> TilesButtonsAssociated { get; set; } = new List<TileButton>();
-        public List<TileData> TilesDataAssociated { get; } = new List<TileData>();
     }
     
     public enum TilemapType

@@ -6,7 +6,6 @@ using TilesEditor.Units;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
@@ -30,7 +29,7 @@ namespace TilesEditor
 
         [Header("Object References")]
         [SerializeField] private GameplayData _gameplayData;
-        [SerializeField] private SpriteRenderer _previewObj;
+        [SerializeField] private TilePreview _previewObj;
         [SerializeField] private UnitForEditor _unitPrefab;
         
         [Header("Button References")]
@@ -62,7 +61,7 @@ namespace TilesEditor
             }
             else
             {
-                Debug.Log("There is already an Instance in the scene");
+                Debug.LogError("There is already an Instance in the scene");
             }
         }
 
@@ -76,19 +75,6 @@ namespace TilesEditor
 
             _updateCurrentTile += UpdateTilePreview;
             _updateCurrentUnit += UpdateTilePreview;
-
-            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
-            {
-                foreach (Tile tile in tilemap.TilesAssociated)
-                {
-                    tilemap.TilesDataAssociated.Add(
-                        new TileData
-                        {
-                            Tile = tile,
-                            AssociatedTilemap = null
-                        });
-                }
-            }
 
             CreateTilemapButtons();
             CreateTileButtons();
@@ -139,7 +125,7 @@ namespace TilesEditor
             screenToWorldPoint.z = 0;
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
 
-            _previewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
+            _previewObj.SetPosition(new Vector3(cellPos.x, cellPos.y, 0));
 
             if (IsOverUI(Input.mousePosition))
             {
@@ -235,11 +221,11 @@ namespace TilesEditor
         {
             if (CurrentTile != null && CurrentUnit == null)
             {
-                _previewObj.sprite = CurrentTile.Tile.sprite;
+                _previewObj.SpriteRenderer.sprite = CurrentTile.Tile.sprite;
             }
             else
             {
-                _previewObj.sprite = null;
+                _previewObj.SpriteRenderer.sprite = null;
             }
         }
 
@@ -250,10 +236,10 @@ namespace TilesEditor
         {
             foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
-                foreach (TileData tile in tilemap.TilesDataAssociated)
+                foreach (var tile in tilemap.TilesDataAssociated)
                 {
                     TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentLayout.transform);
-                    newTileButton.SetTileDisplay(tile, tile.Tile.sprite);
+                    newTileButton.SetTileDisplay(tile.Data, tile.Data.Tile.sprite);
                     tilemap.TilesButtonsAssociated.Add(newTileButton);
                     newTileButton.gameObject.SetActive(false);
                 }
