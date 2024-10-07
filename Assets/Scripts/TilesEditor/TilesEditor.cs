@@ -76,19 +76,6 @@ namespace TilesEditor
             _updateCurrentTile += UpdateTilePreview;
             _updateCurrentUnit += UpdateTilePreview;
 
-            foreach (TilemapData tilemap in _currentMap.TilemapDatas)
-            {
-                //foreach (Tile tile in tilemap.TilesAssociated)
-                //{
-                //    tilemap.TilesDataAssociated.Add(
-                //        //new TileData
-                //        //{
-                //        //    Tile = tile,
-                //        //    AssociatedTilemap = null
-                //        //});
-                //}
-            }
-
             CreateTilemapButtons();
             CreateTileButtons();
             CreateUnitButtons();

@@ -106,9 +106,7 @@ namespace TilesEditor
                             continue;
                         }
 
-                        //SaveTileToMap(tile, tilemap, pos);
                         AddTilesToMap(tile, tilemap, pos);
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////  HERE CONTINUE
                     }
                 }
             }
@@ -271,8 +269,7 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap
-                        .SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    SaveTileToMap(mapData.TileDatas[i],mapData.TileDatas[i].AssociatedTilemap,mapData.TilePos[i]);
                 }
                 else
                 {
