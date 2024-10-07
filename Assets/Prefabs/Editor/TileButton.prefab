@@ -34,7 +34,6 @@ RectTransform:
   - {fileID: 1654150444965214777}
   - {fileID: 1935566136144984185}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -53,9 +52,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59768b9551dc40d6ac8c5749f6dd00b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tile:
-    Tile: {fileID: 0}
-    AssociatedTilemap: {fileID: 0}
   _display: {fileID: 8455841485466085313}
   _button: {fileID: 5271441128927120376}
 --- !u!222 &4017608974508066666
@@ -141,7 +137,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3501383409893395865}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -178,7 +173,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -1892421589, guid: d807460358e365240b2f7948211310f1, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -217,7 +212,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3501383409893395865}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

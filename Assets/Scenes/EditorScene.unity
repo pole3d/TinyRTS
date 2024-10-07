@@ -933,7 +933,7 @@ Grid:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 339170165}
   m_Enabled: 1
-  m_CellSize: {x: 0.99, y: 0.99, z: 0}
+  m_CellSize: {x: 1, y: 1, z: 0}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
@@ -1788,7 +1788,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745179642}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.5, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1841,7 +1841,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.32, y: 0.32}
+  m_Size: {x: 3.92, y: 1.48}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
@@ -4408,7 +4408,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentMap: {fileID: 413033637}
   _gameplayData: {fileID: 11400000, guid: 769565e0c5f6abe48822dd66e6103c1d, type: 2}
-  _previewObj: {fileID: 745179644}
+  _previewObj: {fileID: 2016787089}
   _unitPrefab: {fileID: 9015548726072389478, guid: 75b509133f2d67d44806aafd43aa927f, type: 3}
   _tileButtonPrefab: {fileID: 487441823971541542, guid: dc2bcbabae543a64ca72b67d35b83500, type: 3}
   _tilemapButtonPrefab: {fileID: 8457967881110336401, guid: c54a5ef52504be44f81669ef703fe53c, type: 3}
@@ -4443,6 +4443,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2016787088}
+  - component: {fileID: 2016787089}
   m_Layer: 0
   m_Name: Preview
   m_TagString: Untagged
@@ -4466,6 +4467,20 @@ Transform:
   - {fileID: 745179643}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2016787089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016787087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65b2743805b544a68e8664919e1935cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <SpriteRenderer>k__BackingField: {fileID: 745179644}
+  _positionOffset: {x: 0.5, y: 0.5, z: 0}
 --- !u!1 &2029795366
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,11 +5,9 @@ using TilesEditor.Tiles;
 using TilesEditor.Units;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using TileData = TilesEditor.Tiles.TileData;
-using Vector2 = System.Numerics.Vector2;
 
 namespace TilesEditor
 {

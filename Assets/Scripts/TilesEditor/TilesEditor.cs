@@ -29,7 +29,7 @@ namespace TilesEditor
 
         [Header("Object References")]
         [SerializeField] private GameplayData _gameplayData;
-        [SerializeField] private SpriteRenderer _previewObj;
+        [SerializeField] private TilePreview _previewObj;
         [SerializeField] private UnitForEditor _unitPrefab;
         
         [Header("Button References")]
@@ -138,7 +138,7 @@ namespace TilesEditor
             screenToWorldPoint.z = 0;
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
 
-            _previewObj.transform.position = new Vector3(cellPos.x, cellPos.y, 0);
+            _previewObj.SetPosition(new Vector3(cellPos.x, cellPos.y, 0));
 
             if (IsOverUI(Input.mousePosition))
             {
@@ -234,11 +234,11 @@ namespace TilesEditor
         {
             if (CurrentTile != null && CurrentUnit == null)
             {
-                _previewObj.sprite = CurrentTile.Tile.sprite;
+                _previewObj.SpriteRenderer.sprite = CurrentTile.Tile.sprite;
             }
             else
             {
-                _previewObj.sprite = null;
+                _previewObj.SpriteRenderer.sprite = null;
             }
         }
 
