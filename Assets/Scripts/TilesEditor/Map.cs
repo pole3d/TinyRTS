@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using Gameplay.Units;
 using TilesEditor.Tiles;
 using TilesEditor.Units;
 using TMPro;
@@ -21,13 +20,15 @@ namespace TilesEditor
         [field: SerializeField] public Grid Grid { get; private set; }
 
         [SerializeField] private CameraController _cameraController;
-        
-        [Header("Defaults references")]
-        [SerializeField] private Tilemap _defaultTilemap;
+
+        [Header("Defaults references")] [SerializeField]
+        private Tilemap _defaultTilemap;
+
         [SerializeField] private Tile _defaultTile;
 
-        [Header("Brush Size")]
-        [SerializeField, Range(1, 30)] private float _brushSizeMax;
+        [Header("Brush Size")] [SerializeField, Range(1, 30)]
+        private float _brushSizeMax;
+
         [SerializeField] private Slider _brushSizeSlider;
 
         private TileData[,] _tilesPos;
@@ -83,7 +84,13 @@ namespace TilesEditor
         {
             foreach (TilemapData tilemap in TilemapDatas)
             {
-                if (!tilemap.TilesDataAssociated.Contains(tile))
+                var containsTile = false;
+                foreach (var tileData in tilemap.TilesDataAssociated)
+                {
+                    if (tileData.Data == tile) containsTile = true;
+                }
+
+                if (!containsTile)
                 {
                     continue;
                 }
@@ -94,22 +101,93 @@ namespace TilesEditor
                     {
                         Vector3Int pos = new Vector3Int(position.x + x, position.y + y);
 
-                        bool isInZone = pos.x >= 0 && pos.x < MapSize.x && pos.y < MapSize.y && pos.y >= 0;
-
-                        if (isInZone == false)
+                        if (IsInZone(pos) == false)
                         {
                             continue;
                         }
 
-                        tilemap.CurrentTilemap.SetTile(pos, tile.Tile);
-
-                        tile.AssociatedTilemap = tilemap;
-                        _tilesPos[pos.x, pos.y] = tile;
+                        //SaveTileToMap(tile, tilemap, pos);
+                        AddTilesToMap(tile, tilemap, pos);
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////  HERE CONTINUE
                     }
                 }
             }
         }
+
+        private void SaveTileToMap(TileData tile, TilemapData tilemap, Vector3Int pos)
+        {
+            tilemap.CurrentTilemap.SetTile(pos, GetTileToDraw(tile, pos));
+            tile.AssociatedTilemap = tilemap;
+            _tilesPos[pos.x, pos.y] = tile;
+        }
+
+        /// <summary>
+        /// Add the tiles to draw, one by one
+        /// </summary>
+        /// <param name="firstTilePosition"></param>
+        private void AddTilesToMap(TileData firstTileData, TilemapData tilemap, Vector3Int firstTilePosition)
+        {
+            var openCells = new Queue<TileDataPosition>();
+            var closedCells = new Queue<TileDataPosition>();
+
+            openCells.Enqueue(new TileDataPosition(firstTileData, firstTilePosition));
+
+            foreach (var additionalTile in firstTileData.AdditionalTilesPositions)
+            {
+                openCells.Enqueue(new TileDataPosition(firstTileData, firstTilePosition + (Vector3Int)additionalTile));
+            }
+
+            if (firstTileData.UseTileset)
+            {
+                Vector3Int[] additionalPositions = new Vector3Int[]
+                {
+                    firstTilePosition + Vector3Int.up,
+                    firstTilePosition + Vector3Int.right,
+                    firstTilePosition + Vector3Int.down,
+                    firstTilePosition + Vector3Int.left,
+                };
+
+                foreach (var additionalPosition in additionalPositions)
+                {
+                    if (_tilesPos[additionalPosition.x, additionalPosition.y]?.Tile != null)
+                        openCells.Enqueue(new TileDataPosition(_tilesPos[additionalPosition.x, additionalPosition.y], additionalPosition));
+                }
+            }
+
+            int maxIterations = 100; // To ensure the while loop ends.
+
+            while (openCells.Count > 0 && maxIterations > 0)
+            {
+                var currentCell = openCells.Peek();
+
+                SaveTileToMap(currentCell.Tile, tilemap, currentCell.Position);
+
+                closedCells.Enqueue(currentCell);
+                openCells.Dequeue();
+
+                maxIterations--;
+            }
+        }
         
+        /// <summary>
+        /// Returns the tile to use based on adjacdents tiles
+        /// </summary>
+        /// <param name="tileData"></param>
+        /// <param name="gridPos"></param>
+        /// <returns></returns>
+        private Tile GetTileToDraw(TileData tileData, Vector3Int gridPos)
+        {
+            if (tileData.UseTileset == false) return tileData.Tile;
+                
+            var value = 0;
+            if (_tilesPos[gridPos.x, gridPos.y + 1] != null && _tilesPos[gridPos.x, gridPos.y + 1].ID == tileData.ID) value += 1;
+            if (_tilesPos[gridPos.x + 1, gridPos.y] != null && _tilesPos[gridPos.x + 1, gridPos.y].ID == tileData.ID) value += 2;
+            if (_tilesPos[gridPos.x, gridPos.y - 1] != null && _tilesPos[gridPos.x, gridPos.y - 1].ID == tileData.ID) value += 4;
+            if (_tilesPos[gridPos.x - 1, gridPos.y] != null && _tilesPos[gridPos.x - 1, gridPos.y].ID == tileData.ID) value += 8;
+
+            return tileData.TilesetTiles[value];
+        }
+
         /// <summary>
         /// Add unit to the map.
         /// </summary>
@@ -131,7 +209,7 @@ namespace TilesEditor
             AddUnitToLists(unit);
         }
 
-        
+
         /// <summary>
         /// Add the unit to the list in the editor.
         /// </summary>
@@ -193,7 +271,8 @@ namespace TilesEditor
             {
                 if (mapData.TileDatas[i].Tile != null)
                 {
-                    TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap.SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
+                    TilemapDatas[mapData.TileDatas[i].AssociatedTilemap.TileMapIndex].CurrentTilemap
+                        .SetTile(mapData.TilePos[i], mapData.TileDatas[i].Tile);
                 }
                 else
                 {
@@ -203,7 +282,8 @@ namespace TilesEditor
 
             foreach (UnitForEditorData unitEditorData in mapData.UnitEditorDatas)
             {
-                UnitForEditor newUnit = Instantiate(TilesEditor.Instance.UnitPrefab, unitEditorData.Position, Quaternion.identity, null);
+                UnitForEditor newUnit = Instantiate(TilesEditor.Instance.UnitPrefab, unitEditorData.Position,
+                    Quaternion.identity, null);
 
                 foreach (UnitData unit in TilesEditor.Instance.Data.Units)
                 {
@@ -244,10 +324,20 @@ namespace TilesEditor
 
             _unitForEditor.Clear();
             _unitForEditorDatas.Clear();
-            
+
             _cameraController.Reset();
 
             FillMap();
+        }
+
+        /// <summary>
+        /// Is the given coordinate valid in the map
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        private bool IsInZone(Vector3Int position)
+        {
+            return position.x >= 0 && position.x < MapSize.x && position.y < MapSize.y && position.y >= 0;
         }
     }
 }

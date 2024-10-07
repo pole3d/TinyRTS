@@ -78,15 +78,15 @@ namespace TilesEditor
 
             foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
-                foreach (Tile tile in tilemap.TilesAssociated)
-                {
-                    tilemap.TilesDataAssociated.Add(
-                        new TileData
-                        {
-                            Tile = tile,
-                            AssociatedTilemap = null
-                        });
-                }
+                //foreach (Tile tile in tilemap.TilesAssociated)
+                //{
+                //    tilemap.TilesDataAssociated.Add(
+                //        //new TileData
+                //        //{
+                //        //    Tile = tile,
+                //        //    AssociatedTilemap = null
+                //        //});
+                //}
             }
 
             CreateTilemapButtons();
@@ -249,10 +249,10 @@ namespace TilesEditor
         {
             foreach (TilemapData tilemap in _currentMap.TilemapDatas)
             {
-                foreach (TileData tile in tilemap.TilesDataAssociated)
+                foreach (var tile in tilemap.TilesDataAssociated)
                 {
                     TileButton newTileButton = Instantiate(_tileButtonPrefab, _scrollViewContentLayout.transform);
-                    newTileButton.SetTileDisplay(tile, tile.Tile.sprite);
+                    newTileButton.SetTileDisplay(tile.Data, tile.Data.Tile.sprite);
                     tilemap.TilesButtonsAssociated.Add(newTileButton);
                     newTileButton.gameObject.SetActive(false);
                 }

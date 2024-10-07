@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TilesEditor
 {
-    [CreateAssetMenu(fileName = "New TilesEditorCameraData", menuName = "TilesEditorCameraData")]
+    [CreateAssetMenu(fileName = "New TilesEditorCameraData", menuName = "TilesEditor/TilesEditorCameraData")]
     public class CameraData : ScriptableObject
     {
         [field:SerializeField, Range(5, 30)] public float MinSpeed {get; private set; }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 namespace TilesEditor.Tiles
@@ -14,15 +13,11 @@ namespace TilesEditor.Tiles
 
         private TileData _tile;
 
-        private void Start()
-        {
-            _button.onClick.AddListener(() => TilesEditor.Instance.SetCurrentTile(_tile));
-        }
-
         public void SetTileDisplay(TileData tile, Sprite sprite)
         {
             _tile = tile;
             _display.sprite = sprite;
+            _button.onClick.AddListener(() => TilesEditor.Instance.SetCurrentTile(_tile));
         }
     }
 }
