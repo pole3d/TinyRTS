@@ -136,6 +136,11 @@ namespace TilesEditor
             {
                 return;
             }
+            
+            if (Input.GetMouseButtonDown(1) && CurrentTile != null)
+            {
+                SetCurrentTile(null);
+            }
 
             if (Input.GetMouseButton(0) && CurrentTile != null)
             {

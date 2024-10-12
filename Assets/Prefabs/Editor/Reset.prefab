@@ -31,12 +31,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8745435510095730381}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 5}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 2.5}
+  m_SizeDelta: {x: -30.4465, y: -25.572}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &199223353606365487
 CanvasRenderer:
@@ -68,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: RESET MAP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 73f1dc044e77f5e439378dbd8939dc94, type: 2}
-  m_sharedMaterial: {fileID: -2695539368285348584, guid: 73f1dc044e77f5e439378dbd8939dc94, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: bd2915b59c4e3b34987298865ff9298e, type: 2}
+  m_sharedMaterial: {fileID: -5471163117697162645, guid: bd2915b59c4e3b34987298865ff9298e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -93,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 41
+  m_fontSizeBase: 41
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -168,12 +167,11 @@ RectTransform:
   m_Children:
   - {fileID: 4232783212272357284}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 127.53, y: 64.5}
+  m_AnchoredPosition: {x: 0, y: -4.9373}
+  m_SizeDelta: {x: 127.53, y: 54.6254}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4095639291285450933
 CanvasRenderer:
@@ -196,16 +194,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.50377357, b: 0.50377357, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8fc9feebf624bba43a9df1301ccf1d8e, type: 3}
+  m_Sprite: {fileID: -1895791225, guid: fe46c4f5aeb018241bc9c5864f7fb4f5, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
