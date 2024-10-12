@@ -277,6 +277,16 @@ namespace TilesEditor
                 }
             }
 
+            // Refresh every tile placed to ensure their sprite is correct
+            for (int x = 0; x < _tilesPos.GetLength(0); x++)
+            {
+                for (int y = 0; y < _tilesPos.GetLength(1); y++)
+                {
+                    var tile = _tilesPos[x, y];
+                    if (tile != null) SaveTileToMap(tile,tile.AssociatedTilemap,new Vector3Int(x,y,0));
+                }
+            }
+
             foreach (UnitForEditorData unitEditorData in mapData.UnitEditorDatas)
             {
                 UnitForEditor newUnit = Instantiate(TilesEditor.Instance.UnitPrefab, unitEditorData.Position,
