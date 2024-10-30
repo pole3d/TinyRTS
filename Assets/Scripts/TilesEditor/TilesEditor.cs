@@ -125,7 +125,7 @@ namespace TilesEditor
             screenToWorldPoint.z = 0;
             Vector3Int cellPos = _currentMap.Grid.WorldToCell(screenToWorldPoint);
 
-            _previewObj.SetPosition(new Vector3(cellPos.x, cellPos.y, 0));
+            _previewObj.SetPosition(screenToWorldPoint, _currentMap.Grid);
 
             if (IsOverUI(Input.mousePosition))
             {
@@ -137,14 +137,18 @@ namespace TilesEditor
                 return;
             }
             
-            if (Input.GetMouseButtonDown(1) && CurrentTile != null) // Stop painting tile
+            if (Input.GetMouseButtonDown(1)) 
             {
-                SetCurrentTile(null);
+                if (CurrentTile != null) SetCurrentTile(null); // Stop painting tiles
+                
+                if (CurrentUnit != null) SetCurrentUnit(null); // Stop painting units
             }
             
-            if (Input.GetMouseButton(1) && CurrentTile == null)// Destroy painted tile
+            if (Input.GetMouseButton(1)) 
             {
-                _currentMap.RemoveTileFromMap(cellPos);
+                if (CurrentTile == null) _currentMap.RemoveTileFromMap(cellPos); // Destroy painted tile
+                
+                if (CurrentUnit == null) _currentMap.RemoveUnitFromMap(cellPos);  // Destroy painted unit
             }
             
             if (Input.GetMouseButton(0) && CurrentTile != null) // Paint Tile
@@ -157,7 +161,7 @@ namespace TilesEditor
                 Sprite sprite = null;
                 foreach (var unit in Data.Units)
                 {
-                    if (unit.UnitType == CurrentUnit.UnitType)
+                    if (unit.UnitType == CurrentUnit.AssociatedData.UnitType)
                     {
                         sprite = unit.Sprite;
                     }
@@ -229,9 +233,15 @@ namespace TilesEditor
         /// </summary>
         private void UpdateTilePreview()
         {
-            if (CurrentTile != null && CurrentUnit == null)
+            if (CurrentTile != null)
             {
                 _previewObj.SpriteRenderer.sprite = CurrentTile.Tile.sprite;
+                _previewObj.FollowType = TilePreview.PreviewFollowType.Grid;
+            }
+            else if (CurrentUnit != null)
+            {
+                _previewObj.SpriteRenderer.sprite = CurrentUnit.AssociatedData.Sprite;
+                _previewObj.FollowType = TilePreview.PreviewFollowType.Free;
             }
             else
             {
@@ -284,7 +294,7 @@ namespace TilesEditor
                 newButton.SetUnitData(
                     new UnitForEditorData
                     {
-                        UnitType = unit.UnitType,
+                        AssociatedData = unit,
                         Position = default
                     },
                     unit.Sprite);

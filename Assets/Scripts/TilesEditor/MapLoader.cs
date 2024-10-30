@@ -71,7 +71,7 @@ namespace TilesEditor
 
                 foreach (UnitData unit in _gameplayData.Units)
                 {
-                    if (data.UnitType == unit.UnitType)
+                    if (data.AssociatedData.UnitType == unit.UnitType)
                     {
                         newUnit.Initialize(unit);
                         break;

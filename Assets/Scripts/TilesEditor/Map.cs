@@ -112,6 +112,10 @@ namespace TilesEditor
             }
         }
 
+        /// <summary>
+        /// Remove a tile from the map if it exists at the given position.
+        /// </summary>
+        /// <param name="cellPosition">Position to remove the tile at.</param>
         public void RemoveTileFromMap(Vector3Int cellPosition)
         {
             if (IsInZone(cellPosition) == false) return;
@@ -210,7 +214,7 @@ namespace TilesEditor
 
             unit.UnitForEditorData = new UnitForEditorData
             {
-                UnitType = data.UnitType,
+                AssociatedData = data.AssociatedData,
                 Position = position
             };
 
@@ -226,6 +230,20 @@ namespace TilesEditor
         {
             _unitForEditorDatas.Add(unit.UnitForEditorData);
             _unitForEditor.Add(unit);
+        }
+        
+        /// <summary>
+        /// Remove an unit from the list in the editor and deletes it.
+        /// </summary>
+        /// <param name="cellPosition"> The position to remove the unit at, if it exists. </param>
+        public void RemoveUnitFromMap(Vector3Int cellPosition)
+        {
+            if (IsInZone(cellPosition) == false) return;
+
+            //var unit = _unitForEditor.Find(x => Grid.WorldToCell(x.transform.position) == cellPosition);
+            //
+            //_unitForEditorDatas.Remove(unit.UnitForEditorData);
+            //_unitForEditor.Remove(unit);
         }
 
         /// <summary>
@@ -304,12 +322,12 @@ namespace TilesEditor
 
                 foreach (UnitData unit in TilesEditor.Instance.Data.Units)
                 {
-                    if (unitEditorData.UnitType == unit.UnitType)
+                    if (unitEditorData.AssociatedData.UnitType == unit.UnitType)
                     {
                         newUnit.SetDisplay(unit.Sprite);
                         newUnit.UnitForEditorData = new UnitForEditorData
                         {
-                            UnitType = unit.UnitType,
+                            AssociatedData = unit,
                             Position = unitEditorData.Position
                         };
                         break;

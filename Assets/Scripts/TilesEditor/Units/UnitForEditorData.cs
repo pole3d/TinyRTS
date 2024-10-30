@@ -9,7 +9,7 @@ namespace TilesEditor.Units
     [Serializable]
     public class UnitForEditorData
     {
-        [field:SerializeField] public UnitData.Type UnitType { get; set; }
+        [field:SerializeField] public UnitData AssociatedData { get; set; }
         [field:SerializeField] public Vector2 Position { get; set; }
     }
 }
