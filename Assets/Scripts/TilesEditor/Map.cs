@@ -240,11 +240,19 @@ namespace TilesEditor
         {
             if (IsInZone(cellPosition) == false) return;
 
-            //var unit = _unitForEditor.Find(x => Grid.WorldToCell(x.transform.position) == cellPosition);
-            //
-            //_unitForEditorDatas.Remove(unit.UnitForEditorData);
-            //_unitForEditor.Remove(unit);
-        }
+            foreach (var unitData in _unitForEditorDatas)
+            {
+                var currentCellPosition = Grid.WorldToCell(unitData.Position);
+                if (currentCellPosition == cellPosition)
+                {
+                    var unit = _unitForEditor.Find(e => e.UnitForEditorData == unitData);
+
+                    _unitForEditorDatas.Remove(unitData);
+                    _unitForEditor.Remove(unit);
+                    Destroy(unit.gameObject);
+                    return;
+                }
+            } }
 
         /// <summary>
         /// Save the map in a json file.
