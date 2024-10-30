@@ -112,10 +112,19 @@ namespace TilesEditor
             }
         }
 
+        public void RemoveTileFromMap(Vector3Int cellPosition)
+        {
+            if (IsInZone(cellPosition) == false) return;
+            var currentTileData = _tilesPos[cellPosition.x, cellPosition.y];
+            if (currentTileData == null) return;
+            
+            SaveTileToMap(null, currentTileData.AssociatedTilemap, cellPosition);
+        }
+
         private void SaveTileToMap(TileData tile, TilemapData tilemap, Vector3Int pos)
         {
             tilemap.CurrentTilemap.SetTile(pos, GetTileToDraw(tile, pos));
-            tile.AssociatedTilemap = tilemap;
+            if (tile != null) tile.AssociatedTilemap = tilemap;
             _tilesPos[pos.x, pos.y] = tile;
         }
 
@@ -129,11 +138,6 @@ namespace TilesEditor
             var closedCells = new Queue<TileDataPosition>();
 
             openCells.Enqueue(new TileDataPosition(firstTileData, firstTilePosition));
-
-            foreach (var additionalTile in firstTileData.AdditionalTilesPositions)
-            {
-                openCells.Enqueue(new TileDataPosition(firstTileData, firstTilePosition + (Vector3Int)additionalTile));
-            }
 
             if (firstTileData.UseTileset)
             {
@@ -152,6 +156,11 @@ namespace TilesEditor
                 }
             }
 
+            foreach (var additionalTile in firstTileData.AdditionalTilesPositions)
+            {
+                openCells.Enqueue(new TileDataPosition(firstTileData, firstTilePosition + (Vector3Int)additionalTile));
+            }
+            
             int maxIterations = 100; // To ensure the while loop ends.
 
             while (openCells.Count > 0 && maxIterations > 0)
@@ -175,6 +184,7 @@ namespace TilesEditor
         /// <returns></returns>
         private Tile GetTileToDraw(TileData tileData, Vector3Int gridPos)
         {
+            if (tileData == null) return null;
             if (tileData.UseTileset == false) return tileData.Tile;
                 
             var value = 0;

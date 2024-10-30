@@ -137,17 +137,22 @@ namespace TilesEditor
                 return;
             }
             
-            if (Input.GetMouseButtonDown(1) && CurrentTile != null)
+            if (Input.GetMouseButtonDown(1) && CurrentTile != null) // Stop painting tile
             {
                 SetCurrentTile(null);
             }
-
-            if (Input.GetMouseButton(0) && CurrentTile != null)
+            
+            if (Input.GetMouseButton(1) && CurrentTile == null)// Destroy painted tile
+            {
+                _currentMap.RemoveTileFromMap(cellPos);
+            }
+            
+            if (Input.GetMouseButton(0) && CurrentTile != null) // Paint Tile
             {
                 _currentMap.AddTileToMap(CurrentTile, cellPos);
             }
 
-            if (Input.GetMouseButtonDown(0) && CurrentUnit != null)
+            if (Input.GetMouseButtonDown(0) && CurrentUnit != null) // Paint Unit
             {
                 Sprite sprite = null;
                 foreach (var unit in Data.Units)

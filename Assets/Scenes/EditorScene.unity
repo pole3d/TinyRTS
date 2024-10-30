@@ -1361,7 +1361,7 @@ MonoBehaviour:
   _cameraController: {fileID: 239599777}
   _defaultTilemap: {fileID: 1386923692}
   _defaultTile: {fileID: 11400000, guid: a63d633b91b89b94ca91639f576fbbfd, type: 2}
-  _brushSizeMax: 15.2
+  _brushSizeMax: 7.5
   _brushSizeSlider: {fileID: 2100830966}
 --- !u!1 &511901301
 GameObject:
