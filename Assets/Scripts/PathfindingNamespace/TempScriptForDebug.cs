@@ -2,7 +2,6 @@ using GameManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class TempScriptForDebug : MonoBehaviour
 {
@@ -17,11 +16,12 @@ public class TempScriptForDebug : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
+        Gizmos.color = Color.red;
         for (int i = 0; i < Pos.Length; i++)
         {
-            Gizmos.DrawCube(Pos[i] + Offset, Vector3.one);
+            Gizmos.DrawWireCube(Pos[i] + Offset, Vector3.one);
         }
     }
 }

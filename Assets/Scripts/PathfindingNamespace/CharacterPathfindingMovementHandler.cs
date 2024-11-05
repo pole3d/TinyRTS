@@ -1,3 +1,4 @@
+using GameManagement;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace PathfindingNamespace
         private int _currentPathIndex;
         private List<Vector3> _pathVectorList = new List<Vector3>();
         private int _lastIndex = 0;
+        private Vector3 _currentPosInGrid;
 
         private void Update()
         {
@@ -25,6 +27,15 @@ namespace PathfindingNamespace
                 Vector3 targetPosition = _pathVectorList[_currentPathIndex];
                 Vector3 currentPosition = transform.position;
                 float distanceToTargetPosition = Vector3.Distance(currentPosition, targetPosition);
+
+                Vector3 posGrid = Pathfinding.Instance.Grid.GetWorldPosition((int)_pathVectorList[_currentPathIndex].x, (int)_pathVectorList[_currentPathIndex].y);
+
+                if (_currentPosInGrid != posGrid)
+                {
+                    GameManager.Instance.PathfindingController.SetTileWalkablePathfinding(_currentPosInGrid);
+                    _currentPosInGrid = posGrid;
+                    GameManager.Instance.PathfindingController.SetTileNotWalkablePathfinding(_currentPosInGrid);
+                }
 
                 if (distanceToTargetPosition > 0.2f) //if not close
                 {

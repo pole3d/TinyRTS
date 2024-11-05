@@ -324,7 +324,6 @@ namespace PathfindingNamespace
         }
         #endregion
 
-
         #region Other
         public void ResetNodeWalkable(List<Vector3> listPos, int index)
         {
