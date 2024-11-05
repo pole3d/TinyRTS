@@ -40,6 +40,7 @@ namespace PathfindingNamespace
 
                     if (_currentPathIndex >= _pathVectorList.Count)
                     {
+                        transform.position = targetPosition;
                         StopMoving();
                         //stop animator
                         return;
